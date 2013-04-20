@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 /**
  * Manages the creation and update of the phone's database.
- * @author Julio Mendoza
+ * @author Kelvin Guerrero
  *
  */
 public class SQLiteHelper extends SQLiteOpenHelper {
@@ -29,57 +29,57 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	 */
 	protected static final String COLUMN_DOCUMENT_TITLE= "document_title";
 
+	   /**
+     * The name of the document, given by the user after saving the document.
+     */
+    protected static final String COLUMN_DOCUMENT_TIPO= "document_tipo";
+
+	
 	//---------------------------------------------------------------------
-	//Sounds Table
+	//Recomendaciones Table
 	//---------------------------------------------------------------------
 	/**
-	 * The constant of the name of the sounds table in the phone's database.
+	 * The constant of the name of the recommendation table in the phone's database.
 	 */
-	protected static final String TABLE_SOUNDS = "sounds";
+	protected static final String TABLE_RECOMMENDACION = "recommendation";
 	
 	/**
 	 * The sound id in the sound table.
 	 */
-	protected static final String COLUMN_SOUND_ID = "sound_id";
+	protected static final String COLUMN_RECOMEN_ID = "recommendation_id";
 	
 	/**
-	 * The complete path in the SD card of the sound in the mix. 
+	 * The complete Url of the recommendation. 
 	 */
-	protected static final String COLUMN_SOUND_PATH = "sound_path";
+	protected static final String COLUMN_RECOMMENDACION_URL = "recommendation_url";
 	
 	/**
-	 * The complete path in the SD card of the sound in the mix. 
-	 */
-	protected static final String COLUMN_SOUND_IDENT = "sound_ident";
-	
-	/**
-	 * The complete path in the SD card of the sound in the mix. 
-	 */
-	protected static final String COLUMN_SOUND_INDEX = "sound_index";	
-	
+     * The recommendation referencing the document id.
+     */
+	protected static final String COLUMN_R_D_ID = "document_id";
 	
 	//---------------------------------------------------------------------
-	//Mixes_Sounds Table
+	//Palabras clave Table
 	//---------------------------------------------------------------------
 	/**
 	 * The mixes and sound reference table in the database.
 	 */
-	protected static final String TABLE_M_S = "mixes_sounds";
+	protected static final String TABLE_PALABRAS_CLAVE = "palabras_clave";
 	
 	/**
-	 * The mix_sound id in the table.
+	 * The palabra clave id in the table.
 	 */
-	protected static final String COLUMN_MS_ID = "ms_id";
+	protected static final String COLUMN_PALABRA_CLAVE_ID = "palabra_id";
+
+	/**
+	 * The palabra clave in the table.
+	 */
+	protected static final String COLUMN_PALABRA_CLAVE = "palabra";
 	
 	/**
-	 * The sound id referencing the sound table's sound id.
+	 * The palabra id referencing the document id.
 	 */
-	protected static final String COLUMN_S_ID = "s_id";
-	
-	/**
-	 * The mix id referencing the mix table's mix id.
-	 */
-	protected static final String COLUMN_M_ID = "m_id";
+	protected static final String COLUMN_P_D_ID = "document_id";
 	
 	//---------------------------------------------------------------------
 	//Database Constants
@@ -87,7 +87,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	/**
 	 * The name of the database to create.
 	 */
-	private static final String DATABASE_NAME = "socialmixer.db";
+	private static final String DATABASE_NAME = "magik.db";
 	
 	/**
 	 * The version of the database.
@@ -97,26 +97,24 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	/**
 	 * The mixes table creation SQL statement.
 	 */
-//	private static final String CREATE_MIXES = "create table if not exists " + TABLE_MIXES + " (" + COLUMN_MIX_ID + " integer primary key autoincrement, "
-//			+ COLUMN_MIX_NAME + " text not null)";
+	private static final String CREATE_DOCUMENT = "create table if not exists " + TABLE_DOCUMENTS + " (" + COLUMN_DOCUMENT_ID + " integer primary key autoincrement, "
+			+ COLUMN_DOCUMENT_TITLE + " text, " + COLUMN_DOCUMENT_TIPO +" text not null )";
 	/**
-	 * The sounds table creation SQL statement.
+	 * The recommendation table creation SQL statement.
 	 */
-	private static final String CREATE_SOUNDS = "create table if not exists " + TABLE_SOUNDS + " (" + COLUMN_SOUND_ID
-			+ " integer primary key autoincrement, " + COLUMN_SOUND_IDENT
-			+ " integer not null, " + COLUMN_SOUND_INDEX + " integer not null, " +
-			COLUMN_SOUND_PATH + " text not null )";
+	private static final String CREATE_RECOMEND = "create table if not exists " + TABLE_RECOMMENDACION + " (" + COLUMN_RECOMEN_ID
+			+ " integer primary key autoincrement, " + COLUMN_RECOMMENDACION_URL + " text not null " 
+			+ COLUMN_R_D_ID + " integer unique " + "FOREIGN KEY(" + COLUMN_R_D_ID + ") REFERENCES "
+            + TABLE_DOCUMENTS + "(" + COLUMN_DOCUMENT_ID + "))";
 	
 	/**
-	 * The mixes and sounds bridge table creation SQL statement.
-	 */
-//	private static final String CREATE_S_M = "create table if not exists " + TABLE_M_S + " (" + COLUMN_MS_ID
-//			+ " integer primary key autoincrement, "+COLUMN_M_ID+ " integer unique, "+COLUMN_S_ID+ " integer unique, " + "FOREIGN KEY("
-//			+ COLUMN_M_ID + ") REFERENCES " + TABLE_MIXES + "(" + COLUMN_MIX_ID
-//			+ "), " + "FOREIGN KEY(" + COLUMN_S_ID + ") REFERENCES "
-//			+ TABLE_SOUNDS + "(" + COLUMN_SOUND_ID + "))";
-	
-	
+     * The Palabras clave table creation SQL statement.
+     */
+    private static final String CREATE_PALABRAS_CLAVE = "create table if not exists " + TABLE_PALABRAS_CLAVE + " (" + COLUMN_PALABRA_CLAVE_ID
+            + " integer primary key autoincrement, " + COLUMN_PALABRA_CLAVE + " text not null " 
+            + COLUMN_P_D_ID + " integer unique " + "FOREIGN KEY(" + COLUMN_P_D_ID + ") REFERENCES "
+            + TABLE_DOCUMENTS + "(" + COLUMN_DOCUMENT_ID + "))";
+            	
 	//----------------------------------------------------------------------------
 	//METHODS
 	//----------------------------------------------------------------------------
@@ -128,44 +126,30 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
-    @Override
-    public void onCreate( SQLiteDatabase db )
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void onUpgrade( SQLiteDatabase db, int oldVersion, int newVersion )
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
 	/*
 	 * (non-Javadoc)
 	 * @see android.database.sqlite.SQLiteOpenHelper#onCreate(android.database.sqlite.SQLiteDatabase)
 	 */
-//	@Override
-//	public void onCreate(SQLiteDatabase database) {
-//		database.execSQL(CREATE_MIXES);
-//		database.execSQL(CREATE_SOUNDS);
-//		database.execSQL(CREATE_S_M);
-//	}
-//
-//	/*
-//	 * (non-Javadoc)
-//	 * @see android.database.sqlite.SQLiteOpenHelper#onUpgrade(android.database.sqlite.SQLiteDatabase, int, int)
-//	 */
-//	@Override
-//	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-//		Log.w(SQLiteHelper.class.getName(),
-//				"Upgrading database from version " + oldVersion + " to "
-//						+ newVersion + ", which will destroy all old data");
-//		db.execSQL("DROP TABLE IF EXISTS " + TABLE_MIXES);
-//		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SOUNDS);
-//		db.execSQL("DROP TABLE IF EXISTS " + TABLE_M_S);
-//		onCreate(db);
-//	}
+	@Override
+	public void onCreate(SQLiteDatabase database) {
+		database.execSQL(CREATE_DOCUMENT);
+		database.execSQL(CREATE_RECOMEND);
+		database.execSQL(CREATE_PALABRAS_CLAVE);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see android.database.sqlite.SQLiteOpenHelper#onUpgrade(android.database.sqlite.SQLiteDatabase, int, int)
+	 */
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		Log.w(SQLiteHelper.class.getName(),
+				"Upgrading database from version " + oldVersion + " to "
+						+ newVersion + ", which will destroy all old data");
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_DOCUMENTS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_RECOMMENDACION);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_PALABRAS_CLAVE);
+		onCreate(db);
+	}
 
 }
