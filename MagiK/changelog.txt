@@ -1,0 +1,138 @@
+next version:
+-------------
+
+1.0.0 (8.2.2010):
+-----------------
+changed from DEMO to first release 
+fix for bug 2927280: "Exception:null when reading pdf" - XRefStm in Hybrid documents
+update to target platform 1.6, allow different screen sizes and densities (e.g. for HTC Tatoo)
+
+0.1.26 (28.12.2009):
+--------------------
+bugfix width/height calculation for 90/270 degree rotated pages 
+support for hybrid references (PDF 1.4 compatibility XRefStrm) 
+use font substitution with correct letter width.
+new checkbox "keep caches" to keep all caches in memory (makes all Weak- and SoftReferences permanent).
+ignore buggy "Qq" command 
+
+0.1.25 (25.11.2009):
+--------------------
+support password protected PDFs
+
+0.1.24 (24.11.2009):
+--------------------
+change orientation without rereading the pdf file
+
+0.1.23 (23.11.2009):
+--------------------
+replaced custom graphics viewer with standard layout with 
+navigation buttons and FullScrollView (from Android's Fortune).
+Removed faster / less memory selection.
+  
+0.1.22:
+-------
+some fixes to get built-in fonts working (Joerg)
+some small performance improvements (Joerg)
+bugfix: jpeg decoding - Benutzerhandbuch G1 page 1
+
+0.1.21:
+-------
+bugfix: matrix inversion in buildAccentChar
+
+0.1.20:
+-------
+upgrade to newest version (CVS) of pdf-renderer (3.11.2009)
+
+0.1.19:
+-------
+removed translation \r -> \n in readLiteralString (fixes problems with owner-keys containing 0x0d)
+
+0.1.18:
+-------
+support RC4 encrypted PDFs (fixes jce exception)
+
+0.1.17:
+-------
+bugfix: AffineTransformation to Matrix conversion (italic text went up) 
+bugfix: pagemargin swapped x/y
+
+0.1.16:
+-------
+bugfix page-dimensions
+(width, height) instead of (right, bottom)
+
+0.1.15:
+-------
+support CMYK colorspace
+
+0.1.14:
+-------
+added goto page dialog in viewer.
+added browse button "..." on start page
+
+0.1.13:
+-------
+option for large PDF files (slower) using NIO ByteBuffer (like before v0.1.9) instead of byte array (since v0.1.9).
+catch exceptions and contiue processing in parser
+
+0.1.12b:
+--------
+catch OutOfMemory for images, use dummy-pic instead
+
+0.1.12:
+-------
+free old page bitmap to save memory
+
+0.1.11:
+-------
+support color and fill style for Patterns "scn"/"SCN" (without pattern)
+fix uninitialised colorspaces
+
+0.1.10:
+-------
+file browser [Bob]
+decode RGB-JPEGs (no alpha)
+
+0.1.9:
+------
+replaced java.nio classes with simple byte[] implementation.
+removed all logging in RELEASE
+
+0.1.8:
+------
+render in background thread, show progress every second
+
+0.1.7:
+------
+optional antialiasing
+fix temp files "pdvviewer-nnnn.pdf" are not deleted 
+
+0.1.6:
+------
+support inline indexed images ("BI"/"CS"="I") 
+
+0.1.5:
+------
+support built in PFB fonts as substitution for TTF
+(BUG: empty table of contents on page 3 of bigexample.pdf)   
+
+0.1.4:
+------
+support inline gray images ("BI"/"CS"="G") 
+
+0.1.3:
+------
+support gray color and fill ("g", "G") 
+
+0.1.2:
+------
+support inline RGB images ("BI"/"CS"="RGB") 
+
+0.1.1:
+------
+support rgb color and fill ("rg", "RG")
+
+0.1.0:
+------
+first release
+
