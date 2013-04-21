@@ -27,7 +27,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	/**
 	 * The name of the document, given by the user after saving the document.
 	 */
-	protected static final String COLUMN_DOCUMENT_TITLE= "document_title";
+	protected static final String COLUMN_DOCUMENT_TITLE = "document_title";
+
+	/**
+	 * The name of the document, given by the user after saving the document.
+	 */
+	protected static final String COLUMN_DOCUMENT_NAME = "document_name";
 
 	   /**
      * The name of the document, given by the user after saving the document.
@@ -98,13 +103,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	 * The mixes table creation SQL statement.
 	 */
 	private static final String CREATE_DOCUMENT = "create table if not exists " + TABLE_DOCUMENTS + " (" + COLUMN_DOCUMENT_ID + " integer primary key autoincrement, "
-			+ COLUMN_DOCUMENT_TITLE + " text, " + COLUMN_DOCUMENT_TIPO +" text not null )";
+			+ COLUMN_DOCUMENT_TITLE + " text, " + COLUMN_DOCUMENT_NAME + " text, " + COLUMN_DOCUMENT_TIPO +" text not null )";
 	/**
 	 * The recommendation table creation SQL statement.
 	 */
-	private static final String CREATE_RECOMEND = "create table if not exists " + TABLE_RECOMMENDACION + " (" + COLUMN_RECOMEN_ID
+	private static final String CREATE_RECOMMENDATION = "create table if not exists " + TABLE_RECOMMENDACION + " (" + COLUMN_RECOMEN_ID
 			+ " integer primary key autoincrement, " + COLUMN_RECOMMENDACION_URL + " text not null " 
-			+ COLUMN_R_D_ID + " integer unique " + "FOREIGN KEY(" + COLUMN_R_D_ID + ") REFERENCES "
+			+ COLUMN_R_D_ID + " integer " + "FOREIGN KEY(" + COLUMN_R_D_ID + ") REFERENCES "
             + TABLE_DOCUMENTS + "(" + COLUMN_DOCUMENT_ID + "))";
 	
 	/**
@@ -112,7 +117,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
      */
     private static final String CREATE_PALABRAS_CLAVE = "create table if not exists " + TABLE_PALABRAS_CLAVE + " (" + COLUMN_PALABRA_CLAVE_ID
             + " integer primary key autoincrement, " + COLUMN_PALABRA_CLAVE + " text not null " 
-            + COLUMN_P_D_ID + " integer unique " + "FOREIGN KEY(" + COLUMN_P_D_ID + ") REFERENCES "
+            + COLUMN_P_D_ID + " integer " + " FOREIGN KEY(" + COLUMN_P_D_ID + ") REFERENCES "
             + TABLE_DOCUMENTS + "(" + COLUMN_DOCUMENT_ID + "))";
             	
 	//----------------------------------------------------------------------------
@@ -133,7 +138,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase database) {
 		database.execSQL(CREATE_DOCUMENT);
-		database.execSQL(CREATE_RECOMEND);
+		database.execSQL(CREATE_RECOMMENDATION);
 		database.execSQL(CREATE_PALABRAS_CLAVE);
 	}
 
