@@ -53,33 +53,9 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         data.crearFile( CLASE_DYSPLAY, "Velocity (X,Y) ;Titulo;Url" );
         lecturas = new ArrayList<String>();
         display = new ControlerDisplay( );
-        t = new Thread()
-        {
-        	@Override
-        	public void run()
-        	{
-        		  while( sensorProcess )
-                  {
-                      try
-                      {
-                          Log.v( "KELVIN", "Save Reads" );
-                          if(lecturas.size()>5)
-                          {
-                        	 recomendaciones(); 
-                          }
-                          
-                          sleep( 10000 );
-                      }
-                      catch( InterruptedException e )
-                      {
-                          e.printStackTrace( );
-                      }
-                  }
-        	}
-        };
-        t.start();
+       
         
-        persistenceManager = new PersistenceManager(this.getApplicationContext());
+
 
         objWebView = ( WebView )findViewById( R.id.webView );
         objWebView.setOnTouchListener( this );
@@ -92,7 +68,32 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             public boolean shouldOverrideUrlLoading( WebView view, String url )
             {
                 Toast.makeText( getApplicationContext( ), txtUrl.getText().toString(), Toast.LENGTH_SHORT ).show( );
-                
+                System.out.println(txtUrl.getText().toString());
+                t = new Thread()
+                {
+                	@Override
+                	public void run()
+                	{
+                		  while( sensorProcess )
+                          {
+                              try
+                              {
+                                  Log.v( "KELVIN", "Save Reads" );
+                                  if(lecturas.size()>5)
+                                  {
+                                	 recomendaciones(); 
+                                  }
+                                  
+                                  sleep( 10000 );
+                              }
+                              catch( InterruptedException e )
+                              {
+                                  e.printStackTrace( );
+                              }
+                          }
+                	}
+                };
+                t.start();
                 handler.sendEmptyMessage( CLICK_ON_URL );
                 return false;
             }
