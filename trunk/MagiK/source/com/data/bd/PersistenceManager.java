@@ -363,6 +363,30 @@ public class PersistenceManager
     	
     	return repeated;
     }
+    
+    
+    
+    public void saveRecommendations(String document, String[] recs  )
+    {
+    	try {    		
+			int id = getDocument(document);
+			database = helper.getWritableDatabase();
+			ContentValues values;
+			for (int i = 0; i < recs.length; i++) {
+				String rec = recs[i];
+				values = new ContentValues();
+				values.put(SQLiteHelper.COLUMN_RECOMMENDACION_URL, rec);
+				values.put(SQLiteHelper.COLUMN_R_D_ID, id);
+				database.insert(SQLiteHelper.TABLE_RECOMMENDACION, null,values);
+				values = null;
+			}			
+			database.close();
+			database = null;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
 
     // /**
     // * Returns the id of the sound identified by the parameter.
