@@ -56,6 +56,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             @Override
             public boolean shouldOverrideUrlLoading( WebView view, String url )
             {
+                Toast.makeText( getApplicationContext( ), "entroooo", Toast.LENGTH_SHORT ).show( );
                 handler.sendEmptyMessage( CLICK_ON_URL );
                 return false;
             }
