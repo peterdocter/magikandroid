@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 /**
  * Creates queries to the SQLite helper and returns its results.
@@ -302,6 +303,7 @@ public class PersistenceManager
     public String[] getAllDocuments( ) throws Exception
     {
         String[] mixes = null;
+       
         try
         {
             database = helper.getReadableDatabase( );
@@ -324,6 +326,28 @@ public class PersistenceManager
             throw new Exception( e.getMessage( ) );
         }
         return mixes;
+    }
+    
+    /**
+     * Checks if the file with the given name is already in the documents table.
+     * @param fileName Name of the file to check.
+     * @return <b>repeated</b>: <b><i>True</i></b> if it is in the table, on the contrary <b><i>False</i></b>
+     */
+    public boolean isFileInTable(String fileName)
+    {
+    	boolean repeated = false;
+    	try 
+    	{
+    		database = helper.getReadableDatabase();
+    		Cursor cursor = database.query( SQLiteHelper.TABLE_DOCUMENTS, new String[]{ SQLiteHelper.COLUMN_DOCUMENT_NAME}, SQLiteHelper.COLUMN_DOCUMENT_NAME + " LIKE '?' ", new String[]{fileName}, null, null, null );
+    		repeated = !cursor.moveToFirst();
+		} 
+    	catch (Exception e) 
+    	{
+			System.out.println(e.getMessage());
+		}
+    	
+    	return repeated;
     }
 
     // /**
