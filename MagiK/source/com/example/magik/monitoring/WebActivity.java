@@ -1,14 +1,12 @@
 package com.example.magik.monitoring;
 
-import com.contolers.magik.data.ControlerData;
+import java.util.ArrayList;
 
 import net.sf.andpdf.pdfviewer.R;
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.R.integer;
-import android.R.string;
-import android.app.Activity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +17,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.contolers.magik.data.ControlerData;
+import com.data.bd.PersistenceManager;
+import com.recomendacion.servicio.Servicio;
+
 public class WebActivity extends Activity implements OnTouchListener, Handler.Callback
 {
     private WebView objWebView;
@@ -26,16 +28,20 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
     private EditText txtUrl;
     private final Handler handler = new Handler( this );
     private Thread thread;
+    private Thread t; 
     private String rta = "";
     private boolean sensorProcess;
     private String CLASE_DYSPLAY = "MURL";
     private ControlerData data;
     private ControlerDisplay display;
+    private PersistenceManager persistenceManager;
+    private ArrayList<String> lecturas;
 
     private WebViewClient client;
 
     private static final int CLICK_ON_WEBVIEW = 1;
     private static final int CLICK_ON_URL = 2;
+
 
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -45,18 +51,48 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         data = new ControlerData( );
         data.existDelete( CLASE_DYSPLAY );
         data.crearFile( CLASE_DYSPLAY, "Velocity (X,Y) ;Titulo;Url" );
-
+        lecturas = new ArrayList<String>();
         display = new ControlerDisplay( );
+        t = new Thread()
+        {
+        	@Override
+        	public void run()
+        	{
+        		  while( sensorProcess )
+                  {
+                      try
+                      {
+                          Log.v( "KELVIN", "Save Reads" );
+                          if(lecturas.size()>5)
+                          {
+                        	 recomendaciones(); 
+                          }
+                          
+                          sleep( 10000 );
+                      }
+                      catch( InterruptedException e )
+                      {
+                          e.printStackTrace( );
+                      }
+                  }
+        	}
+        };
+        t.start();
+        
+        persistenceManager = new PersistenceManager(this.getApplicationContext());
 
         objWebView = ( WebView )findViewById( R.id.webView );
         objWebView.setOnTouchListener( this );
 
         client = new WebViewClient( )
         {
-            @Override
+            
+
+			@Override
             public boolean shouldOverrideUrlLoading( WebView view, String url )
             {
-                Toast.makeText( getApplicationContext( ), "entroooo", Toast.LENGTH_SHORT ).show( );
+                Toast.makeText( getApplicationContext( ), txtUrl.getText().toString(), Toast.LENGTH_SHORT ).show( );
+                
                 handler.sendEmptyMessage( CLICK_ON_URL );
                 return false;
             }
@@ -98,7 +134,16 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         inicializarBoton( );
     }
 
-    public void guardar( )
+    protected void recomendaciones() {
+    	Servicio servicio = new Servicio();
+    	String[] recs = servicio.getRecomendaciones(txtUrl.getText().toString());
+    	persistenceManager = new PersistenceManager(this.getApplicationContext());
+    	persistenceManager.saveRecommendations(txtUrl.getText().toString(), recs);
+    	persistenceManager = null;
+    	System.gc();
+	}
+
+	public void guardar( )
     {
         // data.crearFile( CLASE_DYSPLAY, "TIME;Velocity" );
         data.writeToFile( rta, true, CLASE_DYSPLAY );
@@ -183,6 +228,11 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         {
             rta += "\n";
             rta += objWebView.getTitle( ) + ";" + captura + ";"+rtaX+";"+rtaY+";" + objWebView.getUrl( );
+            if(rta.contains("LECTURA"));
+            {
+            	lecturas.add(rta);            	
+            }
+            
         }
         return false;
     }
