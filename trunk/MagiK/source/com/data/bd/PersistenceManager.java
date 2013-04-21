@@ -13,7 +13,19 @@ import android.util.Log;
  */
 public class PersistenceManager
 {
-
+	// --------------------------------------------------------------------------------------------------------------------
+    // CONSTANTS
+    // --------------------------------------------------------------------------------------------------------------------
+	/**
+	 * Identifies the document as a PDF file.
+	 */
+	public static final String PDF = "PDF";
+	
+	/**
+	 * Identifies the document as a HTML webpage.
+	 */
+	public static final String HTML = "HTML";
+	
     // --------------------------------------------------------------------------------------------------------------------
     // FIELDS
     // --------------------------------------------------------------------------------------------------------------------
@@ -45,13 +57,15 @@ public class PersistenceManager
      * @param documentName The name of the new mix.
      * @throws Exception If there is an error inserting the data.
      */
-    public void createDocument( String documentName ) throws Exception
+    public void createDocument( String documentName, String type, String title ) throws Exception
     {
         try
         {
             database = helper.getWritableDatabase( );
             ContentValues values = new ContentValues( );
-            values.put( SQLiteHelper.COLUMN_DOCUMENT_TITLE, documentName );
+            values.put( SQLiteHelper.COLUMN_DOCUMENT_TITLE, title);
+            values.put( SQLiteHelper.COLUMN_DOCUMENT_NAME, documentName );
+            values.put( SQLiteHelper.COLUMN_DOCUMENT_TIPO, type);
             database.insert( SQLiteHelper.TABLE_DOCUMENTS, null, values );
             database.close( );
             values = null;
