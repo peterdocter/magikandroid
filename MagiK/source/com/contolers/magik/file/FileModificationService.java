@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.data.bd.PersistenceManager;
+
 import android.app.ActivityManager;
 import android.app.Service;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 public class FileModificationService extends Service
 {
     // private MyFileObserver fileOb;
+    private PersistenceManager pm;
     private static final int MAX_FO = 100;
     private List<MyFileObserver> fileOb_list = new ArrayList<MyFileObserver>( );
     private Intent intent;
@@ -25,7 +28,7 @@ public class FileModificationService extends Service
     @Override
     public void onCreate( )
     {
-
+        pm = new PersistenceManager( this.getApplicationContext( ) );
         if( !EnvironmentUtilsStatic.is_external_storage_available( ) )
         {
             Toast.makeText( FileModificationService.this, "SDCARD is not available!", Toast.LENGTH_SHORT ).show( );
@@ -60,6 +63,10 @@ public class FileModificationService extends Service
         {
             if( f.getName( ).contains( "pdf" ) || f.getName( ).contains( ".pdf" ) || f.getAbsolutePath( ).contains( "Download" ) )
             {
+                if( !f.isDirectory( ) )
+                {
+                    guardarDocumentoBase(f.getName( ));
+                }
                 MyFileObserver aFileOb = new MyFileObserver( f.getName( ), f.getAbsolutePath( ), this, f.isDirectory( ) );
                 fileOb_list.add( aFileOb );
             }
@@ -85,6 +92,21 @@ public class FileModificationService extends Service
             Log.e( "Error", e.toString( ) );
         }
 
+    }
+    
+    private void guardarDocumentoBase(String documentName)
+    {
+        try
+        {
+            if( !pm.isFileInTable(documentName) )
+            {
+                pm.createDocument( documentName, PersistenceManager.PDF, "" );
+            }
+        }
+        catch( Exception e )
+        {
+            e.printStackTrace();
+        }
     }
 
     public boolean isMyServiceRunning( )

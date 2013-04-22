@@ -43,6 +43,8 @@ package net.sf.andpdf.pdfviewer.gui;
 
 import java.util.List;
 
+import net.sf.andpdf.pdfviewer.DatosDisplay;
+
 import com.contolers.magik.data.ControlerData;
 import com.example.magik.monitoring.ControlerDisplay;
 
@@ -96,6 +98,7 @@ public class FullScrollView extends FrameLayout
     private boolean sensorProcess;
     private String rtaX;
     private String rtaY;
+    private DatosDisplay datosDisplay;
 
     static final String TAG = "FullScrollView";
     static final boolean localLOGV = false || Config.LOGV;
@@ -168,13 +171,13 @@ public class FullScrollView extends FrameLayout
 
     public FullScrollView( Context context, String a )
     {
-        this( context,null, true, true, true );
-        String datos[] = a.split("/");
+        this( context, null, true, true, true );
+        String datos[] = a.split( "/" );
         display = new ControlerDisplay( );
         data = new ControlerData( );
-        CLASE_DYSPLAY = CLASE_DYSPLAY+ datos[datos.length-1];
+        CLASE_DYSPLAY = CLASE_DYSPLAY + datos[ datos.length - 1 ];
         data.existDelete( CLASE_DYSPLAY );
-        data.crearFile( CLASE_DYSPLAY , "Acción;Dirección;Velocidad (pixeles/seg);Eje" );
+        data.crearFile( CLASE_DYSPLAY, "Acción;Dirección;Velocidad (pixeles/seg);Eje" );
         rtaX = "\n" + "X" + "\n";
         rtaY = "\n" + "Y" + "\n";
         sensorProcess = true;
@@ -204,7 +207,7 @@ public class FullScrollView extends FrameLayout
 
     public void guardar( )
     {
-//        data.crearFile( CLASE_DYSPLAY , "TIME;Velocity" );
+        // data.crearFile( CLASE_DYSPLAY , "TIME;Velocity" );
         rtaX += "\n";
         rtaY += "\n";
         data.writeToFile( rtaX, true, CLASE_DYSPLAY );
@@ -213,7 +216,7 @@ public class FullScrollView extends FrameLayout
         rtaY = "\n" + "Y" + "\n";
     }
 
-    public FullScrollView( Context context, AttributeSet attrs,boolean a, boolean b, boolean c )
+    public FullScrollView( Context context, AttributeSet attrs, boolean a, boolean b, boolean c )
     {
         this( context, attrs, R.attr.scrollViewStyle );
     }
@@ -1796,8 +1799,14 @@ public class FullScrollView extends FrameLayout
      */
     public void flingX( int velocityX )
     {
+        datosDisplay = DatosDisplay.darInstacia( );
         String captura = "";
         captura = display.analizarVelocidad( velocityX, "X" );
+
+        String respuesta[] = captura.split( ";" );
+
+        datosDisplay.setAnalisiX( respuesta[ 0 ] );
+
         if( captura != "" )
         {
             rtaX += "\n";
@@ -1834,8 +1843,15 @@ public class FullScrollView extends FrameLayout
      */
     public void flingY( int velocityY )
     {
+        datosDisplay = DatosDisplay.darInstacia( );
+
         String captura = "";
         captura = display.analizarVelocidad( velocityY, "Y" );
+
+        String respuesta[] = captura.split( ";" );
+
+        datosDisplay.setAnalisiY( respuesta[ 0 ] );
+
         if( captura != "" )
         {
             rtaY += "\n";
