@@ -365,6 +365,27 @@ public class PersistenceManager
     }
     
     
+    public void savePalabrasClave(String document, String[] pk  )
+    {
+        try {           
+            int id = getDocument(document);
+            database = helper.getWritableDatabase();
+            ContentValues values;
+            for (int i = 0; i < pk.length; i++) {
+                String rec = pk[i];
+                values = new ContentValues();
+                values.put(SQLiteHelper.COLUMN_PALABRA_CLAVE, rec);
+                values.put(SQLiteHelper.COLUMN_R_D_ID, id);
+                database.insert(SQLiteHelper.TABLE_PALABRAS_CLAVE, null,values);
+                values = null;
+            }           
+            database.close();
+            database = null;
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
     
     public void saveRecommendations(String document, String[] recs  )
     {

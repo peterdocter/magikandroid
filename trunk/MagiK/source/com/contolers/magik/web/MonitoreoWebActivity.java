@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.contolers.magik.data.ControlerData;
+import com.data.bd.PersistenceManager;
 
 public class MonitoreoWebActivity extends Activity
 {
@@ -26,11 +27,13 @@ public class MonitoreoWebActivity extends Activity
     private static boolean started = false;
     private SimpleCursorAdapter adapter;
     private ControlerData artData;
+    private PersistenceManager pm;
 
     @Override
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
+        pm = new PersistenceManager( this.getApplicationContext( ) );
         setContentView( R.layout.activity_monitoreo_web );
         artData = new ControlerData();
         artData.crearFile(CLASE_MONITOREO, "TIME;Numero de consulta;Titulo;Url");
@@ -96,7 +99,6 @@ public class MonitoreoWebActivity extends Activity
         
     	String[] displayFields = { Browser.BookmarkColumns.URL, Browser.BookmarkColumns.TITLE };
         int[] viewFields = { R.id.textlistNombre, R.id.textlistDescription };
-
         adapter = new SimpleCursorAdapter( this, R.layout.rowlist_monitoreo_web, cursor, displayFields, viewFields );
         atrListView.setAdapter( adapter );
         
@@ -109,21 +111,36 @@ public class MonitoreoWebActivity extends Activity
     	cursor.moveToFirst();
     	while (cursor.isAfterLast() == false) 
     	{
-    		String string0=cursor.getString(0);
+    		String vrTitle=cursor.getString(0);
     		String string1=cursor.getString(1);
-    		
-    		String string2=cursor.getString(2);
-    		if(string0==null)
-    			string0="";
+    		String vrUrl=cursor.getString(2);
+    		if(vrTitle==null)
+    			vrTitle="";
     		if(string1==null)
     			string1="";
-    		if(string2==null)
-    			string2="";
-    		artData.writeToFile( string0 + ","  + string2 + "," + string1 +"\n" , true, CLASE_MONITOREO);
-    	    cursor.moveToNext();
+    		if(vrUrl==null)
+    			vrUrl="";
+    		artData.writeToFile( vrTitle + ","  + vrUrl + "," + string1 +"\n" , true, CLASE_MONITOREO);
+    		guardarDocumentoBase(vrUrl, vrTitle, PersistenceManager.HTML);
+    		cursor.moveToNext();
     	}
     }
     
+    private void guardarDocumentoBase(String documentName, String documentTitle, String documentType)
+    {
+        try
+        {
+            if( !pm.isFileInTable(documentName) )
+            {
+                pm.createDocument( documentName, documentType, documentTitle );
+            }
+        }
+        catch( Exception e )
+        {
+            e.printStackTrace();
+        }
+    }
+
     
     
     private void inicialiarList( Cursor cursor )
@@ -146,7 +163,6 @@ public class MonitoreoWebActivity extends Activity
         startManagingCursor( cursor );
         guardarDatos( cursor );
         return cursor;
-
     }
 
     
