@@ -62,6 +62,16 @@
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
+        <activity
+            android:name="com.radaee.reader.PDFReaderAct"
+	        android:configChanges="orientation"
+            android:label="@string/app_name" >
+<!--             <intent-filter> -->
+<!--                 <action android:name="android.intent.action.MAIN" /> -->
+
+<!--                 <category android:name="android.intent.category.LAUNCHER" /> -->
+<!--             </intent-filter> -->
+        </activity>
         <activity android:name="com.example.magik.monitoring.WebActivity" android:theme="@android:style/Theme.Holo.Light.NoActionBar" ></activity>
     </application>
     <!-- <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4"/> -->

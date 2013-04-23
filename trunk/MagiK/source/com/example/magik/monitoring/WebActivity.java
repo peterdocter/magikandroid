@@ -24,13 +24,12 @@ import com.recomendacion.servicio.Servicio;
 
 public class WebActivity extends Activity implements OnTouchListener, Handler.Callback
 {
-    
     private WebView objWebView;
     private Button btnAgregar;
     private EditText txtUrl;
     private final Handler handler = new Handler( this );
     private Thread thread;
-    private Thread t; 
+    private Thread t;
     private String rta = "";
     private boolean sensorProcess;
     private String CLASE_DYSPLAY = "MURL";
@@ -38,12 +37,9 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
     private ControlerDisplay display;
     private PersistenceManager persistenceManager;
     private ArrayList<String> lecturas;
-
     private WebViewClient client;
-
     private static final int CLICK_ON_WEBVIEW = 1;
     private static final int CLICK_ON_URL = 2;
-
 
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -53,46 +49,44 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         data = new ControlerData( );
         data.existDelete( CLASE_DYSPLAY );
         data.crearFile( CLASE_DYSPLAY, "Velocity (X,Y) ;Titulo;Url" );
-        lecturas = new ArrayList<String>();
+        lecturas = new ArrayList<String>( );
         display = new ControlerDisplay( );
-       
         objWebView = ( WebView )findViewById( R.id.webView );
         objWebView.setOnTouchListener( this );
 
         client = new WebViewClient( )
         {
-            
 
-			@Override
+            @Override
             public boolean shouldOverrideUrlLoading( WebView view, String url )
             {
-                Toast.makeText( getApplicationContext( ), txtUrl.getText().toString(), Toast.LENGTH_SHORT ).show( );
-                System.out.println(txtUrl.getText().toString());
-                t = new Thread()
+                Toast.makeText( getApplicationContext( ), txtUrl.getText( ).toString( ), Toast.LENGTH_SHORT ).show( );
+                System.out.println( txtUrl.getText( ).toString( ) );
+                t = new Thread( )
                 {
-                	@Override
-                	public void run()
-                	{
-                		  while( sensorProcess )
-                          {
-                              try
-                              {
-                                  Log.v( "KELVIN", "Save Reads" );
-                                  if(lecturas.size()>5)
-                                  {
-                                	 recomendaciones(); 
-                                  }
-                                  
-                                  sleep( 10000 );
-                              }
-                              catch( InterruptedException e )
-                              {
-                                  e.printStackTrace( );
-                              }
-                          }
-                	}
+                    @Override
+                    public void run( )
+                    {
+                        while( sensorProcess )
+                        {
+                            try
+                            {
+                                Log.v( "KELVIN", "Save Reads" );
+                                if( lecturas.size( ) > 5 )
+                                {
+                                    recomendaciones( );
+                                }
+
+                                sleep( 10000 );
+                            }
+                            catch( InterruptedException e )
+                            {
+                                e.printStackTrace( );
+                            }
+                        }
+                    }
                 };
-                t.start();
+                t.start( );
                 handler.sendEmptyMessage( CLICK_ON_URL );
                 return false;
             }
@@ -134,16 +128,17 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         inicializarBoton( );
     }
 
-    protected void recomendaciones() {
-    	Servicio servicio = new Servicio();
-    	String[] recs = servicio.getRecomendaciones(txtUrl.getText().toString());
-    	persistenceManager = new PersistenceManager(this.getApplicationContext());
-    	persistenceManager.saveRecommendations(txtUrl.getText().toString(), recs);
-    	persistenceManager = null;
-    	System.gc();
-	}
+    protected void recomendaciones( )
+    {
+        Servicio servicio = new Servicio( );
+        String[] recs = servicio.getRecomendaciones( txtUrl.getText( ).toString( ) );
+        persistenceManager = new PersistenceManager( this.getApplicationContext( ) );
+        persistenceManager.saveRecommendations( txtUrl.getText( ).toString( ), recs );
+        persistenceManager = null;
+        System.gc( );
+    }
 
-	public void guardar( )
+    public void guardar( )
     {
         // data.crearFile( CLASE_DYSPLAY, "TIME;Velocity" );
         data.writeToFile( rta, true, CLASE_DYSPLAY );
@@ -214,25 +209,26 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         if( captura != "" && captura != null )
         {
             String partexy[] = captura.split( ":" );
-            String valores [] = partexy[1].split( ";" );
-            valorx= Float.parseFloat( valores[0] );
-            valory= Float.parseFloat( valores[1] );
+            String valores[] = partexy[ 1 ].split( ";" );
+            valorx = Float.parseFloat( valores[ 0 ] );
+            valory = Float.parseFloat( valores[ 1 ] );
         }
         int a = ( int )valorx;
         int b = ( int )valory;
-        
+
         String rtaX = display.analizarVelocidad( a, "X" );
         String rtaY = display.analizarVelocidad( b, "Y" );
-        
+
         if( captura != "" )
         {
             rta += "\n";
-            rta += objWebView.getTitle( ) + ";" + captura + ";"+rtaX+";"+rtaY+";" + objWebView.getUrl( );
-            if(rta.contains("LECTURA"));
+            rta += objWebView.getTitle( ) + ";" + captura + ";" + rtaX + ";" + rtaY + ";" + objWebView.getUrl( );
+            if( rta.contains( "LECTURA" ) )
+                ;
             {
-            	lecturas.add(rta);            	
+                lecturas.add( rta );
             }
-            
+
         }
         return false;
     }
