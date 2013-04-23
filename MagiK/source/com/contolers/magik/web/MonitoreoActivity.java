@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.analisys.words.Words;
 import com.contolers.magik.file.FileModificationMonitor;
 import com.example.magik.DisplayActivity;
 import com.example.magik.monitoring.WebActivity;
@@ -71,6 +72,7 @@ public class MonitoreoActivity extends Activity
             {
                 
                 startWebMonitoreoActivity();
+                Words w= new Words( );
             }
         } );
     }

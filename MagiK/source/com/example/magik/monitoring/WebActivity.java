@@ -17,12 +17,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+
 import com.contolers.magik.data.ControlerData;
 import com.data.bd.PersistenceManager;
 import com.recomendacion.servicio.Servicio;
 
 public class WebActivity extends Activity implements OnTouchListener, Handler.Callback
 {
+    
     private WebView objWebView;
     private Button btnAgregar;
     private EditText txtUrl;
@@ -54,9 +56,6 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         lecturas = new ArrayList<String>();
         display = new ControlerDisplay( );
        
-        
-
-
         objWebView = ( WebView )findViewById( R.id.webView );
         objWebView.setOnTouchListener( this );
 
@@ -101,7 +100,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         objWebView.setWebViewClient( client );
         // objWebView.setVerticalScrollBarEnabled(false);
         objWebView.getSettings( ).setJavaScriptEnabled( true );
-
+        
         txtUrl = ( EditText )findViewById( R.id.txtRuta );
         txtUrl.setText( "http://www.uniandes.edu.co" );
         // String customHtml = "<html><body><h1>Hello, WebView</h1></body></html>";
