@@ -24,11 +24,10 @@ public class ControlerData
         // File initializer
         File root = android.os.Environment.getExternalStorageDirectory( );
         Log.i( "STORAGE", "External file system root: " + root );
-        File dir = new File( root.getAbsolutePath( ) + "/BudgieTracker/" + getDayFileName( ) );
+        File dir = new File( root.getAbsolutePath( ) + "/Magik/" + getDayFileName( ) );
         dir.mkdirs( );
         File monitorFile = new File( dir, pMonitor + ".txt" );
         files.put( pMonitor, monitorFile );
-        // writeToFile("longitude;latitude;altitude;accuracy", false, pMonitor);
         writeToFile( encabezado, false, pMonitor );
 
     }
@@ -61,6 +60,7 @@ public class ControlerData
     		}
 		}
 	}
+    
     public void writeToFile( String text, boolean time, String pMonitor )
     {
         try
