@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="hello">Hello World, PdfViewerActivity!</string>
     <string name="app_name">MagiK</string>
     <string name="action_settings">Settings</string>
@@ -15,4 +16,17 @@
     <string name="title_activity_display">DisplayActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="activity_web_Ir">Ir</string>
+    <string name="s_ink">Ink</string>
+    <string name="s_rect">Rect</string>
+    <string name="s_remove">Remove</string>
+    <string name="s_save">Save</string>
+    <string name="s_end">End</string>
+    <string name="s_prev">&lt;</string>
+    <string name="s_next">&gt;</string>
+    <string name="s_find">the</string>
+    <string name="s_act">Do</string>
+    <string name="s_saveas">Save as</string>
+    <color name="clr_back">#FFCCCC80</color>
+    <string name="s_edit">Edit</string>
+
 </resources>
