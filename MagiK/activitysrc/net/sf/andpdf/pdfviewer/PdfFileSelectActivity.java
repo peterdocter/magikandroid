@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
+import com.contolers.magik.file.PDFAnalist;
 import com.data.bd.PersistenceManager;
 import com.example.magik.monitoring.ControlerDisplay;
 import com.recomendacion.servicio.Servicio;
@@ -158,6 +161,9 @@ public class PdfFileSelectActivity extends ListActivity
             boolean keepCaches = mKeepCaches.isChecked( );
             Intent intent = new Intent( PdfFileSelectActivity.this, PdfViewerActivity.class ).putExtra( EXTRA_PDFFILENAME, pdffilename ).putExtra( EXTRA_USEFONTSUBSTITUTION, useFontSubstitution ).putExtra( EXTRA_KEEPCACHES, keepCaches );
             analizar( pdffilename );
+           
+            PDFAnalist a = new PDFAnalist();
+        	System.out.println(a.getPDFText(pdffilename));
             startActivity( intent );
         }
     };
