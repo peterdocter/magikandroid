@@ -63,7 +63,7 @@ public class FileModificationService extends Service
         {
             if( f.getName( ).contains( "pdf" ) || f.getName( ).contains( ".pdf" ) || f.getAbsolutePath( ).contains( "Download" ) )
             {
-                if( !f.isDirectory( ) )
+                if( !f.isDirectory( ) )	
                 {
                     guardarDocumentoBase(f.getName( ));
                 }
