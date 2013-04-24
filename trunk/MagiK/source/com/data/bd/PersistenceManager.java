@@ -1,5 +1,7 @@
 package com.data.bd;
 
+import java.util.ArrayList;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -308,6 +310,8 @@ public class PersistenceManager
         }
         return recommendations;
     }
+    
+   
 
     /**
      * Returns all the mixes in the database.
@@ -407,6 +411,52 @@ public class PersistenceManager
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+    }
+    
+    public ArrayList<String> recomendar(String document)
+    {    	
+    	ArrayList<String> recomendaciones = null;
+    	
+    	try 
+    	{
+    		String[] documents = getAllDocuments();
+			String[] recs = getRecommendetClaveByDocument(document);
+			recomendaciones = new ArrayList<String>();
+			for(int i = 0; i < documents.length; i ++)
+			{
+				if(!documents[i].equals(document))
+				{
+					String[] r = getRecommendetClaveByDocument(documents[i]);
+					if(compareArrays(recs, r))
+					{
+						recomendaciones.add(documents[i]);						
+					}
+				}
+			}
+			
+			
+		} 
+    	catch (Exception e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return recomendaciones;
+    }
+    
+    
+    
+    private boolean compareArrays(String[] arr1, String[] arr2)
+    {
+    	boolean equal = false;
+    	for(int i = 0; i < arr1.length && !equal; i++)
+    	{
+    		for(int j = 0; j < arr2.length && !equal; j++)
+        	{
+        		equal = arr1[i].equalsIgnoreCase(arr2[j]);
+        	}
+    	}
+    	return equal;
     }
 
     // /**
