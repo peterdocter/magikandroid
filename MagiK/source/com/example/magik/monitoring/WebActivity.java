@@ -1,9 +1,11 @@
 package com.example.magik.monitoring;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import net.sf.andpdf.pdfviewer.R;
 import android.app.Activity;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,7 +20,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 
+import com.analisys.words.PalabrasClave;
+import com.analisys.words.Words;
 import com.contolers.magik.data.ControlerData;
+import com.cybozu.labs.langdetect.Detector;
+import com.cybozu.labs.langdetect.DetectorFactory;
+import com.cybozu.labs.langdetect.LangDetectException;
+import com.cybozu.labs.langdetect.Language;
 import com.data.bd.PersistenceManager;
 import com.recomendacion.servicio.Servicio;
 
@@ -40,11 +48,14 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
     private WebViewClient client;
     private static final int CLICK_ON_WEBVIEW = 1;
     private static final int CLICK_ON_URL = 2;
+    private boolean cargoplabras;
+    private boolean cargoClaves;
 
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
+        cargoClaves = false;
         setContentView( R.layout.activity_web );
         data = new ControlerData( );
         data.existDelete( CLASE_DYSPLAY );
@@ -60,7 +71,8 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             @Override
             public boolean shouldOverrideUrlLoading( WebView view, String url )
             {
-                Toast.makeText( getApplicationContext( ), txtUrl.getText( ).toString( ), Toast.LENGTH_SHORT ).show( );
+                cargoplabras  = false;
+                Toast.makeText( getApplicationContext( ),"palabras" +txtUrl.getText( ).toString( ), Toast.LENGTH_SHORT ).show( );
                 System.out.println( txtUrl.getText( ).toString( ) );
                 t = new Thread( )
                 {
@@ -71,10 +83,16 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                         {
                             try
                             {
-                                Log.v( "KELVIN", "Save Reads" );
+                                Log.v( "KELVIN", "lecturas "+lecturas.size( ) );
                                 if( lecturas.size( ) > 5 )
                                 {
-                                    recomendaciones( );
+                                    if( !cargoplabras )
+                                    {
+                                        //Words w = new Words( objWebView.getUrl( ) );
+                                        PalabrasClave palabras = PalabrasClave.darInstacia( );
+                                        recomendaciones( palabras.getPalabras( ) );
+                                        cargoplabras = true;
+                                    }
                                 }
 
                                 sleep( 10000 );
@@ -92,14 +110,10 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             }
         };
         objWebView.setWebViewClient( client );
-        // objWebView.setVerticalScrollBarEnabled(false);
         objWebView.getSettings( ).setJavaScriptEnabled( true );
         
         txtUrl = ( EditText )findViewById( R.id.txtRuta );
-        txtUrl.setText( "http://www.uniandes.edu.co" );
-        // String customHtml = "<html><body><h1>Hello, WebView</h1></body></html>";
-        // objWebView.loadData(customHtml, "text/html", "UTF-8");
-        // objWebView.loadUrl("http://www.google.com.co");
+        txtUrl.setText( "http://www.eltiempo.co" );
 
         sensorProcess = true;
         thread = new Thread( )
@@ -112,7 +126,6 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                     try
                     {
                         Log.v( "KELVIN", "Guardo" );
-
                         guardar( );
                         sleep( 12000 );
                     }
@@ -126,14 +139,18 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         thread.start( );
 
         inicializarBoton( );
+        inicializarBotonCargar( );
     }
 
-    protected void recomendaciones( )
+    protected void recomendaciones( ArrayList<String> palabras )
     {
+        PalabrasClave palabrasClave = PalabrasClave.darInstacia( );
         Servicio servicio = new Servicio( );
-        String[] recs = servicio.getRecomendaciones( txtUrl.getText( ).toString( ) );
+        String[] recs = servicio.getRecomendaciones( objWebView.getUrl( ));
         persistenceManager = new PersistenceManager( this.getApplicationContext( ) );
-        persistenceManager.saveRecommendations( txtUrl.getText( ).toString( ), recs );
+        persistenceManager.saveRecommendations( objWebView.getUrl( ), recs );
+//        Camabiar a un array list la entrada de recommendaciones
+//        persistenceManager.saveRecommendations( objWebView.getUrl( ), palabras );
         persistenceManager = null;
         System.gc( );
     }
@@ -156,8 +173,24 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             {
                 cargarRuta( );
             }
-        } );
+        } 
+        );
     }
+    
+    private void inicializarBotonCargar( )
+    {
+        btnAgregar = ( Button )findViewById( R.id.button1 );
+        btnAgregar.setOnClickListener( new View.OnClickListener( )
+        {
+
+            public void onClick( View v )
+            {
+                Words w = new Words( objWebView.getUrl( ) );
+            }
+        } 
+        );
+    }
+    
 
     private void cargarRuta( )
     {
@@ -224,7 +257,6 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             rta += "\n";
             rta += objWebView.getTitle( ) + ";" + captura + ";" + rtaX + ";" + rtaY + ";" + objWebView.getUrl( );
             if( rta.contains( "LECTURA" ) )
-                ;
             {
                 lecturas.add( rta );
             }

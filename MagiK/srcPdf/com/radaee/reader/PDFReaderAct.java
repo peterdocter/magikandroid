@@ -94,7 +94,6 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
                         {
                             recomendaciones( );
                         }
-
                         sleep( 10000 );
                     }
                     catch( InterruptedException e )

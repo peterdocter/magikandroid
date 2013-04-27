@@ -70,7 +70,6 @@ public class MonitoreoActivity extends Activity
             {
 
                 startWebMonitoreoActivity( );
-                Words w = new Words( );
             }
         } );
     }
