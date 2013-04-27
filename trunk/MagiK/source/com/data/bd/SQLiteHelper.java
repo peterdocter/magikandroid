@@ -108,16 +108,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	 * The recommendation table creation SQL statement.
 	 */
 	private static final String CREATE_RECOMMENDATION = "create table if not exists " + TABLE_RECOMMENDACION + " (" + COLUMN_RECOMEN_ID
-			+ " integer primary key autoincrement, " + COLUMN_RECOMMENDACION_URL + " text not null " 
-			+ COLUMN_R_D_ID + " integer " + "FOREIGN KEY(" + COLUMN_R_D_ID + ") REFERENCES "
+			+ " integer primary key autoincrement, " + COLUMN_RECOMMENDACION_URL + " text not null, " 
+			+ COLUMN_R_D_ID + " integer " + ",FOREIGN KEY(" + COLUMN_R_D_ID + ") REFERENCES "
             + TABLE_DOCUMENTS + "(" + COLUMN_DOCUMENT_ID + "))";
 	
 	/**
      * The Palabras clave table creation SQL statement.
      */
     private static final String CREATE_PALABRAS_CLAVE = "create table if not exists " + TABLE_PALABRAS_CLAVE + " (" + COLUMN_PALABRA_CLAVE_ID
-            + " integer primary key autoincrement, " + COLUMN_PALABRA_CLAVE + " text not null " 
-            + COLUMN_P_D_ID + " integer " + " FOREIGN KEY(" + COLUMN_P_D_ID + ") REFERENCES "
+            + " integer primary key autoincrement, " + COLUMN_PALABRA_CLAVE + " text not null, " 
+            + COLUMN_P_D_ID + " integer " + " ,FOREIGN KEY(" + COLUMN_P_D_ID + ") REFERENCES "
             + TABLE_DOCUMENTS + "(" + COLUMN_DOCUMENT_ID + "))";
             	
 	//----------------------------------------------------------------------------

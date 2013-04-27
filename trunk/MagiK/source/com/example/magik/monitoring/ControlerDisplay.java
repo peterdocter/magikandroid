@@ -29,7 +29,7 @@ public class ControlerDisplay
         switch( action )
         {
             case MotionEvent.ACTION_DOWN:
-                Log.v( "KELVIN", "ENTROOOOOOOOOOO" );
+//                Log.v( "KELVIN", "ENTROOOOOOOOOOO" );
                 valoresX = new ArrayList<Float>( );
                 valoresY = new ArrayList<Float>( );
                 if( vTracker == null )
@@ -45,14 +45,14 @@ public class ControlerDisplay
             case MotionEvent.ACTION_MOVE:
                 vTracker.addMovement( event );
                 vTracker.computeCurrentVelocity( 1000 );
-                Log.v( "", "X velocity is " + vTracker.getXVelocity( ) + " pixels per second" );
-                Log.v( "", "Y velocity is " + vTracker.getYVelocity( ) + " pixels per second" );
+//                Log.v( "", "X velocity is " + vTracker.getXVelocity( ) + " pixels per second" );
+//                Log.v( "", "Y velocity is " + vTracker.getYVelocity( ) + " pixels per second" );
                 valoresX.add( vTracker.getXVelocity( ) );
                 valoresY.add( vTracker.getYVelocity( ) );
 
                 break;
             case MotionEvent.ACTION_UP:
-                Log.v( "KELVIN", "SOLTOOOOOOOOOOOOOOOOO" );
+//                Log.v( "KELVIN", "SOLTOOOOOOOOOOOOOOOOO" );
                 return calcularMovimiento( );
             case MotionEvent.ACTION_CANCEL:
                 vTracker.recycle( );

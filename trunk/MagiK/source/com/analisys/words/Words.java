@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.SortedSet;
 
 import org.apache.http.HttpEntity;
@@ -28,6 +29,11 @@ import com.aliasi.tokenizer.IndoEuropeanTokenizerFactory;
 import com.aliasi.tokenizer.TokenizerFactory;
 import com.aliasi.util.Files;
 import com.aliasi.util.ScoredObject;
+import com.cybozu.labs.langdetect.Detector;
+import com.cybozu.labs.langdetect.DetectorFactory;
+import com.cybozu.labs.langdetect.LangDetectException;
+import com.cybozu.labs.langdetect.Language;
+import com.example.magik.monitoring.DatosDisplay;
 
 /**
  * Creates queries to the SQLite helper and returns its results.
@@ -37,6 +43,7 @@ import com.aliasi.util.ScoredObject;
 public class Words
 {
 
+    private ArrayList<String> tokens;
     private static int NGRAM = 3;
     private static int MIN_COUNT = 5;
     private static int MAX_NGRAM_REPORTING_LENGTH = 2;
@@ -46,13 +53,39 @@ public class Words
     private static File BACKGROUND_DIR = new File( root.getAbsolutePath( ) + "/Magik/train" );
     private static File FOREGROUND_DIR = new File( root.getAbsolutePath( ) + "/Magik/test" );
 
-    public void getHtml( ) throws ClientProtocolException, IOException
+    
+    private void lenguaje( String texto )
+    {
+        try
+        {
+            File root = android.os.Environment.getExternalStorageDirectory( );
+            DetectorFactory.clear();
+            DetectorFactory.loadProfile(root.getAbsolutePath( ) + "/Magik/profiles");
+            Detector detector = DetectorFactory.create();
+            detector.append(texto);
+            ArrayList<Language> langlist = detector.getProbabilities();
+            for( int i = 0; i < langlist.size( ); i++ )
+            {
+               System.out.println( langlist.get( i ).lang);
+               System.out.println( langlist.get( i ).prob);
+            }
+            
+        }
+        catch( LangDetectException e )
+        {
+            System.out.println( e.getMessage( ) );
+            e.printStackTrace();
+        }
+        
+    }
+    
+    public void getHtml(String url ) throws ClientProtocolException, IOException
     {
         HttpParams httpParameters = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(httpParameters,3000); // 3s max for connection
         HttpConnectionParams.setSoTimeout(httpParameters, 4000); // 4s max to get data
         HttpClient httpclient = new DefaultHttpClient(httpParameters);
-        HttpGet httpget = new HttpGet( "http://www.eltiempo.com/gente/reese-witherspoon-legalmente-rubia-detenida-en-est_12754682-4" ); // Set the action you want to do
+        HttpGet httpget = new HttpGet( url ); // Set the action you want to do
         HttpResponse response = httpclient.execute( httpget ); // Executeit
         HttpEntity entity = response.getEntity( );
         InputStream is = entity.getContent( ); // Create an InputStream with the response
@@ -63,27 +96,49 @@ public class Words
         while( ( line = reader.readLine( ) ) != null )
         {
             String txt = Jsoup.parse(line).text();
-            sb.append( txt + "\n" );
+            if( txt != "" || txt != null )
+            {
+                sb.append( txt  + "\n" );
+            }
         }
         String resString = sb.toString( ); // Result is here
-
+        
+        
+        lenguaje(resString);
         is.close( ); // Close the stream
         
         File root = android.os.Environment.getExternalStorageDirectory( );
         Log.i( "STORAGE", "External file system root: " + root );
         File dir = new File( root.getAbsolutePath( ) + "/Magik/" + "train" );
+        File dir2 = new File( root.getAbsolutePath( ) + "/Magik/" + "test" );
+        
+        String[] children = dir2.list();
+        for (int i = 0; i < children.length; i++) {
+            new File(dir2, children[i]).delete();
+        }
+        
         dir.mkdirs( );
-        File monitorFile = new File( dir, "datos3" );
+        dir2.mkdirs( );
+        
+        File monitorFile = new File( dir, "datos" + (dir.listFiles( ).length +1) );
+        File monitorFile2 = new File( dir2, "datos" + (dir2.listFiles( ).length +1) );
         try
         {
 
             FileOutputStream f = new FileOutputStream( monitorFile, true );
             PrintWriter pw = new PrintWriter( f );
             pw.append( resString );
-            pw.append( "\n" );
             pw.flush( );
             pw.close( );
             f.close( );
+
+            FileOutputStream f2 = new FileOutputStream( monitorFile2, true );
+            PrintWriter pw2 = new PrintWriter( f2 );
+            pw2.append( resString );
+            pw2.flush( );
+            pw2.close( );
+            f2.close( );
+
         }
         catch( FileNotFoundException e )
         {
@@ -95,11 +150,13 @@ public class Words
             e.printStackTrace( );
         }
     }
-    public Words( )
+    
+    public Words( String url )
     {
+        tokens = new ArrayList<String>( );
         try
         {
-            getHtml( );
+            getHtml( url );
         }
         catch( ClientProtocolException e1 )
         {
@@ -126,7 +183,7 @@ public class Words
             SortedSet<ScoredObject<String[]>> coll = backgroundModel.collocationSet( NGRAM_REPORTING_LENGTH, MIN_COUNT, MAX_COUNT );
 
             System.out.println( "\nCollocations in Order of Significance:" );
-            report( coll );
+//            report( coll );
 
             System.out.println( "Training foreground model" );
             TokenizedLM foregroundModel = buildModel( tokenizerFactory, NGRAM, FOREGROUND_DIR );
@@ -146,6 +203,7 @@ public class Words
             e.printStackTrace( );
         }
     }
+    
     private static TokenizedLM buildModel( TokenizerFactory tokenizerFactory, int ngram, File directory ) throws IOException
     {
 
@@ -173,6 +231,7 @@ public class Words
 
     private static void report_filter( double score, String[] toks )
     {
+        PalabrasClave palabrasClave = PalabrasClave.darInstacia( );
         String accum = "";
         for( int j = 0; j < toks.length; ++j )
         {
@@ -180,7 +239,11 @@ public class Words
                 return;
             accum += " " + toks[ j ];
         }
-        System.out.println( "Score: " + score + " with :" + accum );
+        if( accum != null || accum != "" )
+        {
+            palabrasClave.setPalabras( accum );
+            System.out.println( "Score: " + score + " with :" + accum );
+        }
     }
 
     private static boolean nonCapWord( String tok )

@@ -1,34 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/GridLayout1"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:columnCount="2"
-    android:orientation="horizontal" >
+    android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/btnIr"
-        android:layout_width="70dp"
-        android:layout_gravity="left"
-        android:text="@string/activity_web_Ir" />
-
-    <WebView
-
-        android:id="@+id/webView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_column="0"
-        android:layout_gravity="left|center_vertical"
-        android:layout_marginTop="78dp"
-        android:layout_row="0" />
+        android:layout_gravity="center"
+        android:orientation="vertical" 
+        android:layout_marginLeft="55dp"
+        android:layout_marginRight="55dp"
+        >
 
-    <EditText
-        android:id="@+id/txtRuta"
-        android:layout_width="246dp"
-        android:layout_column="0"
-        android:layout_gravity="right|top"
-        android:layout_row="0"
-        android:ems="10"
-        android:inputType="text" />
+        <LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" 
+    android:layout_gravity="center"
+    android:orientation="horizontal">
 
-</GridLayout>
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="CatgarDatos" />
+
+                <Button
+                    android:id="@+id/btnIr"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Ir" />
+
+</LinearLayout>
+
+        <EditText
+            android:id="@+id/txtRuta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:ems="10"
+            android:inputType="text" />
+
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+</LinearLayout>
+
+</LinearLayout>
