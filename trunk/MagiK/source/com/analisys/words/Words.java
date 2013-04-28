@@ -88,10 +88,10 @@ public class Words
             String temp;
             ArrayList<Language> langlist = detector.getProbabilities( );
             leguajeL = langlist;
+            leguaje = new ArrayList<String>( );
             for( int i = 0; i < langlist.size( ); i++ )
             {
                 temp = langlist.get( i ).lang + ";" + langlist.get( i ).prob;
-                leguaje = new ArrayList<String>( );
                 leguaje.add( temp );
             }
 
@@ -144,14 +144,26 @@ public class Words
 
         lenguaje( resString );
 
-        if( !error )
+        if( !error  && leguajeL!=null && leguajeL.size( )>0)
         {
 
             is.close( ); // Close the stream
 
             File root = android.os.Environment.getExternalStorageDirectory( );
             Log.i( "STORAGE", "External file system root: " + root );
+            
+            double mayor =  leguajeL.get( 0 ).prob;
             String lng = leguajeL.get( 0 ).lang;
+            
+            for( int i = 0; i < leguajeL.size( ); i++ )
+            {
+                if( mayor < leguajeL.get( i ).prob )
+                {
+                    mayor = leguajeL.get( i ).prob;
+                    lng = leguajeL.get( i ).lang;
+                }
+            }
+            
             File dir = new File( root.getAbsolutePath( ) + "/Magik/" + "train" + lng );
             BACKGROUND_DIR = dir;
             File dir2 = new File( root.getAbsolutePath( ) + "/Magik/" + "test" + lng );
