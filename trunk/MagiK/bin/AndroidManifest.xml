@@ -70,7 +70,9 @@
         </activity>
         <activity
             android:name="com.radaee.reader.PDFReaderAct"
+
             android:configChanges="orientation"
+            android:screenOrientation="landscape"
             android:label="@string/app_name" >
 
             <!-- <intent-filter> -->
