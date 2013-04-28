@@ -1,54 +1,53 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-<LinearLayout 
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:orientation="vertical">
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:columnCount="1" >
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="62dp"
+        android:layout_height="62dp"
+        android:layout_gravity="left|top"
+        android:layout_margin="20dp"
+        android:src="@drawable/wizard" />
 
     <LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent" 
-    android:layout_gravity="center"
-    android:orientation="vertical">
+        android:layout_width="wrap_content"
+        android:layout_height="247dp"
+        android:layout_column="0"
+        android:layout_gravity="center"
+        android:layout_row="0"
+        android:orientation="vertical" >
 
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:layout_margin="20dp"
-            android:src="@drawable/wizard" />
-    
-    <Button
-        android:id="@+id/webMonitoreo"
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:background="@android:color/holo_blue_light"
-        android:text="Web Monitor" />
+        <Button
+            android:id="@+id/webMonitoreo"
+            android:layout_width="185dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/holo_blue_light"
+            android:text="Web Monitor" />
 
-    <Button
-        android:id="@+id/fileMonitoreo"
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="File Monitor" />
+        <Button
+            android:id="@+id/fileMonitoreo"
+            android:layout_width="185dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="File Monitor" />
 
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-         android:background="@android:color/holo_blue_light"
-        android:text="Web Viewer" />
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="185dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/holo_blue_light"
+            android:text="Web Viewer" />
 
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="PDF Viewer" />
-</LinearLayout>
-</LinearLayout>
-</ScrollView>
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="185dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="PDF Viewer" />
+    </LinearLayout>
+
+</GridLayout>
