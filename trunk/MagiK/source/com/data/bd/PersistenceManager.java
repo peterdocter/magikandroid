@@ -278,13 +278,13 @@ public class PersistenceManager
      * @return The array of paths of the songs.
      * @throws Exception if there is a mistake in the SQL query.
      */
-    public String[] getRecommendetClaveByDocument( String documentName ) throws Exception
+    public String[] getRecommendedClaveByDocument( String documentName ) throws Exception
     {
         String[] recommendations = null;
         try
         {
             database = helper.getReadableDatabase( );
-            String sql = "SELECT p." + SQLiteHelper.COLUMN_RECOMMENDACION_URL + " FROM " + SQLiteHelper.TABLE_RECOMMENDACION + " p JOIN " + SQLiteHelper.TABLE_DOCUMENTS + " d ON " + SQLiteHelper.COLUMN_R_D_ID + " = "
+            String sql = "SELECT p." + SQLiteHelper.COLUMN_RECOMMENDACION_URL + " FROM " + SQLiteHelper.TABLE_RECOMMENDACION + " p JOIN " + SQLiteHelper.TABLE_DOCUMENTS + " d ON p." + SQLiteHelper.COLUMN_R_D_ID + " = d."
                     + SQLiteHelper.COLUMN_DOCUMENT_ID + " WHERE d." + SQLiteHelper.COLUMN_DOCUMENT_URL + " LIKE '" + documentName + "'";
             System.out.println( sql );
             Cursor cursor = database.rawQuery( sql, null );
@@ -419,13 +419,13 @@ public class PersistenceManager
     	try 
     	{
     		String[] documents = getAllDocuments();
-			String[] recs = getRecommendetClaveByDocument(document);
+			String[] recs = getRecommendedClaveByDocument(document);
 			recomendaciones = new ArrayList<String>();
 			for(int i = 0; i < documents.length; i ++)
 			{
 				if(!documents[i].equals(document))
 				{
-					String[] r = getRecommendetClaveByDocument(documents[i]);
+					String[] r = getRecommendedClaveByDocument(documents[i]);
 					if(compareArrays(recs, r))
 					{
 						recomendaciones.add(documents[i]);						

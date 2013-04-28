@@ -194,22 +194,32 @@ public class WebActivity extends Activity implements OnTouchListener,
 	}
 
 	protected void recomendaciones(ArrayList<String> palabras) {
-		String[] pals = new String[palabras.size()];
-		for (int i = 0; i < pals.length; i++) {
-			pals[i] = palabras.get(i);
+		try {
+			String[] pals = new String[palabras.size()];
+			for (int i = 0; i < pals.length; i++) {
+				pals[i] = palabras.get(i);
+			}
+			persistenceManager = new PersistenceManager(getApplicationContext());
+			if(!persistenceManager.isFileInTable(objWebView.getUrl()))
+			{
+				persistenceManager.createDocument(objWebView.getUrl(), PersistenceManager.HTML, objWebView.getTitle());
+			}
+			
+			persistenceManager.savePalabrasClave(objWebView.getUrl(), pals);
+			ArrayList<String> recomms = persistenceManager.recomendar(objWebView.getUrl());
+			String[] recs = new String[recomms.size()];
+			for (int i = 0; i < recs.length; i++) {
+				recs[i] = recomms.get(i);
+			}
+			persistenceManager.saveRecommendations(objWebView.getUrl(), recs);
+			pals = null;
+			recomms = null;
+			recs = null;		
+			persistenceManager = null;
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
 		}
-		persistenceManager = new PersistenceManager(getApplicationContext());
-		persistenceManager.savePalabrasClave(objWebView.getUrl(), pals);
-		ArrayList<String> recomms = persistenceManager.recomendar(objWebView.getUrl());
-		String[] recs = new String[recomms.size()];
-		for (int i = 0; i < recs.length; i++) {
-			recs[i] = recomms.get(i);
-		}
-		persistenceManager.saveRecommendations(objWebView.getUrl(), recs);
-		pals = null;
-		recomms = null;
-		recs = null;		
-		persistenceManager = null;
+		
 		System.gc();
 	}
 
