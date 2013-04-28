@@ -285,7 +285,7 @@ public class PersistenceManager
         {
             database = helper.getReadableDatabase( );
             String sql = "SELECT p." + SQLiteHelper.COLUMN_RECOMMENDACION_URL + " FROM " + SQLiteHelper.TABLE_RECOMMENDACION + " p JOIN " + SQLiteHelper.TABLE_DOCUMENTS + " d ON " + SQLiteHelper.COLUMN_R_D_ID + " = "
-                    + SQLiteHelper.COLUMN_DOCUMENT_ID + "WHERE d." + SQLiteHelper.COLUMN_DOCUMENT_URL + "LIKE '" + documentName + "'";
+                    + SQLiteHelper.COLUMN_DOCUMENT_ID + " WHERE d." + SQLiteHelper.COLUMN_DOCUMENT_URL + " LIKE '" + documentName + "'";
             System.out.println( sql );
             Cursor cursor = database.rawQuery( sql, null );
             if( cursor.moveToFirst( ) )
