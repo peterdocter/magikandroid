@@ -11,6 +11,33 @@
         android:layout_alignParentTop="true" >
     </com.radaee.reader.PDFReader>
 
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+        
+    <TextView
+        android:id="@+id/txtMove"
+        android:layout_width="65dp"
+        android:layout_height="111dp"
+        android:layout_column="0"
+        android:layout_gravity="right|top"
+        android:layout_row="0"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="@dimen/diminuto" />
+
+    <TextView
+        android:id="@+id/txtVerb"
+        android:layout_width="65dp"
+        android:layout_height="68dp"
+        android:layout_column="0"
+        android:layout_marginLeft="5dp"
+        android:layout_gravity="right|bottom"
+        android:layout_row="0"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="@dimen/diminuto" />    
+        
+    </GridLayout>
+
     <LinearLayout
         android:id="@+id/bar_find"
         android:layout_width="match_parent"
@@ -18,27 +45,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentTop="false"
         android:layout_centerInParent="false" >
-
-        <EditText
-            android:id="@+id/txt_find"
-            android:layout_width="150dp"
-            android:layout_height="40dp"
-            android:ems="10"
-            android:text="the" />
-
-        <Button
-            android:id="@+id/btn_prev"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:text="&lt;" />
-
-        <Button
-            android:id="@+id/btn_next"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:text=">" />
 
         </LinearLayout>
 
@@ -48,60 +54,28 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" >
-        <Button
-            android:id="@+id/btn_ink"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ink" />
 
         <Button
-            android:id="@+id/btn_rect"
-            style="?android:attr/buttonStyleSmall"
+            android:id="@+id/btnPal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rect" />
-        <Button
-            android:id="@+id/btn_oval"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Oval" />
-        
-        <Button
-            android:id="@+id/btn_note"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Note" />
+            android:layout_gravity="center_horizontal"
+            android:text="Palabras Clave" />
 
         <Button
-            android:id="@+id/btn_line"
-            style="?android:attr/buttonStyleSmall"
+            android:id="@+id/btnRec"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Line" />
-
-        <Button
-            android:id="@+id/btn_cancel"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" X " />
-        
-        <Button
-            android:id="@+id/btn_save"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Save" />
+            android:text="Recomendaciones" />
 
         <Button
             android:id="@+id/btn_close"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="end"
             android:text="Close" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -110,33 +84,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/bar_cmd" >
-
-        <Button
-            android:id="@+id/btn_sel"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sel" />
-
-        <Button
-            android:id="@+id/btn_edit"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Edit" />
-
-        <Button
-            android:id="@+id/btn_act"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Do" />
-        <Button
-            android:id="@+id/btn_remove"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Remove" />
     </LinearLayout>
 
     <com.radaee.reader.PDFThumbView
