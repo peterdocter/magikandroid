@@ -203,9 +203,13 @@ public class Words
         }
     }
 
-    public Words( String url )
+    public Words(  )
     {
         tokens = new ArrayList<String>( );
+    }
+
+    public boolean startWords( String url )
+    {
         try
         {
             getHtml( url );
@@ -256,13 +260,17 @@ public class Words
                 newTerms = null;
                 System.gc( );
                 System.out.println( "\nDone." );
+                return true;
             }
+            return false;
         }
         catch( IOException e )
         {
             // TODO Auto-generated catch block
             e.printStackTrace( );
         }
+        return false;
+
     }
 
     private static TokenizedLM buildModel( TokenizerFactory tokenizerFactory, int ngram, File directory ) throws IOException

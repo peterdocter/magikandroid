@@ -71,7 +71,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             public boolean shouldOverrideUrlLoading( WebView view, String url )
             {
 
-                Toast.makeText( getApplicationContext( ),"palabras" +txtUrl.getText( ).toString( ), Toast.LENGTH_SHORT ).show( );
+                Toast.makeText( getApplicationContext( ), "palabras" + txtUrl.getText( ).toString( ), Toast.LENGTH_SHORT ).show( );
                 System.out.println( txtUrl.getText( ).toString( ) );
                 t = new Thread( )
                 {
@@ -82,28 +82,33 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                         {
                             try
                             {
-                                Log.v( "KELVIN", "lecturas "+lecturas.size( ) );
+                                Log.v( "KELVIN", "lecturas " + lecturas.size( ) );
                                 if( lecturas.size( ) > 5 )
                                 {
-//                                    Toast.makeText( getApplicationContext( ), "Analizando pagina" + objWebView.getUrl( ), Toast.LENGTH_SHORT ).show( );
+                                    // Toast.makeText( getApplicationContext( ), "Analizando pagina" + objWebView.getUrl( ), Toast.LENGTH_SHORT ).show( );
 
                                     if( !cargoplabras )
                                     {
-                                        Words w = new Words( objWebView.getUrl( ) );
-                                        if( !cargolenguaje )
+                                        Words w = new Words( );
+                                        boolean exito = w.startWords( objWebView.getUrl( ) );
+                                        if( exito )
                                         {
-                                            lenguajes = w.getLenguaje( );
-                                            if( lenguajes!= null && lenguajes.size( )>0 )
+
+                                            if( !cargolenguaje )
                                             {
-////                                                Toast.makeText( getApplicationContext( ), "LenguajeCargado", Toast.LENGTH_SHORT ).show( );
-                                                cargolenguaje = true;
-                                                sensorProcess = false;
+                                                lenguajes = w.getLenguaje( );
+                                                if( lenguajes != null && lenguajes.size( ) > 0 )
+                                                {
+                                                    // // Toast.makeText( getApplicationContext( ), "LenguajeCargado", Toast.LENGTH_SHORT ).show( );
+                                                    cargolenguaje = true;
+                                                    sensorProcess = false;
+                                                }
                                             }
+                                            PalabrasClave palabras = PalabrasClave.darInstacia( );
+                                            recomendaciones( palabras.getPalabras( ) );
+                                            cargoplabras = true;
+                                            w = null;
                                         }
-                                        PalabrasClave palabras = PalabrasClave.darInstacia( );
-                                        recomendaciones( palabras.getPalabras( ) );
-                                        cargoplabras = true;
-                                        w = null;
                                         System.gc( );
                                     }
                                 }
@@ -124,7 +129,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         };
         objWebView.setWebViewClient( client );
         objWebView.getSettings( ).setJavaScriptEnabled( true );
-        
+
         txtUrl = ( EditText )findViewById( R.id.txtRuta );
         txtUrl.setText( "http://m.eltiempo.com" );
 
@@ -159,20 +164,20 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
 
     protected void recomendaciones( ArrayList<String> palabras )
     {
-        
+
         Servicio servicio = new Servicio( );
-        String[] recs = servicio.getRecomendaciones( objWebView.getUrl( ));
+        String[] recs = servicio.getRecomendaciones( objWebView.getUrl( ) );
         persistenceManager = new PersistenceManager( getApplicationContext( ) );
         persistenceManager.saveRecommendations( objWebView.getUrl( ), recs );
-//        Camabiar a un array list la entrada de recommendaciones
-//        persistenceManager.saveRecommendations( objWebView.getUrl( ), palabras );
+        // Camabiar a un array list la entrada de recommendaciones
+        // persistenceManager.saveRecommendations( objWebView.getUrl( ), palabras );
         persistenceManager = null;
         System.gc( );
     }
-    
-    public void actualizarTextoPk(ArrayList<String> texto)
+
+    public void actualizarTextoPk( ArrayList<String> texto )
     {
-        TextView text = (TextView) findViewById(R.id.TextViewPk);
+        TextView text = ( TextView )findViewById( R.id.TextViewPk );
         if( texto != null && texto.size( ) > 0 )
         {
             for( int i = 0; i < texto.size( ); i++ )
@@ -187,10 +192,10 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             text.setText( "No se tiene cargado las Pk" );
         }
     }
-    
-    public void actualizarTextoLecturas(ArrayList<String> texto)
+
+    public void actualizarTextoLecturas( ArrayList<String> texto )
     {
-        TextView text = (TextView) findViewById(R.id.TextViewL);
+        TextView text = ( TextView )findViewById( R.id.TextViewL );
         if( texto != null )
         {
             text.clearComposingText( );
@@ -224,7 +229,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
 
             public void onClick( View v )
             {
-                cargolenguaje= false;
+                cargolenguaje = false;
                 cargoplabras = false;
                 sensorProcess = true;
                 sensorProcessGuardar = true;
@@ -232,25 +237,24 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                 System.gc( );
                 cargarRuta( );
             }
-        } 
-        );
+        } );
     }
-    
+
     private void inicializarBotonCargar( )
     {
         btnAgregar = ( Button )findViewById( R.id.button1 );
         btnAgregar.setEnabled( false );
-//        btnAgregar.setOnClickListener( new View.OnClickListener( )
-//        {
-//
-//            public void onClick( View v )
-//            {
-//                Words w = new Words( objWebView.getUrl( ) );
-//            }
-//        } 
-//        );
+        // btnAgregar.setOnClickListener( new View.OnClickListener( )
+        // {
+        //
+        // public void onClick( View v )
+        // {
+        // Words w = new Words( objWebView.getUrl( ) );
+        // }
+        // }
+        // );
     }
-    
+
     private void inicializarBotonLenguaje( )
     {
         btnLenguaje = ( Button )findViewById( R.id.btncargarlenguaje );
@@ -261,10 +265,9 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             {
                 actualizarTextoLecturas( lenguajes );
             }
-        } 
-        );
+        } );
     }
-    
+
     private void inicializarBotonPk( )
     {
         btnPk = ( Button )findViewById( R.id.ButtonPk );
@@ -276,8 +279,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                 PalabrasClave palabrasClave = PalabrasClave.darInstacia( );
                 actualizarTextoPk( palabrasClave.getPalabras( ) );
             }
-        } 
-        );
+        } );
     }
 
     private void cargarRuta( )
@@ -326,21 +328,21 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
 
         String rtaX = display.analizarVelocidadCorto( a, "X" );
         String tipolecturax = display.darTipoLectura( );
-        
+
         String rtaY = display.analizarVelocidadCorto( b, "Y" );
         String tipolecturay = display.darTipoLectura( );
 
-        String tipoLectorua= "";
-        
-        if(Math.abs( a )>Math.abs( b ) )
+        String tipoLectorua = "";
+
+        if( Math.abs( a ) > Math.abs( b ) )
         {
             tipoLectorua = tipolecturax;
-        }else
+        }
+        else
         {
             tipoLectorua = tipolecturay;
         }
-        
-        
+
         if( captura != "" )
         {
             rta += "\n";
@@ -349,9 +351,9 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             {
                 lecturas.add( rta );
             }
-            
-            String textoFrontal =  tipoLectorua + ":(" +a + "," + b + ")";
-            TextView text = (TextView) findViewById(R.id.textView1);
+
+            String textoFrontal = tipoLectorua + ":(" + a + "," + b + ")";
+            TextView text = ( TextView )findViewById( R.id.textView1 );
             String anterior = ( String )text.getText( );
             if( anterior.length( ) > 500 )
             {
@@ -370,7 +372,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         if( msg.what == CLICK_ON_URL )
         {
             lecturas = new ArrayList<String>( );
-            cargolenguaje= false;
+            cargolenguaje = false;
             cargoplabras = false;
             sensorProcess = true;
             sensorProcessGuardar = true;
@@ -381,7 +383,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         }
         if( msg.what == CLICK_ON_WEBVIEW )
         {
-//            Toast.makeText( this, "WebView clicked" + msg, Toast.LENGTH_SHORT ).show( );
+            // Toast.makeText( this, "WebView clicked" + msg, Toast.LENGTH_SHORT ).show( );
             return true;
         }
         return false;
