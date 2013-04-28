@@ -225,26 +225,29 @@ public class WebActivity extends Activity implements OnTouchListener,
 
 	public void actualizarTextoPk(ArrayList<String> texto) {
 		TextView text = (TextView) findViewById(R.id.TextViewPk);
+        text.setText( "" );
 		if (texto != null && texto.size() > 0) {
 			for (int i = 0; i < texto.size(); i++) {
-				text.clearComposingText();
-				text.setText(texto.get(i));
+                String anterior = (String) text.getText();
+                String cambio = texto.get(i) + "\n" + anterior;
+                text.setText(cambio);
 			}
 		} else {
-			text.clearComposingText();
 			text.setText("No se tiene cargado las Pk");
 		}
 	}
 
 	public void actualizarTextoLecturas(ArrayList<String> texto) {
 		TextView text = (TextView) findViewById(R.id.TextViewL);
+		text.setText( "" );
 		if (texto != null) {
-			text.clearComposingText();
-			for (int i = 0; i < texto.size(); i++) {
-				text.setText(texto.get(i));
+			for (int i = 0; i < texto.size(); i++) 
+			{
+	            String anterior = (String) text.getText();
+	            String cambio = texto.get(i) + "\n" + anterior;
+	            text.setText(cambio);
 			}
 		} else {
-			text.clearComposingText();
 			text.setText("No se tiene cargado el idioma");
 		}
 	}
