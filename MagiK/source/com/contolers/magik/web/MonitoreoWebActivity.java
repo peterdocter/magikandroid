@@ -86,8 +86,6 @@ public class MonitoreoWebActivity extends Activity
     public void clearLog( )
     {
         String[] values = new String[] { "" };
-        String[] displayFields = { Browser.BookmarkColumns.URL, Browser.BookmarkColumns.TITLE };
-        int[] viewFields = { R.id.textlistNombre, R.id.textlistDescription };
         ArrayAdapter<String> adapterVacio = new ArrayAdapter<String>(this,R.layout.rowlist_monitoreo_web, R.id.textlistNombre, values);
         atrListView.setAdapter( adapterVacio );
         adapter = null;
@@ -111,16 +109,13 @@ public class MonitoreoWebActivity extends Activity
     	cursor.moveToFirst();
     	while (cursor.isAfterLast() == false) 
     	{
-    		String vrTitle=cursor.getString(0);
-    		String string1=cursor.getString(1);
-    		String vrUrl=cursor.getString(2);
+    		String vrTitle=cursor.getString(2);    		
+    		String vrUrl=cursor.getString(1);
     		if(vrTitle==null)
-    			vrTitle="";
-    		if(string1==null)
-    			string1="";
+    			vrTitle="";    		
     		if(vrUrl==null)
     			vrUrl="";
-    		artData.writeToFile( vrTitle + ","  + vrUrl + "," + string1 +"\n" , true, CLASE_MONITOREO);
+    		artData.writeToFile( vrTitle + ","  + vrUrl +"\n" , true, CLASE_MONITOREO);
     		guardarDocumentoBase(vrUrl, vrTitle, PersistenceManager.HTML);
     		cursor.moveToNext();
     	}
@@ -159,8 +154,8 @@ public class MonitoreoWebActivity extends Activity
     private Cursor cargarDatosWeb()
     {
         String[] selection = { Browser.BookmarkColumns._ID, Browser.BookmarkColumns.URL, Browser.BookmarkColumns.TITLE };
-        Cursor cursor = getContentResolver( ).query( Browser.BOOKMARKS_URI, selection, null, null,  Browser.BookmarkColumns.DATE + " DESC" );
-        startManagingCursor( cursor );
+        Cursor cursor = getContentResolver( ).query( Browser.BOOKMARKS_URI, selection, null, null,  Browser.BookmarkColumns.DATE + " DESC LIMIT 30" );
+        //startManagingCursor( cursor );
         guardarDatos( cursor );
         return cursor;
     }

@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 /**
  * Creates queries to the SQLite helper and returns its results.
@@ -56,17 +55,17 @@ public class PersistenceManager
 
     /**
      * Creates a new document with the name given by the user.
-     * @param documentName The name of the new mix.
+     * @param url The name of the new mix.
      * @throws Exception If there is an error inserting the data.
      */
-    public void createDocument( String documentName, String type, String title ) throws Exception
+    public void createDocument( String url, String type, String title ) throws Exception
     {
         try
         {
             database = helper.getWritableDatabase( );
             ContentValues values = new ContentValues( );
             values.put( SQLiteHelper.COLUMN_DOCUMENT_TITLE, title);
-            values.put( SQLiteHelper.COLUMN_DOCUMENT_NAME, documentName );
+            values.put( SQLiteHelper.COLUMN_DOCUMENT_URL, url );
             values.put( SQLiteHelper.COLUMN_DOCUMENT_TIPO, type);
             database.insert( SQLiteHelper.TABLE_DOCUMENTS, null, values );
             database.close( );
@@ -150,7 +149,7 @@ public class PersistenceManager
         try
         {
             database = helper.getReadableDatabase( );
-            Cursor cursor = database.query( SQLiteHelper.TABLE_DOCUMENTS, new String[]{ SQLiteHelper.COLUMN_DOCUMENT_ID }, SQLiteHelper.COLUMN_DOCUMENT_NAME + " LIKE '" + document + "'", null, null, null, null );
+            Cursor cursor = database.query( SQLiteHelper.TABLE_DOCUMENTS, new String[]{ SQLiteHelper.COLUMN_DOCUMENT_ID }, SQLiteHelper.COLUMN_DOCUMENT_URL + " LIKE '" + document + "'", null, null, null, null );
             if( cursor.moveToFirst( ) )
             {
                 id = cursor.getInt( 0 );
@@ -248,7 +247,7 @@ public class PersistenceManager
         {
             database = helper.getReadableDatabase( );
             String sql = "SELECT p." + SQLiteHelper.COLUMN_PALABRA_CLAVE + " FROM " + SQLiteHelper.TABLE_PALABRAS_CLAVE + " p JOIN " + SQLiteHelper.TABLE_DOCUMENTS + " d ON " + SQLiteHelper.COLUMN_P_D_ID + " = " + SQLiteHelper.COLUMN_DOCUMENT_ID
-                    + "WHERE d." + SQLiteHelper.COLUMN_DOCUMENT_NAME + "LIKE '" + documentName + "'";
+                    + "WHERE d." + SQLiteHelper.COLUMN_DOCUMENT_URL + "LIKE '" + documentName + "'";
             System.out.println( sql );
             Cursor cursor = database.rawQuery( sql, null );
             if( cursor.moveToFirst( ) )
@@ -286,7 +285,7 @@ public class PersistenceManager
         {
             database = helper.getReadableDatabase( );
             String sql = "SELECT p." + SQLiteHelper.COLUMN_RECOMMENDACION_URL + " FROM " + SQLiteHelper.TABLE_RECOMMENDACION + " p JOIN " + SQLiteHelper.TABLE_DOCUMENTS + " d ON " + SQLiteHelper.COLUMN_R_D_ID + " = "
-                    + SQLiteHelper.COLUMN_DOCUMENT_ID + "WHERE d." + SQLiteHelper.COLUMN_DOCUMENT_NAME + "LIKE '" + documentName + "'";
+                    + SQLiteHelper.COLUMN_DOCUMENT_ID + "WHERE d." + SQLiteHelper.COLUMN_DOCUMENT_URL + "LIKE '" + documentName + "'";
             System.out.println( sql );
             Cursor cursor = database.rawQuery( sql, null );
             if( cursor.moveToFirst( ) )
@@ -325,7 +324,7 @@ public class PersistenceManager
         try
         {
             database = helper.getReadableDatabase( );
-            Cursor cursor = database.query( SQLiteHelper.TABLE_DOCUMENTS, new String[]{ SQLiteHelper.COLUMN_DOCUMENT_ID, SQLiteHelper.COLUMN_DOCUMENT_NAME, SQLiteHelper.COLUMN_DOCUMENT_TIPO , SQLiteHelper.COLUMN_DOCUMENT_TITLE }, null, null, null, null, null );
+            Cursor cursor = database.query( SQLiteHelper.TABLE_DOCUMENTS, new String[]{ SQLiteHelper.COLUMN_DOCUMENT_ID, SQLiteHelper.COLUMN_DOCUMENT_URL, SQLiteHelper.COLUMN_DOCUMENT_TIPO , SQLiteHelper.COLUMN_DOCUMENT_TITLE }, null, null, null, null, null );
             if( cursor.moveToFirst( ) )
             {
                 mixes = new String[cursor.getCount( )];
@@ -357,8 +356,8 @@ public class PersistenceManager
     	try 
     	{
     		database = helper.getReadableDatabase();
-    		Cursor cursor = database.query( SQLiteHelper.TABLE_DOCUMENTS, new String[]{ SQLiteHelper.COLUMN_DOCUMENT_NAME}, SQLiteHelper.COLUMN_DOCUMENT_NAME + " LIKE '?' ", new String[]{fileName}, null, null, null );
-    		repeated = !cursor.moveToFirst();
+    		Cursor cursor = database.query( SQLiteHelper.TABLE_DOCUMENTS, new String[]{ SQLiteHelper.COLUMN_DOCUMENT_URL}, SQLiteHelper.COLUMN_DOCUMENT_URL + " LIKE '"+fileName+"' ", null, null, null, null );
+    		repeated = cursor.moveToFirst();
 		} 
     	catch (Exception e) 
     	{
