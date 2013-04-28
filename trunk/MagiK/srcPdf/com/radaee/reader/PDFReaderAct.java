@@ -10,15 +10,16 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.contolers.magik.data.ControlerData;
@@ -29,11 +30,9 @@ import com.radaee.grid.PDFGridItem;
 import com.radaee.grid.PDFGridView;
 import com.radaee.pdf.Document;
 import com.radaee.pdf.Global;
-import com.radaee.pdf.Page;
 import com.radaee.reader.PDFReader.PDFReaderListener;
 import com.radaee.view.PDFVPage;
 import com.radaee.view.PDFViewThumb.PDFThumbListener;
-import com.recomendacion.servicio.Servicio;
 import com.recomendacion.servicio.WebServiceConnection;
 
 public class PDFReaderAct extends Activity implements OnItemClickListener, OnClickListener, PDFReaderListener, PDFThumbListener
@@ -43,27 +42,13 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
     private PDFThumbView m_thumb = null;
     private RelativeLayout m_layout;
     private Document m_doc = new Document( );
-    private Button btn_ink;
-    private Button btn_rect;
-    private Button btn_oval;
-    private Button btn_note;
-    private Button btn_line;
-    private Button btn_cancel;
-    private Button btn_save;
     private Button btn_close;
+    private Button btn_pal;
+    private Button btn_rec;
 
-    private Button btn_sel;
-    private Button btn_act;
-    private Button btn_edit;
-    private Button btn_remove;
-
-    private Button btn_prev;
-    private Button btn_next;
-    private EditText txt_find;
-    private String str_find;
     private boolean m_set = false;
-    private PDFVPage m_annot_vpage;
-    private int m_annot;
+    private ArrayList<String> recs;
+    private ArrayList<String> palabras;
 
     private Thread thread;
     private Thread recommendationsThread;
@@ -82,6 +67,9 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         super.onCreate( savedInstanceState );
         path = "";
         data = new ControlerData( );
+        palabras = new ArrayList<String>();
+        recs = new ArrayList<String>();
+        sensorProcess = true;
         recommendationsThread = new Thread( )
         {
             @Override
@@ -94,9 +82,13 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
                     {
                         Log.v( "KELVIN", "Save Reads" );
                         datosDisplay = DatosDisplay.darInstacia( );
+                        Log.d("Lecturas", String.valueOf(datosDisplay.getLecturas().size()));
                         if( datosDisplay.getLecturas( ).size( ) > 5 )
                         {
+                        	Log.d("Recomendaciones", "Hizo el thread");
                             recomendaciones( );
+                            palabrasClave();                            
+                            sensorProcess = false;
                         }
                         sleep( 10000 );
                     }
@@ -117,48 +109,15 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         m_layout = ( RelativeLayout )LayoutInflater.from( this ).inflate( R.layout.reader, null );
         m_reader = ( PDFReader )m_layout.findViewById( R.id.view );
         m_thumb = ( PDFThumbView )m_layout.findViewById( R.id.thumbs );
-
         LinearLayout bar_cmd = ( LinearLayout )m_layout.findViewById( R.id.bar_cmd );
-        LinearLayout bar_act = ( LinearLayout )m_layout.findViewById( R.id.bar_act );
-        LinearLayout bar_find = ( LinearLayout )m_layout.findViewById( R.id.bar_find );
-        btn_ink = ( Button )bar_cmd.findViewById( R.id.btn_ink );
-        btn_rect = ( Button )bar_cmd.findViewById( R.id.btn_rect );
-        btn_oval = ( Button )bar_cmd.findViewById( R.id.btn_oval );
-        btn_note = ( Button )bar_cmd.findViewById( R.id.btn_note );
-        btn_line = ( Button )bar_cmd.findViewById( R.id.btn_line );
-        btn_cancel = ( Button )bar_cmd.findViewById( R.id.btn_cancel );
-        btn_save = ( Button )bar_cmd.findViewById( R.id.btn_save );
-        btn_close = ( Button )bar_cmd.findViewById( R.id.btn_close );
-
-        btn_sel = ( Button )bar_act.findViewById( R.id.btn_sel );
-        btn_act = ( Button )bar_act.findViewById( R.id.btn_act );
-        btn_edit = ( Button )bar_act.findViewById( R.id.btn_edit );
-        btn_remove = ( Button )bar_act.findViewById( R.id.btn_remove );
-
-        txt_find = ( EditText )bar_find.findViewById( R.id.txt_find );
-        btn_prev = ( Button )bar_find.findViewById( R.id.btn_prev );
-        btn_next = ( Button )bar_find.findViewById( R.id.btn_next );
-
-        btn_sel.setOnClickListener( this );
-        btn_act.setOnClickListener( this );
-        btn_edit.setOnClickListener( this );
-        btn_remove.setOnClickListener( this );
-
-        btn_ink.setOnClickListener( this );
-        btn_rect.setOnClickListener( this );
-        btn_oval.setOnClickListener( this );
-        btn_note.setOnClickListener( this );
-        btn_line.setOnClickListener( this );
-        btn_cancel.setOnClickListener( this );
-        btn_save.setOnClickListener( this );
-        btn_close.setOnClickListener( this );
-        btn_prev.setOnClickListener( this );
-        btn_next.setOnClickListener( this );
-        btn_act.setEnabled( false );
-        btn_save.setEnabled( false );
-        btn_edit.setEnabled( false );
-        btn_remove.setEnabled( false );
-        btn_cancel.setEnabled( false );
+        //LinearLayout bar_act = ( LinearLayout )m_layout.findViewById( R.id.bar_act );
+        //LinearLayout bar_find = ( LinearLayout )m_layout.findViewById( R.id.bar_find );
+        btn_close = ( Button )bar_cmd.findViewById( R.id.btn_close );        
+        btn_pal = (Button)bar_cmd.findViewById(R.id.btnPal);
+        btn_rec = (Button)bar_cmd.findViewById(R.id.btnRec);
+        btn_rec.setOnClickListener(this);
+        btn_pal.setOnClickListener(this);
+        
     }
 
     public void guardar( )
@@ -188,15 +147,7 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
     }
 
     
-    protected void recomendaciones( )
-    {
-        Servicio servicio = new Servicio( );
-        String[] recs = servicio.getRecomendaciones( CLASE_DYSPLAY );
-        persistenceManager = new PersistenceManager( this.getApplicationContext( ) );
-        persistenceManager.saveRecommendations( CLASE_DYSPLAY, recs );
-        persistenceManager = null;
-        System.gc( );
-    }
+   
 
     protected void onDestroy( )
     {
@@ -235,25 +186,7 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
                 m_doc.Close( );
                 path+=item.get_name();
                 
-                File f = new File(path);
-                SendPDFTask task = new SendPDFTask();
-                try {
-                	Object[] params = new Object[2];
-                	params[0] = f;
-                	params[1] = WebServiceConnection.PALABRAS_FILE; 
-					task.execute(params);
-					params = null;
-					params = new Object[2];
-					params[0] = f;
-                	params[1] = WebServiceConnection.RECOMEND_FILE;
-                	params = null;
-					task.execute(params);
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-				}
-                f = null;
-                task = null;
-                System.gc();
+                
                 String datos[] = item.get_name( ).split( "/" );
                 CLASE_DYSPLAY = CLASE_DYSPLAY + datos[ datos.length - 1 ];
                 int ret = item.open_doc( m_doc, null );
@@ -280,11 +213,6 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
                 }
                 m_thumb.thumbOpen( m_reader.PDFGetDoc( ), this );
                 setContentView( m_layout );
-                btn_ink.setEnabled( m_reader.PDFCanSave( ) );
-                btn_rect.setEnabled( m_reader.PDFCanSave( ) );
-                btn_oval.setEnabled( m_reader.PDFCanSave( ) );
-                btn_note.setEnabled( m_reader.PDFCanSave( ) );
-                btn_save.setEnabled( m_reader.PDFCanSave( ) );
                 
                 data.existDelete( CLASE_DYSPLAY );
                 data.crearFile( CLASE_DYSPLAY, "Acción;Dirección;Velocidad (pixeles/seg);Eje" );
@@ -322,358 +250,28 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
     {
         m_set = !m_set;
         m_reader.PDFSetSelect( );
-        btn_ink.setEnabled( !m_set );
-        btn_rect.setEnabled( !m_set );
-        btn_oval.setEnabled( !m_set );
-        btn_note.setEnabled( !m_set );
-        btn_line.setEnabled( !m_set );
-        btn_cancel.setEnabled( false );
-
-        btn_sel.setPressed( m_set );
-        btn_act.setEnabled( false );
-        btn_edit.setEnabled( false );
-        btn_remove.setEnabled( false );
     }
 
-    private void onInk( )
-    {
-        m_set = !m_set;
-        if( m_set )
-            m_reader.PDFSetInk( 0 );
-        else
-            m_reader.PDFSetInk( 1 );
-        btn_ink.setPressed( m_set );
-        btn_rect.setEnabled( !m_set );
-        btn_oval.setEnabled( !m_set );
-        btn_note.setEnabled( !m_set );
-        btn_line.setEnabled( !m_set );
-        btn_cancel.setEnabled( m_set );
-        btn_save.setEnabled( !m_set );
-
-        btn_sel.setEnabled( !m_set );
-        btn_act.setEnabled( !m_set );
-        btn_edit.setEnabled( !m_set );
-        btn_remove.setEnabled( !m_set );
-
-        btn_prev.setEnabled( !m_set );
-        btn_next.setEnabled( !m_set );
-        txt_find.setEnabled( !m_set );
-    }
-
-    private void onRect( )
-    {
-        m_set = !m_set;
-        if( m_set )
-            m_reader.PDFSetRect( 0 );
-        else
-            m_reader.PDFSetRect( 1 );
-        btn_ink.setEnabled( !m_set );
-        btn_rect.setPressed( m_set );
-        btn_oval.setEnabled( !m_set );
-        btn_note.setEnabled( !m_set );
-        btn_line.setEnabled( !m_set );
-        btn_cancel.setEnabled( m_set );
-        btn_save.setEnabled( !m_set );
-
-        btn_sel.setEnabled( !m_set );
-        btn_act.setEnabled( !m_set );
-        btn_edit.setEnabled( !m_set );
-        btn_remove.setEnabled( !m_set );
-
-        btn_prev.setEnabled( !m_set );
-        btn_next.setEnabled( !m_set );
-        txt_find.setEnabled( !m_set );
-    }
-
-    private void onOval( )
-    {
-        m_set = !m_set;
-        if( m_set )
-            m_reader.PDFSetEllipse( 0 );
-        else
-            m_reader.PDFSetEllipse( 1 );
-        btn_ink.setEnabled( !m_set );
-        btn_rect.setEnabled( !m_set );
-        btn_oval.setPressed( m_set );
-        btn_note.setEnabled( !m_set );
-        btn_line.setEnabled( !m_set );
-        btn_cancel.setEnabled( m_set );
-        btn_save.setEnabled( !m_set );
-
-        btn_sel.setEnabled( !m_set );
-        btn_act.setEnabled( !m_set );
-        btn_edit.setEnabled( !m_set );
-        btn_remove.setEnabled( !m_set );
-
-        btn_prev.setEnabled( !m_set );
-        btn_next.setEnabled( !m_set );
-        txt_find.setEnabled( !m_set );
-    }
-
-    private void onNote( )
-    {
-        m_reader.PDFSetNote( );
-        m_set = !m_set;
-        btn_ink.setEnabled( !m_set );
-        btn_rect.setEnabled( !m_set );
-        btn_oval.setEnabled( !m_set );
-        btn_note.setPressed( m_set );
-        btn_line.setEnabled( !m_set );
-        btn_cancel.setEnabled( false );
-
-        btn_sel.setEnabled( !m_set );
-        btn_act.setEnabled( !m_set );
-        btn_edit.setEnabled( !m_set );
-        btn_remove.setEnabled( !m_set );
-    }
-
-    private void onLine( )
-    {
-        m_set = !m_set;
-        if( m_set )
-            m_reader.PDFSetLine( 0 );
-        else
-            m_reader.PDFSetLine( 1 );
-        btn_ink.setEnabled( !m_set );
-        btn_rect.setEnabled( !m_set );
-        btn_oval.setEnabled( !m_set );
-        btn_note.setEnabled( !m_set );
-        btn_line.setPressed( m_set );
-        btn_cancel.setEnabled( false );
-
-        btn_sel.setEnabled( !m_set );
-        btn_act.setEnabled( !m_set );
-        btn_edit.setEnabled( !m_set );
-        btn_remove.setEnabled( !m_set );
-    }
-
-    private void onCancel( )
-    {
-        m_reader.PDFCancel( );
-        m_set = false;
-        btn_ink.setEnabled( true );
-        btn_rect.setEnabled( true );
-        btn_oval.setEnabled( true );
-        btn_note.setEnabled( true );
-        btn_line.setEnabled( true );
-        btn_cancel.setEnabled( false );
-        btn_save.setEnabled( true );
-
-        btn_sel.setEnabled( true );
-        btn_act.setEnabled( true );
-        btn_edit.setEnabled( true );
-        btn_remove.setEnabled( true );
-
-        btn_prev.setEnabled( true );
-        btn_next.setEnabled( true );
-        txt_find.setEnabled( true );
-    }
-
-    private void onFindPrev( )
-    {
-        String str = txt_find.getText( ).toString( );
-        if( str_find != null )
-        {
-            if( str != null && str.compareTo( str_find ) == 0 )
-            {
-                m_reader.PDFFind( -1 );
-                return;
-            }
-        }
-        if( str != null && str.length( ) > 0 )
-        {
-            m_reader.PDFFindStart( str, false, false );
-            m_reader.PDFFind( 1 );
-            str_find = str;
-        }
-    }
-
-    private void onFindNext( )
-    {
-        String str = txt_find.getText( ).toString( );
-        if( str_find != null )
-        {
-            if( str != null && str.compareTo( str_find ) == 0 )
-            {
-                m_reader.PDFFind( 1 );
-                return;
-            }
-        }
-        if( str != null && str.length( ) > 0 )
-        {
-            m_reader.PDFFindStart( str, false, false );
-            m_reader.PDFFind( 1 );
-            str_find = str;
-        }
-    }
-
-    private void onEdit( )
-    {
-        LinearLayout layout = ( LinearLayout )LayoutInflater.from( this ).inflate( R.layout.dlg_note, null );
-        final EditText subj = ( EditText )layout.findViewById( R.id.txt_subj );
-        final EditText content = ( EditText )layout.findViewById( R.id.txt_content );
-        final Page page = m_annot_vpage.GetPage( );
-        if( page == null )
-            return;
-
-        AlertDialog.Builder builder = new AlertDialog.Builder( this );
-        builder.setPositiveButton( "OK", new DialogInterface.OnClickListener( )
-        {
-            public void onClick( DialogInterface dialog, int which )
-            {
-                String str_subj = subj.getText( ).toString( );
-                String str_content = content.getText( ).toString( );
-                page.SetAnnotPopupSubject( m_annot, str_subj );
-                page.SetAnnotPopupText( m_annot, str_content );
-                dialog.dismiss( );
-                m_reader.PDFEndAnnot( );
-                m_set = false;
-                btn_ink.setEnabled( true );
-                btn_rect.setEnabled( true );
-                btn_oval.setEnabled( true );
-                btn_note.setEnabled( true );
-                btn_cancel.setEnabled( false );
-                btn_save.setEnabled( true );
-
-                btn_sel.setEnabled( true );
-                btn_act.setEnabled( false );
-                btn_edit.setEnabled( false );
-                btn_remove.setEnabled( false );
-
-                btn_prev.setEnabled( true );
-                btn_next.setEnabled( true );
-                txt_find.setEnabled( true );
-            }
-        } );
-        builder.setNegativeButton( "Cancel", new DialogInterface.OnClickListener( )
-        {
-            public void onClick( DialogInterface dialog, int which )
-            {
-                dialog.dismiss( );
-                m_reader.PDFEndAnnot( );
-                m_set = false;
-                btn_ink.setEnabled( true );
-                btn_rect.setEnabled( true );
-                btn_oval.setEnabled( true );
-                btn_note.setEnabled( true );
-                btn_cancel.setEnabled( false );
-                btn_save.setEnabled( true );
-
-                btn_sel.setEnabled( true );
-                btn_act.setEnabled( false );
-                btn_edit.setEnabled( false );
-                btn_remove.setEnabled( false );
-
-                btn_prev.setEnabled( true );
-                btn_next.setEnabled( true );
-                txt_find.setEnabled( true );
-            }
-        } );
-        builder.setTitle( "Note Content" );
-        builder.setCancelable( false );
-        builder.setView( layout );
-
-        subj.setText( page.GetAnnotPopupSubject( m_annot ) );
-        content.setText( page.GetAnnotPopupText( m_annot ) );
-        AlertDialog dlg = builder.create( );
-        dlg.show( );
-    }
-
-    private void onAct( )
-    {
-        m_reader.PDFPerformAnnot( );
-        m_set = false;
-        btn_ink.setEnabled( true );
-        btn_rect.setEnabled( true );
-        btn_oval.setEnabled( true );
-        btn_note.setEnabled( true );
-        btn_line.setEnabled( true );
-        btn_cancel.setEnabled( false );
-        btn_save.setEnabled( true );
-
-        btn_sel.setEnabled( true );
-        btn_act.setEnabled( false );
-        btn_edit.setEnabled( false );
-        btn_remove.setEnabled( false );
-
-        btn_prev.setEnabled( true );
-        btn_next.setEnabled( true );
-        txt_find.setEnabled( true );
-    }
-
-    private void onRemove( )
-    {
-        m_reader.PDFRemoveAnnot( );
-        m_set = false;
-        btn_ink.setEnabled( true );
-        btn_rect.setEnabled( true );
-        btn_oval.setEnabled( true );
-        btn_note.setEnabled( true );
-        btn_line.setEnabled( true );
-        btn_cancel.setEnabled( false );
-        btn_save.setEnabled( true );
-
-        btn_sel.setEnabled( true );
-        btn_act.setEnabled( false );
-        btn_edit.setEnabled( false );
-        btn_remove.setEnabled( false );
-
-        btn_prev.setEnabled( true );
-        btn_next.setEnabled( true );
-        txt_find.setEnabled( true );
-    }
-
+  
     public void onClick( View v )
     {
         switch( v.getId( ) )
         {
-            case R.id.btn_ink:
-                onInk( );
-                break;
-            case R.id.btn_rect:
-                onRect( );
-                break;
-            case R.id.btn_oval:
-                onOval( );
-                break;
-            case R.id.btn_note:
-                onNote( );
-                break;
-            case R.id.btn_line:
-                onLine( );
-                break;
-            case R.id.btn_cancel:
-                onCancel( );
-                break;
-            case R.id.btn_save:
-                m_reader.PDFSave( );
-                break;
-            case R.id.btn_sel:
-                onSelect( );
-                break;
-            case R.id.btn_remove:
-                onRemove( );
-                break;
-            case R.id.btn_act:
-                onAct( );
-                break;
-            case R.id.btn_edit:
-                onEdit( );
-                break;
-            case R.id.btn_prev:
-                onFindPrev( );
-                break;
-            case R.id.btn_next:
-                onFindNext( );
-                break;
             case R.id.btn_close:
                 m_thumb.thumbClose( );
                 m_reader.PDFClose( );
                 if( m_doc != null )
                     m_doc.Close( );
-                str_find = null;
                 setContentView( m_vFiles );
                 break;
+            case R.id.btnRec:
+            	actualizarTextoLecturas(recs);
+            	break;
+            case R.id.btnPal:
+            	actualizarTextoLecturas(palabras);
+            	break;
+                
+              
         }
     }
 
@@ -689,25 +287,77 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
 
     public void OnAnnotClicked( PDFVPage vpage, int annot )
     {
-        m_annot_vpage = vpage;
-        m_annot = annot;
-        btn_ink.setEnabled( annot == 0 );
-        btn_rect.setEnabled( annot == 0 );
-        btn_oval.setEnabled( annot == 0 );
-        btn_note.setEnabled( annot == 0 );
-        btn_cancel.setEnabled( false );
-        btn_save.setEnabled( annot == 0 );
-
-        btn_sel.setEnabled( annot == 0 );
-        btn_act.setEnabled( annot != 0 );
-        btn_edit.setEnabled( annot != 0 );
-        btn_remove.setEnabled( annot != 0 );
-
-        btn_prev.setEnabled( annot == 0 );
-        btn_next.setEnabled( annot == 0 );
-        txt_find.setEnabled( annot == 0 );
     }
-
+    
+    
+    private void palabrasClave()
+    {
+    	File f = new File(path);
+        SendPDFTask task = new SendPDFTask();
+        try {
+        	Object[] params = new Object[2];
+        	params[0] = f;
+        	params[1] = WebServiceConnection.PALABRAS_FILE; 
+			task.execute(params);
+			String resp = task.get();
+			System.out.println("Respuesta: "+resp);
+			if(resp.contains(";"))
+			{
+				String[] recArr  = resp.split(";");
+				for(String rec: recArr)
+				{
+					palabras.add(rec);
+				}
+			}
+			else
+			{
+				palabras.add(resp);
+			}			
+			params = null;			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+        f = null;
+        task = null;
+        System.gc();
+    }
+    
+    private void recomendaciones( )
+    {
+    	File f = new File(path);
+        SendPDFTask task = new SendPDFTask();
+        try {
+        	Object[] params = new Object[2];
+        	params[0] = f;
+        	params[1] = WebServiceConnection.RECOMEND_FILE; 
+			task.execute(params);
+			String resp = task.get();
+			System.out.println("Respuesta: "+resp);
+			if(resp.contains(";"))
+			{
+				String[] recArr  = resp.split(";");
+				for(String rec: recArr)
+				{
+					recs.add(rec);
+				}
+				persistenceManager = new PersistenceManager( this.getApplicationContext( ) );
+		        persistenceManager.saveRecommendations( CLASE_DYSPLAY, recArr );
+		        persistenceManager = null;
+			}
+			else
+			{
+				recs.add(resp);
+			}	        
+			params = null;			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+        f = null;
+        task = null;
+        System.gc();
+    }
+    
+    
     public void OnOpenURI( String uri )
     {
     }
@@ -772,36 +422,28 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         AlertDialog dlg = builder.create( );
         dlg.show( );
     }
+    
+    
+    
+    public void actualizarTextoLecturas(ArrayList<String> texto)
+    {
+        TextView text = (TextView) findViewById(R.id.txtVerb);
+        if( texto != null )
+        {
+            for( int i = 0; i < texto.size( ); i++ )
+            {
+                text.clearComposingText( );
+                text.setText( texto.get( i ) );
+                System.out.println(texto.get( i ) );
+            }
+        }
+        else
+        {
+            text.clearComposingText( );
+            text.setText( "Cargando..." );
+        }
+    }
 
-//    public boolean onTouchEvent( MotionEvent event )
-//    {
-//        String captura = "";
-//        captura = display.velocityTrack( event );
-//        float valorx = 0;
-//        float valory = 0;
-//        if( captura != "" && captura != null )
-//        {
-//            String partexy[] = captura.split( ":" );
-//            String valores[] = partexy[ 1 ].split( ";" );
-//            valorx = Float.parseFloat( valores[ 0 ] );
-//            valory = Float.parseFloat( valores[ 1 ] );
-//        }
-//        int a = ( int )valorx;
-//        int b = ( int )valory;
-//
-//        String rtaX = display.analizarVelocidad( a, "X" );
-//        String rtaY = display.analizarVelocidad( b, "Y" );
-//
-//        if( captura != "" )
-//        {
-//            rta += "\n";
-//            rta += captura + ";" + rtaX + ";" + rtaY + ";";
-//            if( rta.contains( "LECTURA" ) )
-//            {
-//                lecturas.add( rta );
-//            }
-//
-//        }
-//        return false;
-//    }
+
+	
 }
