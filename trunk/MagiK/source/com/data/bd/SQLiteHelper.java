@@ -22,7 +22,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	/**
 	 * The id of the document in the mix table.
 	 */
-	protected static final String COLUMN_DOCUMENT_ID = "document_id";
+	protected static final String COLUMN_DOCUMENT_ID = "id";
 	
 	/**
 	 * The name of the document, given by the user after saving the document.
