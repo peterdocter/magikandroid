@@ -933,13 +933,15 @@ public class PDFReader extends View implements PDFViewListener, OnItemClickListe
             datos.setAnalisiX( rtaX );
             datos.setAnalisiY( rtaY );
             String rta = captura + ";" + rtaX + ";" + rtaY + ";";
+            String txt = captura + ": "+ a + "," + b;
+            RelativeLayout layout = (RelativeLayout)this.getParent();
+            TextView txtMove = (TextView)layout.findViewById(R.id.txtMove);
+            txtMove.clearComposingText( );
+            txtMove.setText(txt);
             if( rta.contains( "LECTURA" ) )
             {
                 datos.setLecturas( rta );
-                RelativeLayout layout = (RelativeLayout)this.getParent();
-                TextView txtMove = (TextView)layout.findViewById(R.id.txtMove);
-                txtMove.clearComposingText( );
-                txtMove.setText(rta);
+                
             }
         }
     }
