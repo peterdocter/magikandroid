@@ -18,6 +18,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.magik.monitoring.ControlerDisplay;
@@ -934,6 +936,10 @@ public class PDFReader extends View implements PDFViewListener, OnItemClickListe
             if( rta.contains( "LECTURA" ) )
             {
                 datos.setLecturas( rta );
+                RelativeLayout layout = (RelativeLayout)this.getParent();
+                TextView txtMove = (TextView)layout.findViewById(R.id.txtMove);
+                txtMove.clearComposingText( );
+                txtMove.setText(rta);
             }
         }
     }
