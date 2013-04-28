@@ -20,7 +20,7 @@
         -->
         <activity
             android:name=".PdfSlowViewerActivity"
-            android:label="PDF Viewer" 
+            android:label="PDF Viewer"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -33,15 +33,21 @@
         <activity
             android:name="com.contolers.magik.web.MonitoreoActivity"
             android:label="@string/app_name"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.contolers.magik.web.MonitoreoWebActivity" android:theme="@android:style/Theme.Holo.Light.NoActionBar"  >
+        <activity
+            android:name="com.contolers.magik.web.MonitoreoWebActivity"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
         </activity>
-        <activity android:name="com.contolers.magik.file.FileModificationMonitor" android:theme="@android:style/Theme.Holo.Light.NoActionBar"  >
+        <activity
+            android:name="com.contolers.magik.file.FileModificationMonitor"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
         </activity>
 
         <service android:name="com.contolers.magik.file.FileModificationService" >
@@ -50,12 +56,12 @@
         <activity
             android:name="com.example.magik.DisplayActivity"
             android:label="@string/title_activity_display"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar"  >
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
         </activity>
         <activity
             android:name=".PdfFileSelectActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar"  >
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
@@ -64,15 +70,21 @@
         </activity>
         <activity
             android:name="com.radaee.reader.PDFReaderAct"
-	        android:configChanges="orientation"
+            android:configChanges="orientation"
             android:label="@string/app_name" >
-<!--             <intent-filter> -->
-<!--                 <action android:name="android.intent.action.MAIN" /> -->
 
-<!--                 <category android:name="android.intent.category.LAUNCHER" /> -->
-<!--             </intent-filter> -->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
-        <activity android:name="com.example.magik.monitoring.WebActivity" android:theme="@android:style/Theme.Holo.Light.NoActionBar" android:screenOrientation="landscape"></activity>
+        <activity
+            android:name="com.example.magik.monitoring.WebActivity"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
+        </activity>
     </application>
     <!-- <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4"/> -->
     <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />

@@ -31,4 +31,10 @@ public class PalabrasClave
     {
         this.palabras.add( palabras );
     }
+    
+
+    public ArrayList<String> iniPalabras( )
+    {
+        return palabras = new ArrayList<String>( );
+    }
 }
