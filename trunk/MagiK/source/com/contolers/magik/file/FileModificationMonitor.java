@@ -29,7 +29,7 @@ public class FileModificationMonitor extends Activity
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        LocalBroadcastManager.getInstance( this ).registerReceiver( mMessageReceiver, new IntentFilter( "action" ) );
+//        LocalBroadcastManager.getInstance( this ).registerReceiver( mMessageReceiver, new IntentFilter( "action" ) );
         setContentView( R.layout.file_modification_monitor );
         btn1 = ( Button )findViewById( R.id.file_modification_monitor_btn_first );
         btn2 = ( Button )findViewById( R.id.file_modification_monitor_btn_second );
@@ -91,36 +91,36 @@ public class FileModificationMonitor extends Activity
         refreshLog( );
     }
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver( )
-    {
-        @Override
-        public void onReceive( Context context, Intent intent )
-        {
-            String action = intent.getAction( );
-            String currentSpeed = intent.getStringExtra( "action" );
-            Toast.makeText( getApplicationContext( ), currentSpeed, Toast.LENGTH_SHORT ).show( );
-            startProcessMonitor( );
+//    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver( )
+//    {
+//        @Override
+//        public void onReceive( Context context, Intent intent )
+//        {
+//            String action = intent.getAction( );
+//            String currentSpeed = intent.getStringExtra( "action" );
+//            Toast.makeText( getApplicationContext( ), currentSpeed, Toast.LENGTH_SHORT ).show( );
+//            startProcessMonitor( );
+//
+//        }
+//    };
 
-        }
-    };
-
-    public void startProcessMonitor( )
-    {
-        Intent intent = new Intent(this, ProcessMonitor.class);
-        startService( intent );
-        btn1.setEnabled( true );
-        pmStarted = true;
-    }
-
-    public void stopProcessMonitor( )
-    {
-        if( !pmStarted )
-        {
-            stopService( new Intent( getApplicationContext( ), ProcessMonitor.class ) );
-            btn1.setEnabled( true );
-            pmStarted = true;
-        }
-    }
+//    public void startProcessMonitor( )
+//    {
+//        Intent intent = new Intent(this, ProcessMonitor.class);
+//        startService( intent );
+//        btn1.setEnabled( true );
+//        pmStarted = true;
+//    }
+//
+//    public void stopProcessMonitor( )
+//    {
+//        if( !pmStarted )
+//        {
+//            stopService( new Intent( getApplicationContext( ), ProcessMonitor.class ) );
+//            btn1.setEnabled( true );
+//            pmStarted = true;
+//        }
+//    }
 
     public void refreshLog( )
     {

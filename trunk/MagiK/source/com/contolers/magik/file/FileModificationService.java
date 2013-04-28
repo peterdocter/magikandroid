@@ -11,163 +11,147 @@ import android.app.Service;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
-public class FileModificationService extends Service
-{
-    // private MyFileObserver fileOb;
-    private PersistenceManager pm;
-    private static final int MAX_FO = 100;
-    private List<MyFileObserver> fileOb_list = new ArrayList<MyFileObserver>( );
-    private Intent intent;
-    private FileModificationMonitor proceso;
+public class FileModificationService extends Service {
+	// private MyFileObserver fileOb;
+	private PersistenceManager pm;
+	private static final int MAX_FO = 100;
+	private List<MyFileObserver> fileOb_list = new ArrayList<MyFileObserver>();
+	@Override
+	public void onCreate() {
+		pm = new PersistenceManager(this.getApplicationContext());
+		if (!EnvironmentUtilsStatic.is_external_storage_available()) {
+			Toast.makeText(FileModificationService.this,
+					"SDCARD is not available!", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		crearObservadores();
+	}
 
-    @Override
-    public void onCreate( )
-    {
-        pm = new PersistenceManager( this.getApplicationContext( ) );
-        if( !EnvironmentUtilsStatic.is_external_storage_available( ) )
-        {
-            Toast.makeText( FileModificationService.this, "SDCARD is not available!", Toast.LENGTH_SHORT ).show( );
-            return;
-        }
-        crearObservadores( );
-    }
+	public void crearObservadores() {
+		File sdcard = new File(Environment.getExternalStorageDirectory().getPath()+"/Download");		
+		fileOb_list.clear();
+		num_of_fos = 0;
+		createFileObs(sdcard);		
+	}
 
-    public void crearObservadores( )
-    {
-        File sdcard = new File( "/sdcard/" );
-        if( sdcard == null )
-        {
-            return;
-        }
-        else
-        {
-            fileOb_list.clear( );
-            num_of_fos = 0;
-            createFileObs( sdcard );
-        }
-    }
+	int num_of_fos = 0;
 
-    int num_of_fos = 0;
-    private void createFileObs( File f )
-    {
-        if( num_of_fos > MAX_FO )
-        {
-            return;
-        }
-        if( !f.isDirectory( ) || ( f.isDirectory( ) && f.getAbsolutePath( ).contains( "Download" ) ) )
-        {
-            if( f.getName( ).contains( "pdf" ) || f.getName( ).contains( ".pdf" ) || f.getAbsolutePath( ).contains( "Download" ) )
-            {
-                if( !f.isDirectory( ) )	
-                {
-                    guardarDocumentoBase(f.getName( ));
-                }
-                MyFileObserver aFileOb = new MyFileObserver( f.getName( ), f.getAbsolutePath( ), this, f.isDirectory( ) );
-                fileOb_list.add( aFileOb );
-            }
-        }
+	private void createFileObs(File f) {
+		MyFileObserver aFileOb = new MyFileObserver(f.getName(),
+				f.getAbsolutePath(), this, f.isDirectory());
+		String ext;
+		if (num_of_fos > MAX_FO) {
+			return;
+		}
+		if (!f.isDirectory()) {
+			String filename = f.getName();
+			if(filename.contains("."))
+			{
+				String[] campos = filename.split("\\.");
+				ext = campos[campos.length - 1];
+				if (ext.contains("pdf")) {
+					guardarDocumentoBase(f.getAbsolutePath(), filename);
+					fileOb_list.add(aFileOb);
+					num_of_fos++;
+					campos = null;
+				}
+			}
+			
+			ext = null;
+			
+			filename = null;
+//			System.gc();
+		} else if (f.getAbsolutePath().contains("Download")) {
+			fileOb_list.add(aFileOb);
+			num_of_fos++;
+		}
+		aFileOb = null;
+//		System.gc();
+		// fileOb = new MyFileObserver( f.getName() ,f.getAbsolutePath( ) ,this
+		// );
+		// MyFileObserver aFileOb = new MyFileObserver( f.getAbsolutePath( ) );
+		// fileOb_list.add( aFileOb );
+		
+		try {
+			if (f.isDirectory()) {
+				for (File currentFile : f.listFiles()) {
+					createFileObs(currentFile);
+				}
+			}
+		} catch (Exception e) {
+			Log.e("Error", e.toString());
+		}
+	}
 
-        // fileOb = new MyFileObserver( f.getName() ,f.getAbsolutePath( ) ,this );
-        // MyFileObserver aFileOb = new MyFileObserver( f.getAbsolutePath( ) );
-        // fileOb_list.add( aFileOb );
-        num_of_fos++;
-        try
-        {
-            if( f.isDirectory( ) )
-            {
+	private void guardarDocumentoBase(String url, String filename) {
+		try {
+			if (!pm.isFileInTable(url)) {
+				pm.createDocument(url, PersistenceManager.PDF, filename);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-                for( File currentFile : f.listFiles( ) )
-                {
-                    createFileObs( currentFile );
-                }
-            }
-        }
-        catch( Exception e )
-        {
-            Log.e( "Error", e.toString( ) );
-        }
+	public boolean isMyServiceRunning() {
+		ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+		for (RunningServiceInfo service : manager
+				.getRunningServices(Integer.MAX_VALUE)) {
+			if (ProcessMonitor.class.getName().equals(
+					service.service.getClassName())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    }
-    
-    private void guardarDocumentoBase(String documentName)
-    {
-        try
-        {
-            if( !pm.isFileInTable(documentName) )
-            {
-                pm.createDocument( documentName, PersistenceManager.PDF, "" );
-            }
-        }
-        catch( Exception e )
-        {
-            e.printStackTrace();
-        }
-    }
+	private void sendLocationBroadcast(Intent intent) {
+		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+	}
 
-    public boolean isMyServiceRunning( )
-    {
-        ActivityManager manager = ( ActivityManager )getSystemService( Context.ACTIVITY_SERVICE );
-        for( RunningServiceInfo service : manager.getRunningServices( Integer.MAX_VALUE ) )
-        {
-            if( ProcessMonitor.class.getName( ).equals( service.service.getClassName( ) ) )
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+	public void starServicioProcess() {
+		Intent intent = new Intent("action");
+		intent.putExtra("StartServicioProcess", "StartServicioProcess");
+		sendLocationBroadcast(intent);
+	}
 
-    private void sendLocationBroadcast( Intent intent )
-    {
-        LocalBroadcastManager.getInstance( this ).sendBroadcast( intent );
-    }
+	public void stopServiceProcess() {
+		Intent intent = new Intent("action");
+		intent.putExtra("StopServicioProcess", "StopServicioProcess");
+		sendLocationBroadcast(intent);
+	}
 
-    public void starServicioProcess( )
-    {
-        Intent intent = new Intent( "action" );
-        intent.putExtra( "StartServicioProcess", "StartServicioProcess" );
-        sendLocationBroadcast( intent );
-    }
+	@Override
+	public void onStart(Intent intent, int startid) {
+		// fileOb.startWatching( );
+		int i = 0;
+		for (i = 0; i < fileOb_list.size(); ++i) {
+			fileOb_list.get(i).startWatching();
+		}
+		Toast.makeText(this.getApplicationContext(),
+				"start monitoring file modification" + " " + i,
+				Toast.LENGTH_SHORT).show();
+	}
 
-    public void stopServiceProcess( )
-    {
-        Intent intent = new Intent( "action" );
-        intent.putExtra( "StopServicioProcess", "StopServicioProcess" );
-        sendLocationBroadcast( intent );
-    }
+	@Override
+	public void onDestroy() {
+		// fileOb.stopWatching( );
+		for (int i = 0; i < fileOb_list.size(); ++i) {
+			fileOb_list.get(i).stopWatching();
+		}
+		Toast.makeText(this.getApplicationContext(),
+				"stop monitoring file modification", Toast.LENGTH_SHORT).show();
+	}
 
-    @Override
-    public void onStart( Intent intent, int startid )
-    {
-        // fileOb.startWatching( );
-        int i = 0;
-        for( i = 0; i < fileOb_list.size( ); ++i )
-        {
-            fileOb_list.get( i ).startWatching( );
-        }
-        Toast.makeText( this.getApplicationContext( ), "start monitoring file modification" + " " + i, Toast.LENGTH_SHORT ).show( );
-    }
-
-    @Override
-    public void onDestroy( )
-    {
-        // fileOb.stopWatching( );
-        for( int i = 0; i < fileOb_list.size( ); ++i )
-        {
-            fileOb_list.get( i ).stopWatching( );
-        }
-        Toast.makeText( this.getApplicationContext( ), "stop monitoring file modification", Toast.LENGTH_SHORT ).show( );
-    }
-
-    @Override
-    public IBinder onBind( Intent arg0 )
-    {
-        return null;
-    }
+	@Override
+	public IBinder onBind(Intent arg0) {
+		return null;
+	}
 
 }

@@ -41,7 +41,7 @@ public class MyFileObserver extends FileObserver
         if( event == 32 )
         {
             accesos += absolutePath + " was opened\n";
-            servicoGeneral.starServicioProcess(  );
+//            servicoGeneral.starServicioProcess(  );
         }
 
         if( event == 1 )
@@ -57,19 +57,19 @@ public class MyFileObserver extends FileObserver
         if( event == 512 )
         {
             accesos += absolutePath + " file was deleted from the monitored directory\n";
-            if( !servicoGeneral.isMyServiceRunning( ) )
-            {
-                servicoGeneral.starServicioProcess( );//intent );
-            }
+//            if( !servicoGeneral.isMyServiceRunning( ) )
+//            {
+//                servicoGeneral.starServicioProcess( );//intent );
+//            }
         }
 
         if( event == 32 )
         {
             accesos += absolutePath + " file or directory was opened\n";
-            if( !servicoGeneral.isMyServiceRunning( ) )
-            {
-                servicoGeneral.starServicioProcess( );//intent );
-            }
+//            if( !servicoGeneral.isMyServiceRunning( ) )
+//            {
+//                servicoGeneral.starServicioProcess( );//intent );
+//            }
         }
 
         if( ( FileObserver.CREATE & event ) != 0 )
@@ -80,10 +80,10 @@ public class MyFileObserver extends FileObserver
         if( ( FileObserver.OPEN & event ) != 0 )
         {
             accesos += name + " is opened\n";
-            if( !servicoGeneral.isMyServiceRunning( ) )
-            {
-                servicoGeneral.starServicioProcess( );//intent );
-            }
+//            if( !servicoGeneral.isMyServiceRunning( ) )
+//            {
+//                servicoGeneral.starServicioProcess( );//intent );
+//            }
         }
         // data was read from a file
         if( ( FileObserver.ACCESS & event ) != 0 )
@@ -99,7 +99,7 @@ public class MyFileObserver extends FileObserver
         if( ( FileObserver.CLOSE_NOWRITE & event ) != 0 )
         {
             accesos += name + " is closed\n";
-            servicoGeneral.stopServiceProcess( );//intent );
+//            servicoGeneral.stopServiceProcess( );//intent );
         }
         // someone has a file or directory open for writing, and closed it
         if( ( FileObserver.CLOSE_WRITE & event ) != 0 )
@@ -116,7 +116,7 @@ public class MyFileObserver extends FileObserver
         if( ( FileObserver.DELETE_SELF & event ) != 0 )
         {
             accesos += absolutePath + "/" + " is deleted\n";
-            servicoGeneral.stopServiceProcess( );//intent );
+//            servicoGeneral.stopServiceProcess( );//intent );
         }
         // a file or subdirectory was moved from the monitored directory
         if( ( FileObserver.MOVED_FROM & event ) != 0 )
@@ -143,7 +143,7 @@ public class MyFileObserver extends FileObserver
         if( !directorio )
         {
             data.existDelete( CLASE_FILE );
-            data.crearFile( CLASE_FILE, "TIME;Process;Foreground;Perceptible;Visible" );
+            data.crearFile( CLASE_FILE, "TIME" );
             data.writeToFile( accesos, true, CLASE_FILE );
         }
     }
