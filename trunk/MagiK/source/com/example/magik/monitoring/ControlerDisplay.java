@@ -2,6 +2,8 @@ package com.example.magik.monitoring;
 
 import java.util.ArrayList;
 
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -15,12 +17,14 @@ public class ControlerDisplay
     private VelocityTracker vTracker;
     private ArrayList<Float> valoresX;
     private ArrayList<Float> valoresY;
+    private String tipoLectura;
 
     public ControlerDisplay( )
     {
         valoresX = new ArrayList<Float>( );
         valoresY = new ArrayList<Float>( );
         vTracker = VelocityTracker.obtain( );
+        tipoLectura = "";
     }
 
     public String velocityTrack( MotionEvent event )
@@ -29,7 +33,6 @@ public class ControlerDisplay
         switch( action )
         {
             case MotionEvent.ACTION_DOWN:
-//                Log.v( "KELVIN", "ENTROOOOOOOOOOO" );
                 valoresX = new ArrayList<Float>( );
                 valoresY = new ArrayList<Float>( );
                 if( vTracker == null )
@@ -45,14 +48,10 @@ public class ControlerDisplay
             case MotionEvent.ACTION_MOVE:
                 vTracker.addMovement( event );
                 vTracker.computeCurrentVelocity( 1000 );
-//                Log.v( "", "X velocity is " + vTracker.getXVelocity( ) + " pixels per second" );
-//                Log.v( "", "Y velocity is " + vTracker.getYVelocity( ) + " pixels per second" );
                 valoresX.add( vTracker.getXVelocity( ) );
                 valoresY.add( vTracker.getYVelocity( ) );
-
                 break;
             case MotionEvent.ACTION_UP:
-//                Log.v( "KELVIN", "SOLTOOOOOOOOOOOOOOOOO" );
                 return calcularMovimiento( );
             case MotionEvent.ACTION_CANCEL:
                 vTracker.recycle( );
@@ -126,19 +125,73 @@ public class ControlerDisplay
                 direccion = "ARRIBA";
             }
         }
-        if( valor < 300 && valor > -300 )
+        if( valor < 100 && valor > -100 )
         {
+            tipoLectura = LECTURA;
             return LECTURA + ";" +direccion + ";" + valor + ";" + sentido;
         }
-        else if( valor >= 300 && valor < 1500 )
+        else if( valor >= 100 && valor < 1500 )
         {
+            tipoLectura = LECTURA_RAPIDA ;
             return LECTURA_RAPIDA + ";" +direccion + ";" + valor + ";" + sentido;
 
         }
         else
         {
+            tipoLectura = BUSQUEDA;
             return BUSQUEDA + ";" +direccion + ";" + valor + ";" + sentido;
 
         }
+    }
+    
+    public String analizarVelocidadCorto( int valor, String sentido )
+    {
+        String direccion;
+
+        if( valor >= 0 )
+        {
+            if( sentido.equals( "X" ) )
+            {
+                direccion = "DERECHA";
+            }
+            else
+            {
+                direccion = "ABAJO";
+            }
+
+        }
+        else
+        {
+            if( sentido.equals( "X" ) )
+            {
+                direccion = "IZQUIERDA";
+            }
+            else
+            {
+                direccion = "ARRIBA";
+            }
+        }
+        if( valor < 100 && valor > -100 )
+        {
+            tipoLectura = LECTURA;
+            return  valor + "";
+        }
+        else if( valor >= 100 && valor < 1500 )
+        {
+            tipoLectura = LECTURA_RAPIDA ;
+            return valor + "";
+
+        }
+        else
+        {
+            tipoLectura = BUSQUEDA;
+            return  valor + "";
+
+        }
+    }
+    
+    public String darTipoLectura()
+    {
+        return tipoLectura;
     }
 }
