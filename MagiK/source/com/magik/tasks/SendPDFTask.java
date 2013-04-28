@@ -20,6 +20,7 @@ import com.recomendacion.servicio.WebServiceConnection;
 
 import android.os.AsyncTask;
 import android.util.Base64;
+import android.util.Log;
 
 /**
  * @author User
@@ -55,10 +56,13 @@ public class SendPDFTask extends AsyncTask<Object, Void, String> {
 			httpPost.setEntity(entity);			
 			HttpClient client = new DefaultHttpClient();
 			HttpResponse response = client.execute(httpPost);
-			Header[] head = response.getAllHeaders();
+			Header[] headers = response.getAllHeaders();
 			resp = String.valueOf(response.getStatusLine().getStatusCode());
 			response.getEntity().consumeContent();
-			
+			for(Header head:headers)
+			{
+				resp.concat(";"+head.getValue());
+			}
 			//TODO
 			/*
 			 * Descomentar cuando le pasen el código de los servicios.
@@ -84,7 +88,7 @@ public class SendPDFTask extends AsyncTask<Object, Void, String> {
 			body = null;
 			client = null;
 			response = null;
-			head = null;
+			headers = null;
 			/*
 			nParams = null;
 			p = null;
@@ -103,6 +107,7 @@ public class SendPDFTask extends AsyncTask<Object, Void, String> {
 		{
 			System.out.println(e.getMessage());
 		}
+		System.out.println(resp);
 		return resp;
 	}
 	
