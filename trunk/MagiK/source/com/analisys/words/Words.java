@@ -44,6 +44,7 @@ public class Words
 {
 
     private ArrayList<String> tokens;
+    private ArrayList<String> leguaje;
     private static int NGRAM = 3;
     private static int MIN_COUNT = 5;
     private static int MAX_NGRAM_REPORTING_LENGTH = 2;
@@ -53,6 +54,10 @@ public class Words
     private static File BACKGROUND_DIR = new File( root.getAbsolutePath( ) + "/Magik/train" );
     private static File FOREGROUND_DIR = new File( root.getAbsolutePath( ) + "/Magik/test" );
 
+    public ArrayList<String> getLenguaje()
+    {
+        return leguaje;
+    }
     
     private void lenguaje( String texto )
     {
@@ -63,13 +68,21 @@ public class Words
             DetectorFactory.loadProfile(root.getAbsolutePath( ) + "/Magik/profiles");
             Detector detector = DetectorFactory.create();
             detector.append(texto);
+            String temp;
             ArrayList<Language> langlist = detector.getProbabilities();
             for( int i = 0; i < langlist.size( ); i++ )
             {
-               System.out.println( langlist.get( i ).lang);
-               System.out.println( langlist.get( i ).prob);
+                temp = langlist.get( i ).lang + ";" + langlist.get( i ).prob;
+                leguaje = new ArrayList<String>( );
+                leguaje.add( temp );
             }
             
+            langlist = null;
+            temp = null;
+            detector = null;
+            root = null;
+            DetectorFactory.clear( );
+            System.gc( );
         }
         catch( LangDetectException e )
         {
@@ -93,18 +106,27 @@ public class Words
         StringBuilder sb = new StringBuilder( );
         String line = null;
         
+        String txt;
         while( ( line = reader.readLine( ) ) != null )
         {
-            String txt = Jsoup.parse(line).text();
+            txt = Jsoup.parse(line).text();
             if( txt != "" || txt != null )
             {
                 sb.append( txt  + "\n" );
             }
         }
         String resString = sb.toString( ); // Result is here
-        
+        sb = null;
+        txt = null;
+        reader = null;
+        entity = null;
+        httpget = null;
+        httpclient = null;
+        httpParameters = null;
+        System.gc( );
         
         lenguaje(resString);
+        
         is.close( ); // Close the stream
         
         File root = android.os.Environment.getExternalStorageDirectory( );
@@ -149,6 +171,8 @@ public class Words
         {
             e.printStackTrace( );
         }
+        resString = null;
+        System.gc( );
     }
     
     public Words( String url )
@@ -191,10 +215,16 @@ public class Words
 
             System.out.println( "\nAssembling New Terms in Test vs. Training" );
             SortedSet<ScoredObject<String[]>> newTerms = foregroundModel.newTermSet( NGRAM_REPORTING_LENGTH, MIN_COUNT, MAX_COUNT, backgroundModel );
-
+            
             System.out.println( "\nNew Terms in Order of Signficance:" );
             report( newTerms );
-
+            
+            foregroundModel = null;
+            backgroundModel = null;
+            coll = null;
+            tokenizerFactory = null;
+            newTerms = null;
+            System.gc( );
             System.out.println( "\nDone." );
         }
         catch( IOException e )
@@ -210,12 +240,15 @@ public class Words
         String[] trainingFiles = directory.list( );
         TokenizedLM model = new TokenizedLM( tokenizerFactory, ngram );
         System.out.println( "Training on " + directory );
-
+        String text;
         for( int j = 0; j < trainingFiles.length; ++j )
         {
-            String text = Files.readFromFile( new File( directory, trainingFiles[ j ] ), "ISO-8859-1" );
+            text = Files.readFromFile( new File( directory, trainingFiles[ j ] ), "ISO-8859-1" );
             model.handle( text );
         }
+        text = null;
+        trainingFiles = null;
+        System.gc( );
         return model;
     }
 
@@ -223,10 +256,9 @@ public class Words
     {
         for( ScoredObject<String[]> nGram : nGrams )
         {
-            double score = nGram.score( );
-            String[] toks = nGram.getObject( );
-            report_filter( score, toks );
+            report_filter( nGram.score( ), nGram.getObject( ) );
         }
+        System.gc( );
     }
 
     private static void report_filter( double score, String[] toks )
@@ -255,4 +287,6 @@ public class Words
                 return true;
         return false;
     }
+    
+
 }

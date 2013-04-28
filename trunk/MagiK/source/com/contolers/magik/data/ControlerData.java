@@ -29,7 +29,11 @@ public class ControlerData
         File monitorFile = new File( dir, pMonitor + ".txt" );
         files.put( pMonitor, monitorFile );
         writeToFile( encabezado, false, pMonitor );
-
+        
+        root = null;
+        dir= null;
+        monitorFile = null;
+        System.gc( );
     }
 
     public String getDayFileName( )
@@ -59,6 +63,8 @@ public class ControlerData
     			temp.delete();
     		}
 		}
+		temp = null;
+		System.gc( );
 	}
     
     public void writeToFile( String text, boolean time, String pMonitor )
@@ -77,6 +83,12 @@ public class ControlerData
             pw.flush( );
             pw.close( );
             f.close( );
+            
+            temp = null;
+            f = null;
+            pw = null;
+            
+            System.gc( );
         }
         catch( FileNotFoundException e )
         {
