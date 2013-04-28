@@ -1,5 +1,6 @@
 package com.radaee.reader;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import net.sf.andpdf.pdfviewer.R;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import com.contolers.magik.data.ControlerData;
 import com.data.bd.PersistenceManager;
 import com.example.magik.monitoring.DatosDisplay;
+import com.magik.tasks.SendPDFTask;
 import com.radaee.grid.PDFGridItem;
 import com.radaee.grid.PDFGridView;
 import com.radaee.pdf.Document;
@@ -32,6 +34,7 @@ import com.radaee.reader.PDFReader.PDFReaderListener;
 import com.radaee.view.PDFVPage;
 import com.radaee.view.PDFViewThumb.PDFThumbListener;
 import com.recomendacion.servicio.Servicio;
+import com.recomendacion.servicio.WebServiceConnection;
 
 public class PDFReaderAct extends Activity implements OnItemClickListener, OnClickListener, PDFReaderListener, PDFThumbListener
 {
@@ -71,12 +74,13 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
     
     private boolean sensorProcess;
     private PersistenceManager persistenceManager;
+	private String path;
 
     @Override
     public void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        
+        path = "";
         data = new ControlerData( );
         recommendationsThread = new Thread( )
         {
@@ -217,16 +221,39 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
 
     public void onItemClick( AdapterView<?> arg0, View arg1, int arg2, long arg3 )
     {
-        if( arg0 == m_vFiles )
+    	if( arg0 == m_vFiles )
         {
             PDFGridItem item = ( PDFGridItem )arg1;
+           
             if( item.is_dir( ) )
             {
+            	path+=item.get_name()+"/";
                 m_vFiles.PDFGotoSubdir( item.get_name( ) );
             }
             else
             {
                 m_doc.Close( );
+                path+=item.get_name();
+                
+                File f = new File(path);
+                SendPDFTask task = new SendPDFTask();
+                try {
+                	Object[] params = new Object[2];
+                	params[0] = f;
+                	params[1] = WebServiceConnection.PALABRAS_FILE; 
+					task.execute(params);
+					params = null;
+					params = new Object[2];
+					params[0] = f;
+                	params[1] = WebServiceConnection.RECOMEND_FILE;
+                	params = null;
+					task.execute(params);
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+                f = null;
+                task = null;
+                System.gc();
                 String datos[] = item.get_name( ).split( "/" );
                 CLASE_DYSPLAY = CLASE_DYSPLAY + datos[ datos.length - 1 ];
                 int ret = item.open_doc( m_doc, null );
