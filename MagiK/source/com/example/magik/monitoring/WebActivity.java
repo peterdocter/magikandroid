@@ -98,7 +98,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                                     // "Analizando pagina" + objWebView.getUrl(
                                     // ), Toast.LENGTH_SHORT ).show( );
                                     ArrayList<String> pals = new ArrayList<String>( );
-                                    if( connected( ) )
+                                    if( !connected( ) )
                                     {
                                         WebServiceConnection connection = WebServiceConnection.darInctancia( );
                                         String[] nombresParams = { "interes", "archivo" };
@@ -213,7 +213,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
     {
         try
         {
-            if( connected( ) )
+            if( !connected( ) )
             {
                 WebServiceConnection connection = WebServiceConnection.darInctancia( );
                 String[] nombresParams = { "url", "interes" };
