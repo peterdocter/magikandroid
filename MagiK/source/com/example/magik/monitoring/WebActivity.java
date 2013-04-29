@@ -5,12 +5,14 @@ import java.util.Arrays;
 
 import net.sf.andpdf.pdfviewer.R;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,7 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.analisys.words.PalabrasClave;
-import com.analisys.words.Words;
 import com.contolers.magik.data.ControlerData;
 import com.data.bd.PersistenceManager;
 import com.recomendacion.servicio.WebServiceConnection;
@@ -54,6 +55,7 @@ public class WebActivity extends Activity implements OnTouchListener,
 	private boolean cargoplabras;
 	private boolean cargoClaves;
 	private boolean cargolenguaje;
+	private String[] recs;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -110,11 +112,12 @@ public class WebActivity extends Activity implements OnTouchListener,
 
 									} else {
 										if (!cargoplabras) {
-//											Words w = new Words();
-											boolean exito = false;//w.startWords(objWebView.getUrl());
+											// Words w = new Words();
+											boolean exito = false;// w.startWords(objWebView.getUrl());
 											if (exito) {
 												if (!cargolenguaje) {
-//													lenguajes = w.getLenguaje();
+													// lenguajes =
+													// w.getLenguaje();
 													if (lenguajes != null
 															&& lenguajes.size() > 0) {
 														// // Toast.makeText(
@@ -130,13 +133,13 @@ public class WebActivity extends Activity implements OnTouchListener,
 														.darInstacia();
 												pals = palabras.getPalabras();
 												cargoplabras = true;
-//												w = null;
+												// w = null;
 											}
 											System.gc();
 										}
-									}								
+									}
 									recomendaciones(pals);
-									
+
 								}
 
 								sleep(30000);
@@ -193,12 +196,14 @@ public class WebActivity extends Activity implements OnTouchListener,
 
 	protected void recomendaciones(ArrayList<String> palabras) {
 		try {
-			if(!connected())
-			{
-				WebServiceConnection connection = WebServiceConnection.darInctancia();
-				String[] nombresParams = {"url", "interes"};
-				Object[] params = {objWebView.getUrl(), "LECTURA"};
-				String[] nWords = ((String)connection.accederServicio(WebServiceConnection.RECOMEND_URL, nombresParams, params)).split(";");
+			if (!connected()) {
+				WebServiceConnection connection = WebServiceConnection
+						.darInctancia();
+				String[] nombresParams = { "url", "interes" };
+				Object[] params = { objWebView.getUrl(), "LECTURA" };
+				String[] nWords = ((String) connection.accederServicio(
+						WebServiceConnection.RECOMEND_URL, nombresParams,
+						params)).split(";");
 				for (int i = 0; i < nWords.length; i++) {
 					palabras.add(nWords[i]);
 				}
@@ -208,25 +213,25 @@ public class WebActivity extends Activity implements OnTouchListener,
 			}
 			String[] pals = new String[palabras.size()];
 			pals = palabras.toArray(pals);
-			//TODO
-			pals = new String[]{"Kelvin", "Tita", "Julio"};
-			System.out.println("ARREGLO: -------------------------------------------------- " +Arrays.deepToString(pals));
-			if(pals.length>0)
-			{
-				persistenceManager = new PersistenceManager(getApplicationContext());
+			// TODO
+			pals = new String[] { "Kelvin", "Tita", "Julio" };
+			System.out
+					.println("ARREGLO: -------------------------------------------------- "
+							+ Arrays.deepToString(pals));
+			if (pals.length > 0) {
+				persistenceManager = new PersistenceManager(
+						getApplicationContext());
 				System.out.println("BDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
 				String urlTemp = objWebView.getUrl();
-				if(!persistenceManager.isFileInTable(urlTemp))
-				{
-					persistenceManager.createDocument(urlTemp, PersistenceManager.HTML, objWebView.getTitle());
-					
+				if (!persistenceManager.isFileInTable(urlTemp)) {
+					persistenceManager.createDocument(urlTemp,
+							PersistenceManager.HTML, objWebView.getTitle());
+
 				}
 				sensorProcess = false;
 				ArrayList<String> guardar = new ArrayList<String>();
-				for(String palabra: pals)
-				{
-					if(!persistenceManager.isPKInTable(palabra, urlTemp))
-					{
+				for (String palabra : pals) {
+					if (!persistenceManager.isPKInTable(palabra, urlTemp)) {
 						guardar.add(palabra);
 					}
 				}
@@ -235,34 +240,39 @@ public class WebActivity extends Activity implements OnTouchListener,
 				guardar = null;
 				persistenceManager.savePalabrasClave(urlTemp, g);
 				g = null;
-				ArrayList<String> recomms = persistenceManager.recomendar(urlTemp);
-				String[] recs = new String[recomms.size()];
+				ArrayList<String> recomms = persistenceManager
+						.recomendar(urlTemp);
+				recs = new String[recomms.size()];
 				for (int i = 0; i < recs.length; i++) {
 					recs[i] = recomms.get(i);
 				}
-				persistenceManager.saveRecommendations(objWebView.getUrl(), recs);
-				Toast.makeText(getApplicationContext(), Arrays.deepToString(recs), Toast.LENGTH_LONG).show();
+				persistenceManager.saveRecommendations(objWebView.getUrl(),
+						recs);
+				System.out.println(Arrays.deepToString(recs));
+				Vibrator vibrator = (Vibrator) WebActivity.this
+						.getSystemService(VIBRATOR_SERVICE);
+				vibrator.vibrate(1000);
+
 				pals = null;
 				recomms = null;
-				recs = null;		
+				recs = null;
 				persistenceManager = null;
 			}
-			
+
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
-		
 		System.gc();
 	}
 
 	public void actualizarTextoPk(ArrayList<String> texto) {
 		TextView text = (TextView) findViewById(R.id.TextViewPk);
-        text.setText( "" );
+		text.setText("");
 		if (texto != null && texto.size() > 0) {
 			for (int i = 0; i < texto.size(); i++) {
-                String anterior = (String) text.getText();
-                String cambio = texto.get(i) + "\n" + anterior;
-                text.setText(cambio);
+				String anterior = (String) text.getText();
+				String cambio = texto.get(i) + "\n" + anterior;
+				text.setText(cambio);
 			}
 		} else {
 			text.setText("No se tiene cargado las Pk");
@@ -271,13 +281,12 @@ public class WebActivity extends Activity implements OnTouchListener,
 
 	public void actualizarTextoLecturas(ArrayList<String> texto) {
 		TextView text = (TextView) findViewById(R.id.TextViewL);
-		text.setText( "" );
+		text.setText("");
 		if (texto != null) {
-			for (int i = 0; i < texto.size(); i++) 
-			{
-	            String anterior = (String) text.getText();
-	            String cambio = texto.get(i) + "\n" + anterior;
-	            text.setText(cambio);
+			for (int i = 0; i < texto.size(); i++) {
+				String anterior = (String) text.getText();
+				String cambio = texto.get(i) + "\n" + anterior;
+				text.setText(cambio);
 			}
 		} else {
 			text.setText("No se tiene cargado el idioma");
@@ -311,16 +320,31 @@ public class WebActivity extends Activity implements OnTouchListener,
 
 	private void inicializarBotonCargar() {
 		btnAgregar = (Button) findViewById(R.id.button1);
-		btnAgregar.setEnabled(false);
-		// btnAgregar.setOnClickListener( new View.OnClickListener( )
-		// {
-		//
-		// public void onClick( View v )
-		// {
-		// Words w = new Words( objWebView.getUrl( ) );
-		// }
-		// }
-		// );
+		btnAgregar.setEnabled(true);
+		btnAgregar.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			/*
+			 * (non-Javadoc)
+			 * @see android.view.View.OnClickListener#onClick(android.view.View)
+			 */
+			public void onClick(View v) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						WebActivity.this);
+				builder.setTitle("Recomendaciones");
+				if(recs!=null &&recs.length>0)
+				{					
+					builder.setMessage(Arrays.deepToString(recs));
+				}
+				else
+				{
+					builder.setMessage("No hay recomendaciones disponibles.");
+				}				
+				builder.setCancelable(true);
+				AlertDialog alert = builder.create();
+				alert.show();
+			}
+		});
 	}
 
 	private void inicializarBotonLenguaje() {
