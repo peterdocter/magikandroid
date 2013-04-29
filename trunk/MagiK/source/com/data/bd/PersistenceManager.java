@@ -248,7 +248,6 @@ public class PersistenceManager
             database = helper.getReadableDatabase( );
             String sql = "SELECT p." + SQLiteHelper.COLUMN_PALABRA_CLAVE + " FROM " + SQLiteHelper.TABLE_PALABRAS_CLAVE + " p JOIN " + SQLiteHelper.TABLE_DOCUMENTS + " d ON " + SQLiteHelper.COLUMN_P_D_ID + " = " + SQLiteHelper.COLUMN_DOCUMENT_ID
                     + "WHERE d." + SQLiteHelper.COLUMN_DOCUMENT_URL + "LIKE '" + documentName + "'";
-            System.out.println( sql );
             Cursor cursor = database.rawQuery( sql, null );
             if( cursor.moveToFirst( ) )
             {
@@ -286,7 +285,6 @@ public class PersistenceManager
             database = helper.getReadableDatabase( );
             String sql = "SELECT p." + SQLiteHelper.COLUMN_RECOMMENDACION_URL + " FROM " + SQLiteHelper.TABLE_RECOMMENDACION + " p JOIN " + SQLiteHelper.TABLE_DOCUMENTS + " d ON p." + SQLiteHelper.COLUMN_R_D_ID + " = d."
                     + SQLiteHelper.COLUMN_DOCUMENT_ID + " WHERE d." + SQLiteHelper.COLUMN_DOCUMENT_URL + " LIKE '" + documentName + "'";
-            System.out.println( sql );
             Cursor cursor = database.rawQuery( sql, null );
             if( cursor.moveToFirst( ) )
             {
@@ -358,6 +356,8 @@ public class PersistenceManager
     		database = helper.getReadableDatabase();
     		Cursor cursor = database.query( SQLiteHelper.TABLE_DOCUMENTS, new String[]{ SQLiteHelper.COLUMN_DOCUMENT_URL}, SQLiteHelper.COLUMN_DOCUMENT_URL + " LIKE '"+fileName+"' ", null, null, null, null );
     		repeated = cursor.moveToFirst();
+    		cursor.close();
+    		database.close();
 		} 
     	catch (Exception e) 
     	{
@@ -367,6 +367,28 @@ public class PersistenceManager
     	return repeated;
     }
     
+    
+    public boolean isPKInTable(String palabra, String url)
+    {
+    	
+    	boolean repeated = false;
+    	try 
+    	{
+    		int id = getDocument(url);
+    		database = helper.getReadableDatabase();
+    		Cursor cursor = database.query( SQLiteHelper.TABLE_PALABRAS_CLAVE, new String[]{ SQLiteHelper.COLUMN_PALABRA_CLAVE_ID}, SQLiteHelper.COLUMN_PALABRA_CLAVE+ " LIKE '"+palabra+"' AND "
+    		+ SQLiteHelper.COLUMN_P_D_ID + " = "+id, null, null, null, null );
+    		repeated = cursor.moveToFirst();
+    		cursor.close();
+    		database.close();
+		} 
+    	catch (Exception e) 
+    	{
+			System.out.println(e.getMessage());
+		}
+    	
+    	return repeated;
+    }
     
     public void savePalabrasClave(String document, String[] pk  )
     {
