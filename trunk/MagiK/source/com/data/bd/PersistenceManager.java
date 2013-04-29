@@ -243,22 +243,24 @@ public class PersistenceManager
     public String[] getPalabraClaveByDocument( String documentName ) throws Exception
     {
         String[] palabras_clave = null;
+        ArrayList<String> temp = new ArrayList<String>();
         try
         {
             database = helper.getReadableDatabase( );
             String sql = "SELECT p." + SQLiteHelper.COLUMN_PALABRA_CLAVE + " FROM " + SQLiteHelper.TABLE_PALABRAS_CLAVE + " p JOIN " + SQLiteHelper.TABLE_DOCUMENTS + " d ON " + SQLiteHelper.COLUMN_P_D_ID + " = " + SQLiteHelper.COLUMN_DOCUMENT_ID
-                    + "WHERE d." + SQLiteHelper.COLUMN_DOCUMENT_URL + "LIKE '" + documentName + "'";
+                    + " WHERE d." + SQLiteHelper.COLUMN_DOCUMENT_URL + " LIKE '" + documentName + "'";
             Cursor cursor = database.rawQuery( sql, null );
+            
             if( cursor.moveToFirst( ) )
-            {
-                palabras_clave = new String[cursor.getCount( )];
-                String s;
-                for( int i = 0; i < palabras_clave.length; i++ )
-                {
-                    s = cursor.getString( 0 );
-                    palabras_clave[ i ] = s;
-                }
+            {            	
+            	do
+            	{
+            		temp.add(String.valueOf(cursor.getInt(0)));
+            	}
+            	while(cursor.moveToNext());               
             }
+            palabras_clave = new String[temp.size()];
+            palabras_clave = temp.toArray(palabras_clave);
             cursor.close( );
             database.close( );
             cursor = null;
@@ -280,6 +282,7 @@ public class PersistenceManager
     public String[] getRecommendedClaveByDocument( String documentName ) throws Exception
     {
         String[] recommendations = null;
+        ArrayList<String> temp = new ArrayList<String>();
         try
         {
             database = helper.getReadableDatabase( );
@@ -287,15 +290,15 @@ public class PersistenceManager
                     + SQLiteHelper.COLUMN_DOCUMENT_ID + " WHERE d." + SQLiteHelper.COLUMN_DOCUMENT_URL + " LIKE '" + documentName + "'";
             Cursor cursor = database.rawQuery( sql, null );
             if( cursor.moveToFirst( ) )
-            {
-                recommendations = new String[cursor.getCount( )];
-                String s;
-                for( int i = 0; i < recommendations.length; i++ )
-                {
-                    s = cursor.getString( 0 );
-                    recommendations[ i ] = s;
-                }
+            {            	
+            	do
+            	{
+            		temp.add(String.valueOf(cursor.getInt(0)));
+            	}
+            	while(cursor.moveToNext());               
             }
+            recommendations = new String[temp.size()];
+            recommendations = temp.toArray(recommendations);            
             cursor.close( );
             database.close( );
             cursor = null;
@@ -308,6 +311,9 @@ public class PersistenceManager
         return recommendations;
     }
     
+    
+    
+    
    
 
     /**
@@ -317,20 +323,22 @@ public class PersistenceManager
      */
     public String[] getAllDocuments( ) throws Exception
     {
-        String[] mixes = null;
-       
+        String[] docs = null;
+        ArrayList<String> temp = new ArrayList<String>();
         try
         {
             database = helper.getReadableDatabase( );
-            Cursor cursor = database.query( SQLiteHelper.TABLE_DOCUMENTS, new String[]{ SQLiteHelper.COLUMN_DOCUMENT_ID, SQLiteHelper.COLUMN_DOCUMENT_URL, SQLiteHelper.COLUMN_DOCUMENT_TIPO , SQLiteHelper.COLUMN_DOCUMENT_TITLE }, null, null, null, null, null );
+            Cursor cursor = database.query( SQLiteHelper.TABLE_DOCUMENTS, new String[]{ SQLiteHelper.COLUMN_DOCUMENT_ID}, null, null, null, null, null );
             if( cursor.moveToFirst( ) )
-            {
-                mixes = new String[cursor.getCount( )];
-                for( int i = 0; i < mixes.length; i++ )
-                {
-                    mixes[ i ] = cursor.getString( 0 );
-                }
+            {            	
+            	do
+            	{
+            		temp.add(String.valueOf(cursor.getInt(0)));
+            	}
+            	while(cursor.moveToNext());               
             }
+            docs = new String[temp.size()];
+            docs = temp.toArray(docs);
             cursor.close( );
             database.close( );
             cursor = null;
@@ -340,7 +348,7 @@ public class PersistenceManager
         {
             throw new Exception( e.getMessage( ) );
         }
-        return mixes;
+        return docs;
     }
     
     /**
@@ -441,20 +449,25 @@ public class PersistenceManager
     	try 
     	{
     		String[] documents = getAllDocuments();
-			String[] recs = getRecommendedClaveByDocument(document);
+			String[] p2 = getPalabraClaveByDocument(document);
 			recomendaciones = new ArrayList<String>();
 			for(int i = 0; i < documents.length; i ++)
 			{
 				if(!documents[i].equals(document))
 				{
-					String[] r = getRecommendedClaveByDocument(documents[i]);
-					if(r!=null)
+					String[] p = getPalabraClaveByDocument(documents[i]);
+					if(p2!= null && compareArrays(p2, p))
 					{
-						if(compareArrays(recs, r))
+						recomendaciones.add(documents[i]);
+						String[] r = getRecommendedClaveByDocument(documents[i]);
+						for(String s:r)
 						{
-							recomendaciones.add(documents[i]);						
+							if(!recomendaciones.contains(s))
+							{
+								recomendaciones.add(s);
+							}
 						}
-					}					
+					}
 				}
 			}
 			
