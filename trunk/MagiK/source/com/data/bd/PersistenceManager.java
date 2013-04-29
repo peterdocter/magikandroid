@@ -426,10 +426,13 @@ public class PersistenceManager
 				if(!documents[i].equals(document))
 				{
 					String[] r = getRecommendedClaveByDocument(documents[i]);
-					if(compareArrays(recs, r))
+					if(r!=null)
 					{
-						recomendaciones.add(documents[i]);						
-					}
+						if(compareArrays(recs, r))
+						{
+							recomendaciones.add(documents[i]);						
+						}
+					}					
 				}
 			}
 			
