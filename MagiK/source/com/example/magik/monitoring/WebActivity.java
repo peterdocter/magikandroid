@@ -258,17 +258,16 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                 ArrayList<String> recomms = persistenceManager.recomendar( urlTemp );
                 recs = new String[recomms.size( )];
                 for( int i = 0; i < recs.length; i++ )
-                {
+                {                	
                     recs[ i ] = recomms.get( i );
                 }
                 persistenceManager.saveRecommendations( objWebView.getUrl( ), recs );
-                System.out.println( Arrays.deepToString( recs ) );
+                System.out.println("Recomendaciones: "+ Arrays.deepToString( recs ) );
                 Vibrator vibrator = ( Vibrator )WebActivity.this.getSystemService( VIBRATOR_SERVICE );
                 vibrator.vibrate( 1000 );
 
                 pals = null;
                 recomms = null;
-                recs = null;
                 persistenceManager = null;
             }
 
