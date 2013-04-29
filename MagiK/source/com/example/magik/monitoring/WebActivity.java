@@ -1,6 +1,7 @@
 package com.example.magik.monitoring;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import net.sf.andpdf.pdfviewer.R;
 import android.app.Activity;
@@ -20,12 +21,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.analisys.words.PalabrasClave;
 import com.analisys.words.Words;
 import com.contolers.magik.data.ControlerData;
-import com.contolers.magik.web.WebControlLogStatic;
 import com.data.bd.PersistenceManager;
-import com.recomendacion.servicio.Servicio;
 import com.recomendacion.servicio.WebServiceConnection;
 
 public class WebActivity extends Activity implements OnTouchListener,
@@ -110,11 +110,11 @@ public class WebActivity extends Activity implements OnTouchListener,
 
 									} else {
 										if (!cargoplabras) {
-											Words w = new Words();
-											boolean exito = w.startWords(objWebView.getUrl());
+//											Words w = new Words();
+											boolean exito = false;//w.startWords(objWebView.getUrl());
 											if (exito) {
 												if (!cargolenguaje) {
-													lenguajes = w.getLenguaje();
+//													lenguajes = w.getLenguaje();
 													if (lenguajes != null
 															&& lenguajes.size() > 0) {
 														// // Toast.makeText(
@@ -130,15 +130,13 @@ public class WebActivity extends Activity implements OnTouchListener,
 														.darInstacia();
 												pals = palabras.getPalabras();
 												cargoplabras = true;
-												w = null;
+//												w = null;
 											}
 											System.gc();
 										}
-									}
-									if(!pals.isEmpty())
-									{
-										recomendaciones(pals);
-									}
+									}								
+									recomendaciones(pals);
+									
 								}
 
 								sleep(30000);
@@ -195,27 +193,60 @@ public class WebActivity extends Activity implements OnTouchListener,
 
 	protected void recomendaciones(ArrayList<String> palabras) {
 		try {
-			String[] pals = new String[palabras.size()];
-			for (int i = 0; i < pals.length; i++) {
-				pals[i] = palabras.get(i);
-			}
-			persistenceManager = new PersistenceManager(getApplicationContext());
-			if(!persistenceManager.isFileInTable(objWebView.getUrl()))
+			if(!connected())
 			{
-				persistenceManager.createDocument(objWebView.getUrl(), PersistenceManager.HTML, objWebView.getTitle());
+				WebServiceConnection connection = WebServiceConnection.darInctancia();
+				String[] nombresParams = {"url", "interes"};
+				Object[] params = {objWebView.getUrl(), "LECTURA"};
+				String[] nWords = ((String)connection.accederServicio(WebServiceConnection.RECOMEND_URL, nombresParams, params)).split(";");
+				for (int i = 0; i < nWords.length; i++) {
+					palabras.add(nWords[i]);
+				}
+				nombresParams = null;
+				params = null;
+				nWords = null;
+			}
+			String[] pals = new String[palabras.size()];
+			pals = palabras.toArray(pals);
+			//TODO
+			pals = new String[]{"Kelvin", "Tita", "Julio"};
+			System.out.println("ARREGLO: -------------------------------------------------- " +Arrays.deepToString(pals));
+			if(pals.length>0)
+			{
+				persistenceManager = new PersistenceManager(getApplicationContext());
+				System.out.println("BDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+				String urlTemp = objWebView.getUrl();
+				if(!persistenceManager.isFileInTable(urlTemp))
+				{
+					persistenceManager.createDocument(urlTemp, PersistenceManager.HTML, objWebView.getTitle());
+					
+				}
+				sensorProcess = false;
+				ArrayList<String> guardar = new ArrayList<String>();
+				for(String palabra: pals)
+				{
+					if(!persistenceManager.isPKInTable(palabra, urlTemp))
+					{
+						guardar.add(palabra);
+					}
+				}
+				String[] g = new String[guardar.size()];
+				g = guardar.toArray(g);
+				guardar = null;
+				persistenceManager.savePalabrasClave(objWebView.getUrl(), g);
+				g = null;
+				ArrayList<String> recomms = persistenceManager.recomendar(objWebView.getUrl());
+				String[] recs = new String[recomms.size()];
+				for (int i = 0; i < recs.length; i++) {
+					recs[i] = recomms.get(i);
+				}
+				persistenceManager.saveRecommendations(objWebView.getUrl(), recs);
+				pals = null;
+				recomms = null;
+				recs = null;		
+				persistenceManager = null;
 			}
 			
-			persistenceManager.savePalabrasClave(objWebView.getUrl(), pals);
-			ArrayList<String> recomms = persistenceManager.recomendar(objWebView.getUrl());
-			String[] recs = new String[recomms.size()];
-			for (int i = 0; i < recs.length; i++) {
-				recs[i] = recomms.get(i);
-			}
-			persistenceManager.saveRecommendations(objWebView.getUrl(), recs);
-			pals = null;
-			recomms = null;
-			recs = null;		
-			persistenceManager = null;
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
