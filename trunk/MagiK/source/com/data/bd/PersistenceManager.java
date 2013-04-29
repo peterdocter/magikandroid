@@ -398,6 +398,28 @@ public class PersistenceManager
     	return repeated;
     }
     
+    public boolean isRecInTable(String rec, String url)
+    {
+    	
+    	boolean repeated = false;
+    	try 
+    	{
+    		int id = getDocument(url);
+    		database = helper.getReadableDatabase();
+    		Cursor cursor = database.query( SQLiteHelper.TABLE_RECOMMENDACION, new String[]{ SQLiteHelper.COLUMN_RECOMEN_ID}, SQLiteHelper.COLUMN_RECOMMENDACION_URL+ " LIKE '"+rec+"' AND "
+    		+ SQLiteHelper.COLUMN_R_D_ID + " = "+id, null, null, null, null );
+    		repeated = cursor.moveToFirst();
+    		cursor.close();
+    		database.close();
+		} 
+    	catch (Exception e) 
+    	{
+			System.out.println(e.getMessage());
+		}
+    	
+    	return repeated;
+    }
+    
     public void savePalabrasClave(String document, String[] pk  )
     {
         try {           
@@ -428,11 +450,14 @@ public class PersistenceManager
 			ContentValues values;
 			for (int i = 0; i < recs.length; i++) {
 				String rec = recs[i];
-				values = new ContentValues();
-				values.put(SQLiteHelper.COLUMN_RECOMMENDACION_URL, rec);
-				values.put(SQLiteHelper.COLUMN_R_D_ID, id);
-				database.insert(SQLiteHelper.TABLE_RECOMMENDACION, null,values);
-				values = null;
+				if(!isRecInTable(rec, document))
+				{
+					values = new ContentValues();
+					values.put(SQLiteHelper.COLUMN_RECOMMENDACION_URL, rec);
+					values.put(SQLiteHelper.COLUMN_R_D_ID, id);
+					database.insert(SQLiteHelper.TABLE_RECOMMENDACION, null,values);
+					values = null;
+				}				
 			}			
 			database.close();
 			database = null;
