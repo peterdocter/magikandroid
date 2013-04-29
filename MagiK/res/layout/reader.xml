@@ -53,28 +53,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" >
-
-        <Button
-            android:id="@+id/btnPal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Palabras Clave" />
+        android:layout_alignParentTop="true" >        
 
         <Button
             android:id="@+id/btnRec"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Recomendaciones" />
-
-        <Button
-            android:id="@+id/btn_close"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:text="Close" />
+            android:text="Recomendaciones" />        
 
     </LinearLayout>
 
