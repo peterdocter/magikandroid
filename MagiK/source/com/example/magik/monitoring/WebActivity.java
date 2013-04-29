@@ -233,14 +233,15 @@ public class WebActivity extends Activity implements OnTouchListener,
 				String[] g = new String[guardar.size()];
 				g = guardar.toArray(g);
 				guardar = null;
-				persistenceManager.savePalabrasClave(objWebView.getUrl(), g);
+				persistenceManager.savePalabrasClave(urlTemp, g);
 				g = null;
-				ArrayList<String> recomms = persistenceManager.recomendar(objWebView.getUrl());
+				ArrayList<String> recomms = persistenceManager.recomendar(urlTemp);
 				String[] recs = new String[recomms.size()];
 				for (int i = 0; i < recs.length; i++) {
 					recs[i] = recomms.get(i);
 				}
 				persistenceManager.saveRecommendations(objWebView.getUrl(), recs);
+				Toast.makeText(getApplicationContext(), Arrays.deepToString(recs), Toast.LENGTH_LONG).show();
 				pals = null;
 				recomms = null;
 				recs = null;		
