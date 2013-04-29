@@ -255,7 +255,7 @@ public class PersistenceManager
             {            	
             	do
             	{
-            		temp.add(String.valueOf(cursor.getInt(0)));
+            		temp.add(cursor.getString(0));
             	}
             	while(cursor.moveToNext());               
             }
@@ -293,7 +293,7 @@ public class PersistenceManager
             {            	
             	do
             	{
-            		temp.add(String.valueOf(cursor.getInt(0)));
+            		temp.add(cursor.getString(0));
             	}
             	while(cursor.moveToNext());               
             }
@@ -328,12 +328,12 @@ public class PersistenceManager
         try
         {
             database = helper.getReadableDatabase( );
-            Cursor cursor = database.query( SQLiteHelper.TABLE_DOCUMENTS, new String[]{ SQLiteHelper.COLUMN_DOCUMENT_ID}, null, null, null, null, null );
+            Cursor cursor = database.query( SQLiteHelper.TABLE_DOCUMENTS, new String[]{ SQLiteHelper.COLUMN_DOCUMENT_URL}, null, null, null, null, null );
             if( cursor.moveToFirst( ) )
             {            	
             	do
             	{
-            		temp.add(String.valueOf(cursor.getInt(0)));
+            		temp.add(cursor.getString(0));
             	}
             	while(cursor.moveToNext());               
             }
