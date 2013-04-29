@@ -2,15 +2,19 @@ package com.radaee.reader;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import net.sf.andpdf.pdfviewer.R;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -25,6 +29,7 @@ import android.widget.Toast;
 import com.contolers.magik.data.ControlerData;
 import com.data.bd.PersistenceManager;
 import com.example.magik.monitoring.DatosDisplay;
+import com.example.magik.monitoring.WebActivity;
 import com.magik.tasks.SendPDFTask;
 import com.radaee.grid.PDFGridItem;
 import com.radaee.grid.PDFGridView;
@@ -42,18 +47,19 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
     private PDFThumbView m_thumb = null;
     private RelativeLayout m_layout;
     private Document m_doc = new Document( );
-    private Button btn_close;
+//    private Button btn_close;
     private Button btn_pal;
     private Button btn_rec;
 
     private boolean m_set = false;
     private ArrayList<String> recs;
+    private String[] recsPDF;
     private ArrayList<String> palabras;
 
     private Thread thread;
     private Thread recommendationsThread;
 
-    private String CLASE_DYSPLAY = "";
+    private String CLASE_DISPLAY = "";
     private ControlerData data;
     private DatosDisplay datosDisplay;
     
@@ -86,8 +92,7 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
                         if( datosDisplay.getLecturas( ).size( ) > 5 )
                         {
                         	Log.d("Recomendaciones", "Hizo el thread");
-                            recomendaciones( );
-                            palabrasClave();                            
+                        	recomendacionesPDF();
                             sensorProcess = false;
                         }
                         sleep( 10000 );
@@ -112,11 +117,9 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         LinearLayout bar_cmd = ( LinearLayout )m_layout.findViewById( R.id.bar_cmd );
         //LinearLayout bar_act = ( LinearLayout )m_layout.findViewById( R.id.bar_act );
         //LinearLayout bar_find = ( LinearLayout )m_layout.findViewById( R.id.bar_find );
-        btn_close = ( Button )bar_cmd.findViewById( R.id.btn_close );        
-        btn_pal = (Button)bar_cmd.findViewById(R.id.btnPal);
+//        btn_close = ( Button )bar_cmd.findViewById( R.id.btn_close );        
         btn_rec = (Button)bar_cmd.findViewById(R.id.btnRec);
         btn_rec.setOnClickListener(this);
-        btn_pal.setOnClickListener(this);
         
     }
 
@@ -137,11 +140,11 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
             rtay = rtay + respuestay.get( i ) + "\n";
         }
         String rta = rtax + "\n" + rtay;
-        // data.crearFile( CLASE_DYSPLAY, "TIME;Velocity" );
+        // data.crearFile( CLASE_DISPLAY, "TIME;Velocity" );
         if( respuestax.size( )>0  )
         {
-            data.writeToFile( rta, true, CLASE_DYSPLAY );
-            data.writeToFile( rta, true, CLASE_DYSPLAY );
+            data.writeToFile( rta, true, CLASE_DISPLAY );
+            data.writeToFile( rta, true, CLASE_DISPLAY );
         }
         rta = "";
     }
@@ -188,7 +191,7 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
                 
                 
                 String datos[] = item.get_name( ).split( "/" );
-                CLASE_DYSPLAY = CLASE_DYSPLAY + datos[ datos.length - 1 ];
+                CLASE_DISPLAY = CLASE_DISPLAY + datos[ datos.length - 1 ];
                 int ret = item.open_doc( m_doc, null );
                 switch( ret )
                 {
@@ -214,8 +217,8 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
                 m_thumb.thumbOpen( m_reader.PDFGetDoc( ), this );
                 setContentView( m_layout );
                 
-                data.existDelete( CLASE_DYSPLAY );
-                data.crearFile( CLASE_DYSPLAY, "Acción;Dirección;Velocidad (pixeles/seg);Eje" );
+                data.existDelete( CLASE_DISPLAY );
+                data.crearFile( CLASE_DISPLAY, "Acción;Dirección;Velocidad (pixeles/seg);Eje" );
                 sensorProcess = true;
                 thread = new Thread( )
                 {
@@ -266,9 +269,20 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
                 break;
             case R.id.btnRec:
             	actualizarTextoLecturas(recs);
-            	break;
-            case R.id.btnPal:
-            	actualizarTextoLecturas(palabras);
+            	AlertDialog.Builder builder = new AlertDialog.Builder(
+						PDFReaderAct.this);
+				builder.setTitle("Recomendaciones");
+				if(recsPDF!=null &&recsPDF.length>0)
+				{					
+					builder.setMessage(Arrays.deepToString(recsPDF));
+				}
+				else
+				{
+					builder.setMessage("No hay recomendaciones disponibles.");
+				}				
+				builder.setCancelable(true);
+				AlertDialog alert = builder.create();
+				alert.show();
             	break;
                 
               
@@ -341,7 +355,7 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
 					recs.add(rec);
 				}
 				persistenceManager = new PersistenceManager( this.getApplicationContext( ) );
-		        persistenceManager.saveRecommendations( CLASE_DYSPLAY, recArr );
+		        persistenceManager.saveRecommendations( CLASE_DISPLAY, recArr );
 		        persistenceManager = null;
 			}
 			else
@@ -351,11 +365,84 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
 			params = null;			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-		}
+		}	
+		System.gc();
         f = null;
         task = null;
         System.gc();
     }
+    
+    private boolean connected() {
+		boolean connected = false;
+		ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetworkInfo = manager.getActiveNetworkInfo();
+		connected = activeNetworkInfo != null
+				&& activeNetworkInfo.isConnected();
+		return connected;
+	}
+
+	protected void recomendacionesPDF() {
+		try {
+			if (!connected()) {
+				recomendaciones();
+				palabrasClave();
+			}			
+			String[] pals = new String[palabras.size()];
+			pals = palabras.toArray(pals);
+			// TODO
+			pals = new String[] { "Kelvin", "Tita", "Julio" };
+			System.out
+					.println("ARREGLO: -------------------------------------------------- "
+							+ Arrays.deepToString(pals));
+			if (pals.length > 0) {
+				persistenceManager = new PersistenceManager(
+						getApplicationContext());
+				System.out.println("BDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+				String pathTemp = path;
+				if (!persistenceManager.isFileInTable(pathTemp)) {
+					persistenceManager.createDocument(pathTemp,
+							PersistenceManager.PDF, CLASE_DISPLAY);
+
+				}
+				sensorProcess = false;
+				ArrayList<String> guardar = new ArrayList<String>();
+				for (String palabra : pals) {
+					if (!persistenceManager.isPKInTable(palabra, pathTemp)) {
+						guardar.add(palabra);
+					}
+				}
+				String[] g = new String[guardar.size()];
+				g = guardar.toArray(g);
+				guardar = null;
+				persistenceManager.savePalabrasClave(pathTemp, g);
+				g = null;
+				ArrayList<String> recomms = persistenceManager
+						.recomendar(pathTemp);
+				recsPDF = new String[recomms.size()];
+				for (int i = 0; i < recsPDF.length; i++) {
+					recsPDF[i] = recomms.get(i);
+				}
+				persistenceManager.saveRecommendations(pathTemp,
+						recsPDF);
+				System.out.println(Arrays.deepToString(recsPDF));
+				Vibrator vibrator = (Vibrator) PDFReaderAct.this
+						.getSystemService(VIBRATOR_SERVICE);
+				vibrator.vibrate(1000);
+
+				pals = null;
+				recomms = null;				
+				persistenceManager = null;
+				for(String r : recsPDF)
+				{
+					recs.add(r);
+				}
+			}
+
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+		System.gc();
+	}
     
     
     public void OnOpenURI( String uri )
