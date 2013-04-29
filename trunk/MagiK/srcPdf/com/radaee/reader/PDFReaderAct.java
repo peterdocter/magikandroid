@@ -47,7 +47,7 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
     private PDFThumbView m_thumb = null;
     private RelativeLayout m_layout;
     private Document m_doc = new Document( );
-//    private Button btn_close;
+    // private Button btn_close;
     private Button btn_pal;
     private Button btn_rec;
 
@@ -62,10 +62,10 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
     private String CLASE_DISPLAY = "";
     private ControlerData data;
     private DatosDisplay datosDisplay;
-    
+
     private boolean sensorProcess;
     private PersistenceManager persistenceManager;
-	private String path;
+    private String path;
 
     @Override
     public void onCreate( Bundle savedInstanceState )
@@ -73,26 +73,26 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         super.onCreate( savedInstanceState );
         path = "";
         data = new ControlerData( );
-        palabras = new ArrayList<String>();
-        recs = new ArrayList<String>();
+        palabras = new ArrayList<String>( );
+        recs = new ArrayList<String>( );
         sensorProcess = true;
         recommendationsThread = new Thread( )
         {
             @Override
             public void run( )
             {
-                
+
                 while( sensorProcess )
                 {
                     try
                     {
                         Log.v( "KELVIN", "Save Reads" );
                         datosDisplay = DatosDisplay.darInstacia( );
-                        Log.d("Lecturas", String.valueOf(datosDisplay.getLecturas().size()));
+                        Log.d( "Lecturas", String.valueOf( datosDisplay.getLecturas( ).size( ) ) );
                         if( datosDisplay.getLecturas( ).size( ) > 5 )
                         {
-                        	Log.d("Recomendaciones", "Hizo el thread");
-                        	recomendacionesPDF();
+                            Log.d( "Recomendaciones", "Hizo el thread" );
+                            recomendacionesPDF( );
                             sensorProcess = false;
                         }
                         sleep( 10000 );
@@ -115,12 +115,12 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         m_reader = ( PDFReader )m_layout.findViewById( R.id.view );
         m_thumb = ( PDFThumbView )m_layout.findViewById( R.id.thumbs );
         LinearLayout bar_cmd = ( LinearLayout )m_layout.findViewById( R.id.bar_cmd );
-        //LinearLayout bar_act = ( LinearLayout )m_layout.findViewById( R.id.bar_act );
-        //LinearLayout bar_find = ( LinearLayout )m_layout.findViewById( R.id.bar_find );
-//        btn_close = ( Button )bar_cmd.findViewById( R.id.btn_close );        
-        btn_rec = (Button)bar_cmd.findViewById(R.id.btnRec);
-        btn_rec.setOnClickListener(this);
-        
+        // LinearLayout bar_act = ( LinearLayout )m_layout.findViewById( R.id.bar_act );
+        // LinearLayout bar_find = ( LinearLayout )m_layout.findViewById( R.id.bar_find );
+        // btn_close = ( Button )bar_cmd.findViewById( R.id.btn_close );
+        btn_rec = ( Button )bar_cmd.findViewById( R.id.btnRec );
+        btn_rec.setOnClickListener( this );
+
     }
 
     public void guardar( )
@@ -128,9 +128,9 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         DatosDisplay datos = DatosDisplay.darInstacia( );
         ArrayList<String> respuestax = datos.getAnalisiX( );
         ArrayList<String> respuestay = datos.getAnalisiY( );
-        
-        String rtax= "";
-        String rtay= "";
+
+        String rtax = "";
+        String rtay = "";
         for( int i = 0; i < respuestax.size( ); i++ )
         {
             rtax = rtax + respuestax.get( i ) + "\n";
@@ -141,16 +141,13 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         }
         String rta = rtax + "\n" + rtay;
         // data.crearFile( CLASE_DISPLAY, "TIME;Velocity" );
-        if( respuestax.size( )>0  )
+        if( respuestax.size( ) > 0 )
         {
             data.writeToFile( rta, true, CLASE_DISPLAY );
             data.writeToFile( rta, true, CLASE_DISPLAY );
         }
         rta = "";
     }
-
-    
-   
 
     protected void onDestroy( )
     {
@@ -175,21 +172,20 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
 
     public void onItemClick( AdapterView<?> arg0, View arg1, int arg2, long arg3 )
     {
-    	if( arg0 == m_vFiles )
+        if( arg0 == m_vFiles )
         {
             PDFGridItem item = ( PDFGridItem )arg1;
-           
+
             if( item.is_dir( ) )
             {
-            	path+=item.get_name()+"/";
+                path += item.get_name( ) + "/";
                 m_vFiles.PDFGotoSubdir( item.get_name( ) );
             }
             else
             {
                 m_doc.Close( );
-                path+=item.get_name();
-                
-                
+                path += item.get_name( );
+
                 String datos[] = item.get_name( ).split( "/" );
                 CLASE_DISPLAY = CLASE_DISPLAY + datos[ datos.length - 1 ];
                 int ret = item.open_doc( m_doc, null );
@@ -216,7 +212,7 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
                 }
                 m_thumb.thumbOpen( m_reader.PDFGetDoc( ), this );
                 setContentView( m_layout );
-                
+
                 data.existDelete( CLASE_DISPLAY );
                 data.crearFile( CLASE_DISPLAY, "Acción;Dirección;Velocidad (pixeles/seg);Eje" );
                 sensorProcess = true;
@@ -241,7 +237,7 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
                     }
                 };
                 thread.start( );
-                
+
             }
         }
         else
@@ -255,7 +251,6 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         m_reader.PDFSetSelect( );
     }
 
-  
     public void onClick( View v )
     {
         switch( v.getId( ) )
@@ -268,24 +263,22 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
                 setContentView( m_vFiles );
                 break;
             case R.id.btnRec:
-            	actualizarTextoLecturas(recs);
-            	AlertDialog.Builder builder = new AlertDialog.Builder(
-						PDFReaderAct.this);
-				builder.setTitle("Recomendaciones");
-				if(recsPDF!=null &&recsPDF.length>0)
-				{					
-					builder.setMessage(Arrays.deepToString(recsPDF));
-				}
-				else
-				{
-					builder.setMessage("No hay recomendaciones disponibles.");
-				}				
-				builder.setCancelable(true);
-				AlertDialog alert = builder.create();
-				alert.show();
-            	break;
-                
-              
+                actualizarTextoLecturas( recs );
+                AlertDialog.Builder builder = new AlertDialog.Builder( PDFReaderAct.this );
+                builder.setTitle( "Recomendaciones" );
+                if( recsPDF != null && recsPDF.length > 0 )
+                {
+                    builder.setMessage( Arrays.deepToString( recsPDF ) );
+                }
+                else
+                {
+                    builder.setMessage( "No hay recomendaciones disponibles." );
+                }
+                builder.setCancelable( true );
+                AlertDialog alert = builder.create( );
+                alert.show( );
+                break;
+
         }
     }
 
@@ -302,149 +295,156 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
     public void OnAnnotClicked( PDFVPage vpage, int annot )
     {
     }
-    
-    
-    private void palabrasClave()
+
+    private void palabrasClave( )
     {
-    	File f = new File(path);
-        SendPDFTask task = new SendPDFTask();
-        try {
-        	Object[] params = new Object[2];
-        	params[0] = f;
-        	params[1] = WebServiceConnection.PALABRAS_FILE; 
-			task.execute(params);
-			String resp = task.get();
-			System.out.println("Respuesta: "+resp);
-			if(resp.contains(";"))
-			{
-				String[] recArr  = resp.split(";");
-				for(String rec: recArr)
-				{
-					palabras.add(rec);
-				}
-			}
-			else
-			{
-				palabras.add(resp);
-			}			
-			params = null;			
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
+        File f = new File( path );
+        SendPDFTask task = new SendPDFTask( );
+        try
+        {
+            Object[] params = new Object[2];
+            params[ 0 ] = f;
+            params[ 1 ] = WebServiceConnection.PALABRAS_FILE;
+            task.execute( params );
+            String resp = task.get( );
+            System.out.println( "Respuesta: " + resp );
+            if( resp.contains( ";" ) )
+            {
+                String[] recArr = resp.split( ";" );
+                for( String rec : recArr )
+                {
+                    palabras.add( rec );
+                }
+            }
+            else
+            {
+                palabras.add( resp );
+            }
+            params = null;
+        }
+        catch( Exception e )
+        {
+            System.out.println( e.getMessage( ) );
+        }
         f = null;
         task = null;
-        System.gc();
+        System.gc( );
     }
-    
+
     private void recomendaciones( )
     {
-    	File f = new File(path);
-        SendPDFTask task = new SendPDFTask();
-        try {
-        	Object[] params = new Object[2];
-        	params[0] = f;
-        	params[1] = WebServiceConnection.RECOMEND_FILE; 
-			task.execute(params);
-			String resp = task.get();
-			System.out.println("Respuesta: "+resp);
-			if(resp.contains(";"))
-			{
-				String[] recArr  = resp.split(";");
-				for(String rec: recArr)
-				{
-					recs.add(rec);
-				}
-				persistenceManager = new PersistenceManager( this.getApplicationContext( ) );
-		        persistenceManager.saveRecommendations( CLASE_DISPLAY, recArr );
-		        persistenceManager = null;
-			}
-			else
-			{
-				recs.add(resp);
-			}	        
-			params = null;			
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}	
-		System.gc();
+        File f = new File( path );
+        SendPDFTask task = new SendPDFTask( );
+        try
+        {
+            Object[] params = new Object[2];
+            params[ 0 ] = f;
+            params[ 1 ] = WebServiceConnection.RECOMEND_FILE;
+            task.execute( params );
+            String resp = task.get( );
+            System.out.println( "Respuesta: " + resp );
+            if( resp.contains( ";" ) )
+            {
+                String[] recArr = resp.split( ";" );
+                for( String rec : recArr )
+                {
+                    recs.add( rec );
+                }
+                persistenceManager = new PersistenceManager( this.getApplicationContext( ) );
+                persistenceManager.saveRecommendations( CLASE_DISPLAY, recArr );
+                persistenceManager = null;
+            }
+            else
+            {
+                recs.add( resp );
+            }
+            params = null;
+        }
+        catch( Exception e )
+        {
+            System.out.println( e.getMessage( ) );
+        }
+        System.gc( );
         f = null;
         task = null;
-        System.gc();
+        System.gc( );
     }
-    
-    private boolean connected() {
-		boolean connected = false;
-		ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetworkInfo = manager.getActiveNetworkInfo();
-		connected = activeNetworkInfo != null
-				&& activeNetworkInfo.isConnected();
-		return connected;
-	}
 
-	protected void recomendacionesPDF() {
-		try {
-			if (!connected()) {
-				recomendaciones();
-				palabrasClave();
-			}			
-			String[] pals = new String[palabras.size()];
-			pals = palabras.toArray(pals);
-			// TODO
-			pals = new String[] { "Kelvin", "Tita", "Julio" };
-			System.out
-					.println("ARREGLO: -------------------------------------------------- "
-							+ Arrays.deepToString(pals));
-			if (pals.length > 0) {
-				persistenceManager = new PersistenceManager(
-						getApplicationContext());
-				System.out.println("BDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
-				String pathTemp = path;
-				if (!persistenceManager.isFileInTable(pathTemp)) {
-					persistenceManager.createDocument(pathTemp,
-							PersistenceManager.PDF, CLASE_DISPLAY);
+    private boolean connected( )
+    {
+        boolean connected = false;
+        ConnectivityManager manager = ( ConnectivityManager )getSystemService( Context.CONNECTIVITY_SERVICE );
+        NetworkInfo activeNetworkInfo = manager.getActiveNetworkInfo( );
+        connected = activeNetworkInfo != null && activeNetworkInfo.isConnected( );
+        return connected;
+    }
 
-				}
-				sensorProcess = false;
-				ArrayList<String> guardar = new ArrayList<String>();
-				for (String palabra : pals) {
-					if (!persistenceManager.isPKInTable(palabra, pathTemp)) {
-						guardar.add(palabra);
-					}
-				}
-				String[] g = new String[guardar.size()];
-				g = guardar.toArray(g);
-				guardar = null;
-				persistenceManager.savePalabrasClave(pathTemp, g);
-				g = null;
-				ArrayList<String> recomms = persistenceManager
-						.recomendar(pathTemp);
-				recsPDF = new String[recomms.size()];
-				for (int i = 0; i < recsPDF.length; i++) {
-					recsPDF[i] = recomms.get(i);
-				}
-				persistenceManager.saveRecommendations(pathTemp,
-						recsPDF);
-				System.out.println(Arrays.deepToString(recsPDF));
-				Vibrator vibrator = (Vibrator) PDFReaderAct.this
-						.getSystemService(VIBRATOR_SERVICE);
-				vibrator.vibrate(1000);
+    protected void recomendacionesPDF( )
+    {
+        try
+        {
+            if( connected( ) )
+            {
+                recomendaciones( );
+                palabrasClave( );
+            }
+            String[] pals = new String[palabras.size( )];
+            pals = palabras.toArray( pals );
+            // TODO
+            // pals = new String[] { "Kelvin", "Tita", "Julio" };
+            System.out.println( "ARREGLO: -------------------------------------------------- " + Arrays.deepToString( pals ) );
+            if( pals.length > 0 )
+            {
+                persistenceManager = new PersistenceManager( getApplicationContext( ) );
+                System.out.println( "BDDDDDDDDDDDDDDDDDDDDDDDDDDDD" );
+                String pathTemp = path;
+                if( !persistenceManager.isFileInTable( pathTemp ) )
+                {
+                    persistenceManager.createDocument( pathTemp, PersistenceManager.PDF, CLASE_DISPLAY );
 
-				pals = null;
-				recomms = null;				
-				persistenceManager = null;
-				for(String r : recsPDF)
-				{
-					recs.add(r);
-				}
-			}
+                }
+                sensorProcess = false;
+                ArrayList<String> guardar = new ArrayList<String>( );
+                for( String palabra : pals )
+                {
+                    if( !persistenceManager.isPKInTable( palabra, pathTemp ) )
+                    {
+                        guardar.add( palabra );
+                    }
+                }
+                String[] g = new String[guardar.size( )];
+                g = guardar.toArray( g );
+                guardar = null;
+                persistenceManager.savePalabrasClave( pathTemp, g );
+                g = null;
+                ArrayList<String> recomms = persistenceManager.recomendar( pathTemp );
+                recsPDF = new String[recomms.size( )];
+                for( int i = 0; i < recsPDF.length; i++ )
+                {
+                    recsPDF[ i ] = recomms.get( i );
+                }
+                persistenceManager.saveRecommendations( pathTemp, recsPDF );
+                System.out.println( Arrays.deepToString( recsPDF ) );
+                Vibrator vibrator = ( Vibrator )PDFReaderAct.this.getSystemService( VIBRATOR_SERVICE );
+                vibrator.vibrate( 3000 );
 
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
-		}
-		System.gc();
-	}
-    
-    
+                pals = null;
+                recomms = null;
+                persistenceManager = null;
+                for( String r : recsPDF )
+                {
+                    recs.add( r );
+                }
+            }
+
+        }
+        catch( Exception e )
+        {
+            System.err.println( e.getMessage( ) );
+        }
+        System.gc( );
+    }
+
     public void OnOpenURI( String uri )
     {
     }
@@ -509,19 +509,17 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         AlertDialog dlg = builder.create( );
         dlg.show( );
     }
-    
-    
-    
-    public void actualizarTextoLecturas(ArrayList<String> texto)
+
+    public void actualizarTextoLecturas( ArrayList<String> texto )
     {
-        TextView text = (TextView) findViewById(R.id.txtVerb);
+        TextView text = ( TextView )findViewById( R.id.txtVerb );
         if( texto != null )
         {
             for( int i = 0; i < texto.size( ); i++ )
             {
                 text.clearComposingText( );
                 text.setText( texto.get( i ) );
-                System.out.println(texto.get( i ) );
+                System.out.println( texto.get( i ) );
             }
         }
         else
@@ -531,6 +529,4 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         }
     }
 
-
-	
 }
