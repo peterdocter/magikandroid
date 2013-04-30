@@ -21,6 +21,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,10 +35,10 @@ import com.recomendacion.servicio.WebServiceConnection;
 public class WebActivity extends Activity implements OnTouchListener, Handler.Callback
 {
     private WebView objWebView;
-    private Button btnAgregar;
-    private Button btnPk;
-    private Button btnIr;
-    private Button btnLenguaje;
+    private ImageButton btnAgregar;
+    private ImageButton btnPk;
+    private ImageButton btnIr;
+    private ImageButton btnLenguaje;
     private EditText txtUrl;
     private final Handler handler = new Handler( this );
     private Thread thread;
@@ -144,9 +145,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                                         }
                                     }
                                     recomendaciones( pals );
-
                                 }
-
                                 sleep( 30000 );
                             }
                             catch( InterruptedException e )
@@ -206,6 +205,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         ConnectivityManager manager = ( ConnectivityManager )getSystemService( Context.CONNECTIVITY_SERVICE );
         NetworkInfo activeNetworkInfo = manager.getActiveNetworkInfo( );
         connected = activeNetworkInfo != null && activeNetworkInfo.isConnected( );
+        System.out.println(connected);
         return connected;
     }
 
@@ -328,7 +328,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
 
     private void inicializarBoton( )
     {
-        btnIr = ( Button )findViewById( R.id.btnIr );
+        btnIr = ( ImageButton )findViewById( R.id.btnIr );
         btnIr.setOnClickListener( new View.OnClickListener( )
         {
 
@@ -347,7 +347,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
 
     private void inicializarBotonCargar( )
     {
-        btnAgregar = ( Button )findViewById( R.id.button1 );
+        btnAgregar = ( ImageButton )findViewById( R.id.button1 );
         btnAgregar.setEnabled( true );
         btnAgregar.setOnClickListener( new View.OnClickListener( )
         {
@@ -379,7 +379,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
 
     private void inicializarBotonLenguaje( )
     {
-        btnLenguaje = ( Button )findViewById( R.id.btncargarlenguaje );
+        btnLenguaje = ( ImageButton )findViewById( R.id.btncargarlenguaje );
         btnLenguaje.setOnClickListener( new View.OnClickListener( )
         {
 
@@ -392,7 +392,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
 
     private void inicializarBotonPk( )
     {
-        btnPk = ( Button )findViewById( R.id.ButtonPk );
+        btnPk = ( ImageButton )findViewById( R.id.ButtonPk );
         btnPk.setOnClickListener( new View.OnClickListener( )
         {
 
@@ -486,6 +486,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         if( msg.what == CLICK_ON_URL )
         {
             lecturas = new ArrayList<String>( );
+            
             cargolenguaje = false;
             cargoplabras = false;
             sensorProcess = true;
@@ -493,6 +494,8 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             lenguajes = null;
             Toast.makeText( this, "WebView url" + msg, Toast.LENGTH_SHORT ).show( );
             handler.removeMessages( CLICK_ON_WEBVIEW );
+            PalabrasClave palabrasClave = PalabrasClave.darInstacia( );
+            palabrasClave.iniPalabras( );
             return true;
         }
         if( msg.what == CLICK_ON_WEBVIEW )

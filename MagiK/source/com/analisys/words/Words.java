@@ -22,7 +22,6 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.jsoup.Jsoup;
 
-import android.R.bool;
 import android.util.Log;
 
 import com.aliasi.lm.TokenizedLM;
@@ -34,7 +33,6 @@ import com.cybozu.labs.langdetect.Detector;
 import com.cybozu.labs.langdetect.DetectorFactory;
 import com.cybozu.labs.langdetect.LangDetectException;
 import com.cybozu.labs.langdetect.Language;
-import com.example.magik.monitoring.DatosDisplay;
 
 /**
  * Creates queries to the SQLite helper and returns its results.
