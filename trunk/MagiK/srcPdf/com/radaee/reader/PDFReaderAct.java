@@ -383,7 +383,7 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
     {
         try
         {
-            if( connected( ) )
+            if( !connected( ) )
             {
                 recomendaciones( );
                 palabrasClave( );
@@ -391,7 +391,7 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
             String[] pals = new String[palabras.size( )];
             pals = palabras.toArray( pals );
             // TODO
-            // pals = new String[] { "Kelvin", "Tita", "Julio" };
+            pals = new String[] { "Kelvin", "Tita", "Julio" };
             System.out.println( "ARREGLO: -------------------------------------------------- " + Arrays.deepToString( pals ) );
             if( pals.length > 0 )
             {

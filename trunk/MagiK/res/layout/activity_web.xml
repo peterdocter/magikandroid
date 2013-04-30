@@ -40,29 +40,39 @@
         android:layout_row="0"
         android:orientation="vertical" >
 
-        <Button
+        <ImageButton
             android:id="@+id/btnIr"
-            android:layout_width="40dp"
+            android:layout_width="45dp"
             android:layout_height="wrap_content"
-            android:text="Ir" />
+            android:src="@drawable/ir" 
+            android:layout_marginTop="10dp"
+            android:background="@null"
+            />
 
-        <Button
+        <ImageButton
             android:id="@+id/ButtonPk"
-            android:layout_width="40dp"
+            android:layout_width="45dp"
             android:layout_height="wrap_content"
-            android:text="PK" />
+            android:src="@drawable/buscar" 
+            android:layout_marginTop="10dp"
+            android:background="@null"
+            />
 
-        <Button
+        <ImageButton
             android:id="@+id/btncargarlenguaje"
-            android:layout_width="40dp"
+            android:layout_width="45dp"
             android:layout_height="wrap_content"
-            android:text="L" />
+            android:layout_marginTop="10dp"
+            android:src="@drawable/lenguajes" 
+            android:background="@null" />
 
-        <Button
+        <ImageButton
             android:id="@+id/button1"
-            android:layout_width="40dp"
+            android:layout_width="45dp"
+            android:layout_marginTop="10dp"
             android:layout_height="wrap_content"
-            android:text="CD" />
+            android:src="@drawable/recomendar" 
+            android:background="@null" />
 
     </LinearLayout>
 
