@@ -22,6 +22,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.jsoup.Jsoup;
 
+import android.R.bool;
 import android.util.Log;
 
 import com.aliasi.lm.TokenizedLM;
@@ -53,20 +54,30 @@ public class Words
     static File root = android.os.Environment.getExternalStorageDirectory( );
     private static File BACKGROUND_DIR = new File( root.getAbsolutePath( ) + "/Magik/train" );
     private static File FOREGROUND_DIR = new File( root.getAbsolutePath( ) + "/Magik/test" );
-
+    private boolean cargoProfiles;
     private boolean error = false;
+    
     public ArrayList<String> getLenguaje( )
     {
         return leguaje;
     }
 
+    public boolean cargoProfiles()
+    {
+    	return cargoProfiles;
+    }
+    
     private void cargarlenguajes( )
     {
         try
         {
-            File root = android.os.Environment.getExternalStorageDirectory( );
-            DetectorFactory.clear( );
-            DetectorFactory.loadProfile( root.getAbsolutePath( ) + "/Magik/profiles" );
+        	if (!cargoProfiles) 
+        	{
+        		File root = android.os.Environment.getExternalStorageDirectory( );
+        		DetectorFactory.clear( );
+        		DetectorFactory.loadProfile( root.getAbsolutePath( ) + "/Magik/profiles" );
+        		cargoProfiles = true;
+			}
         }
         catch( LangDetectException e )
         {
@@ -213,8 +224,9 @@ public class Words
         }
     }
 
-    public Words(  )
+    public Words( boolean profiles )
     {
+    	cargoProfiles = profiles;
         tokens = new ArrayList<String>( );
     }
 

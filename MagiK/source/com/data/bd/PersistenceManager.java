@@ -1,11 +1,13 @@
 package com.data.bd;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.webkit.WebChromeClient.CustomViewCallback;
 
 /**
  * Creates queries to the SQLite helper and returns its results.
@@ -165,6 +167,29 @@ public class PersistenceManager
         }
         return id;
     }
+    
+    private String getDocumentTitle( String document ) throws Exception
+    {
+        String title = null;
+        try
+        {
+            database = helper.getReadableDatabase( );
+            Cursor cursor = database.query( SQLiteHelper.TABLE_DOCUMENTS, new String[]{ SQLiteHelper.COLUMN_DOCUMENT_TITLE }, SQLiteHelper.COLUMN_DOCUMENT_URL + " LIKE '" + document + "'", null, null, null, null );
+            if( cursor.moveToFirst( ) )
+            {
+                title = cursor.getString(0);
+            }
+            cursor.close( );
+            database.close( );
+            cursor = null;
+            database = null;
+        }
+        catch( Exception e )
+        {
+            throw new Exception( "Error: " + e );
+        }
+        return title;
+    }
 
     /**
      * Returns the id of the mix identified by the parameter.
@@ -286,14 +311,25 @@ public class PersistenceManager
         try
         {
             database = helper.getReadableDatabase( );
-            String sql = "SELECT p." + SQLiteHelper.COLUMN_RECOMMENDACION_URL + " FROM " + SQLiteHelper.TABLE_RECOMMENDACION + " p JOIN " + SQLiteHelper.TABLE_DOCUMENTS + " d ON p." + SQLiteHelper.COLUMN_R_D_ID + " = d."
+            String sql = "SELECT p." + SQLiteHelper.COLUMN_RECOMMENDACION_URL+ ", d."+ SQLiteHelper.COLUMN_DOCUMENT_TITLE + " FROM " + SQLiteHelper.TABLE_RECOMMENDACION + " p JOIN " + SQLiteHelper.TABLE_DOCUMENTS + " d ON p." + SQLiteHelper.COLUMN_R_D_ID + " = d."
                     + SQLiteHelper.COLUMN_DOCUMENT_ID + " WHERE d." + SQLiteHelper.COLUMN_DOCUMENT_URL + " LIKE '" + documentName + "'";
             Cursor cursor = database.rawQuery( sql, null );
+            System.out.println("COnsulta "+cursor.getCount() +":-------------------------------------"+sql);
+            System.out.println();
             if( cursor.moveToFirst( ) )
-            {            	
+            {
             	do
             	{
-            		temp.add(cursor.getString(0));
+            		System.out.println("Cursor:-------------------------------------"+cursor.getString(1));
+            		if(!cursor.getString(1).equals("") && cursor.getString(1) != null)
+            		{
+            			temp.add(cursor.getString(1));
+            		}
+            		else
+            		{
+            			temp.add(cursor.getString(0));
+            		}
+            		
             	}
             	while(cursor.moveToNext());               
             }
@@ -446,20 +482,24 @@ public class PersistenceManager
     {
     	try {    		
 			int id = getDocument(document);
-			database = helper.getWritableDatabase();
+			
 			ContentValues values;
+			System.out.println("Recs:                             "+Arrays.deepToString(recs));
 			for (int i = 0; i < recs.length; i++) {
 				String rec = recs[i];
 				if(!isRecInTable(rec, document))
 				{
+					database = helper.getWritableDatabase();
+					System.out.println(":::::::::::::::::::SAVE:::::::::::::::::::::");
 					values = new ContentValues();
 					values.put(SQLiteHelper.COLUMN_RECOMMENDACION_URL, rec);
 					values.put(SQLiteHelper.COLUMN_R_D_ID, id);
 					database.insert(SQLiteHelper.TABLE_RECOMMENDACION, null,values);
 					values = null;
+					database.close();
 				}				
 			}			
-			database.close();
+			
 			database = null;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -483,7 +523,7 @@ public class PersistenceManager
 					String[] p = getPalabraClaveByDocument(documents[i]);
 					if(p2!= null && compareArrays(p2, p))
 					{
-						recomendaciones.add(documents[i]);
+						recomendaciones.add(getDocumentTitle(documents[i]));
 						String[] r = getRecommendedClaveByDocument(documents[i]);
 						for(String s:r)
 						{

@@ -56,7 +56,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
     private static final int CLICK_ON_URL = 2;
     private ArrayList<String> lenguajes;
     private boolean cargoplabras;
-    private boolean cargoClaves;
+    private boolean cargoProfiles;
     private boolean cargolenguaje;
     private String[] recs;
 
@@ -64,7 +64,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
     protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
-        cargoClaves = false;
+        cargoProfiles = false;
         cargolenguaje = false;
         setContentView( R.layout.activity_web );
         data = new ControlerData( );
@@ -121,7 +121,8 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                                     {
                                         if( !cargoplabras )
                                         {
-                                            Words w = new Words( );
+                                            Words w = new Words( cargoProfiles );
+                                            cargoProfiles = w.cargoProfiles();
                                             boolean exito = w.startWords( objWebView.getUrl( ) );
                                             if( exito )
                                             {
@@ -334,6 +335,8 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
 
             public void onClick( View v )
             {
+            	Vibrator vibrator = ( Vibrator )WebActivity.this.getSystemService( VIBRATOR_SERVICE );
+                vibrator.vibrate( 300 );
                 cargolenguaje = false;
                 cargoplabras = false;
                 sensorProcess = true;
@@ -360,11 +363,18 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
              */
             public void onClick( View v )
             {
+            	Vibrator vibrator = ( Vibrator )WebActivity.this.getSystemService( VIBRATOR_SERVICE );
+                vibrator.vibrate( 300 );
                 AlertDialog.Builder builder = new AlertDialog.Builder( WebActivity.this );
                 builder.setTitle( "Recomendaciones" );
+                String msg = "";
                 if( recs != null && recs.length > 0 )
                 {
-                    builder.setMessage( Arrays.deepToString( recs ) );
+                	for(String s: recs)
+                	{
+                		msg+=s+"\n\n";
+                	}
+                    builder.setMessage(msg);
                 }
                 else
                 {
@@ -385,6 +395,8 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
 
             public void onClick( View v )
             {
+            	Vibrator vibrator = ( Vibrator )WebActivity.this.getSystemService( VIBRATOR_SERVICE );
+                vibrator.vibrate( 300 );
                 actualizarTextoLecturas( lenguajes );
             }
         } );
@@ -398,6 +410,8 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
 
             public void onClick( View v )
             {
+            	Vibrator vibrator = ( Vibrator )WebActivity.this.getSystemService( VIBRATOR_SERVICE );
+                vibrator.vibrate( 300 );
                 PalabrasClave palabrasClave = PalabrasClave.darInstacia( );
                 actualizarTextoPk( palabrasClave.getPalabras( ) );
             }
