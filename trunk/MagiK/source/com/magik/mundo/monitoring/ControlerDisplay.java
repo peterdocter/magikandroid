@@ -98,8 +98,9 @@ public class ControlerDisplay
 
     }
 
-    public String analizarVelocidad( int valor, String sentido )
+    public String analizarVelocidad( int valor, String sentido, long time2 )
     {
+    	System.out.println("Tiempo:----------------------------------------------------"+String.valueOf(time2));
         String direccion;
 
         if( valor >= 0 )
@@ -125,27 +126,56 @@ public class ControlerDisplay
                 direccion = "ARRIBA";
             }
         }
-        if( valor < 100 && valor > -100 )
+        if(time2 >= 33600)
         {
-            tipoLectura = LECTURA;
-            return LECTURA + ";" +direccion + ";" + valor + ";" + sentido;
-        }
-        else if( valor >= 100 && valor < 1500 )
-        {
-            tipoLectura = LECTURA_RAPIDA ;
-            return LECTURA_RAPIDA + ";" +direccion + ";" + valor + ";" + sentido;
+        	if( valor < 350 && valor > -350 )
+            {
+                tipoLectura = LECTURA;
+                return LECTURA + ";" +direccion + ";" + valor + ";" + sentido;
+            }
+            else if( valor >= 350 && valor < 2200 )
+            {
+                tipoLectura = LECTURA_RAPIDA ;
+                return LECTURA_RAPIDA + ";" +direccion + ";" + valor + ";" + sentido;
 
+            }
+            else
+            {
+                tipoLectura = BUSQUEDA;
+                return BUSQUEDA + ";" +direccion + ";" + valor + ";" + sentido;
+
+            }
+        }
+        else if(time2>20000 && time2<33600)
+        {
+        	if( valor < 150 && valor > -150 )
+            {
+                tipoLectura = LECTURA;
+                return LECTURA + ";" +direccion + ";" + valor + ";" + sentido;
+            }
+            else if( valor >= 150 && valor < 1500 )
+            {
+                tipoLectura = LECTURA_RAPIDA ;
+                return LECTURA_RAPIDA + ";" +direccion + ";" + valor + ";" + sentido;
+
+            }
+            else
+            {
+                tipoLectura = BUSQUEDA;
+                return BUSQUEDA + ";" +direccion + ";" + valor + ";" + sentido;
+
+            }
         }
         else
         {
-            tipoLectura = BUSQUEDA;
+        	tipoLectura = BUSQUEDA;
             return BUSQUEDA + ";" +direccion + ";" + valor + ";" + sentido;
-
-        }
+        }        
     }
     
-    public String analizarVelocidadCorto( int valor, String sentido )
+    public String analizarVelocidadCorto( int valor, String sentido, long time2 )
     {
+    	System.out.println("Tiempo:----------------------------------------------------"+String.valueOf(time2)+","+valor);
         String direccion;
 
         if( valor >= 0 )
@@ -171,23 +201,52 @@ public class ControlerDisplay
                 direccion = "ARRIBA";
             }
         }
-        if( valor < 100 && valor > -100 )
+        if(time2>=33600)
         {
-            tipoLectura = LECTURA;
-            return  valor + "";
-        }
-        else if( valor >= 100 && valor < 1500 )
-        {
-            tipoLectura = LECTURA_RAPIDA ;
-            return valor + "";
+        	if( valor < 350 && valor > -350)
+            {
+                tipoLectura = LECTURA;
+                return  valor + "";
+            }
+            else if( valor >= 350 && valor < 2200 )
+            {
+                tipoLectura = LECTURA_RAPIDA ;
+                return valor + "";
 
+            }
+            else
+            {
+                tipoLectura = BUSQUEDA;
+                return  valor + "";
+
+            }
+        }
+        else if(time2>1500 && time2 < 33600)
+        {
+        	if( valor < 150 && valor > -150)
+            {
+                tipoLectura = LECTURA;
+                return  valor + "";
+            }
+            else if( valor >= 150 && valor < 1500)
+            {
+                tipoLectura = LECTURA_RAPIDA ;
+                return valor + "";
+
+            }
+            else
+            {
+                tipoLectura = BUSQUEDA;
+                return  valor + "";
+
+            }
         }
         else
         {
             tipoLectura = BUSQUEDA;
             return  valor + "";
 
-        }
+        }       
     }
     
     public String darTipoLectura()
