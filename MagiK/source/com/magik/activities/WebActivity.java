@@ -2,6 +2,7 @@ package com.magik.activities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -59,6 +60,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
     private boolean cargoProfiles;
     private boolean cargolenguaje;
     private String[] recs;
+    private long time;
 
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -74,6 +76,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         display = new ControlerDisplay( );
         objWebView = ( WebView )findViewById( R.id.webView );
         objWebView.setOnTouchListener( this );
+        time = -1;
         client = new WebViewClient( )
         {
 
@@ -435,12 +438,26 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
     @Override
     public boolean onTouch( View v, MotionEvent event )
     {
+    	long time2 = 0;
+    	if(event.getAction()==MotionEvent.ACTION_UP)
+    	{   
+    		time2 = System.currentTimeMillis();
+        	if(time!=-1)
+        	{
+        		time2 -= time;
+        	}
+        	time = System.currentTimeMillis();
+    	}
+    	    	
+    	    	
+    	
         if( v.getId( ) == R.id.webView && event.getAction( ) == MotionEvent.ACTION_DOWN )
         {
             handler.sendEmptyMessageDelayed( CLICK_ON_WEBVIEW, 500 );
         }
 
         String captura = "";
+        
         captura = display.velocityTrack( event );
         float valorx = 0;
         float valory = 0;
@@ -454,10 +471,10 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         int a = ( int )valorx;
         int b = ( int )valory;
 
-        String rtaX = display.analizarVelocidadCorto( a, "X" );
+        String rtaX = display.analizarVelocidadCorto( a, "X", time2 );
         String tipolecturax = display.darTipoLectura( );
 
-        String rtaY = display.analizarVelocidadCorto( b, "Y" );
+        String rtaY = display.analizarVelocidadCorto( b, "Y", time2);
         String tipolecturay = display.darTipoLectura( );
 
         String tipoLectorua = "";
@@ -493,6 +510,8 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         }
         return false;
     }
+    
+    
 
     @Override
     public boolean handleMessage( Message msg )

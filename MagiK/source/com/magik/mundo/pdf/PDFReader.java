@@ -68,6 +68,7 @@ public class PDFReader extends View implements PDFViewListener, OnItemClickListe
     private int m_pageno = 0;
     private int m_edit_type = 0;
     private int m_sel_index = -1;
+	private long time;
     public interface PDFReaderListener
     {
         public void OnPageChanged( int pageno );
@@ -83,7 +84,7 @@ public class PDFReader extends View implements PDFViewListener, OnItemClickListe
     {
         super( context, attrs );
         display = new ControlerDisplay( );
-        
+        time = -1;
         this.setBackgroundColor( 0xFFCCCCCC );
         m_pEdit = new PopupWindow( LayoutInflater.from( context ).inflate( R.layout.pop_edit, null ) );
         m_pCombo = new PopupWindow( LayoutInflater.from( context ).inflate( R.layout.pop_combo, null ) );
@@ -909,7 +910,7 @@ public class PDFReader extends View implements PDFViewListener, OnItemClickListe
         m_view.vResize( w, h );
     }
 
-    private void capturarDatos( MotionEvent event )
+    private void capturarDatos( MotionEvent event, long time2 )
     {
         String captura = "";
         captura = display.velocityTrack( event );
@@ -925,8 +926,8 @@ public class PDFReader extends View implements PDFViewListener, OnItemClickListe
         int a = ( int )valorx;
         int b = ( int )valory;
 
-        String rtaX = display.analizarVelocidad( a, "X" );
-        String rtaY = display.analizarVelocidad( b, "Y" );
+        String rtaX = display.analizarVelocidad( a, "X", time2 );
+        String rtaY = display.analizarVelocidad( b, "Y", time2 );
 
         if( captura != "" )
         {
@@ -950,7 +951,17 @@ public class PDFReader extends View implements PDFViewListener, OnItemClickListe
     @Override
     public boolean onTouchEvent( MotionEvent event )
     {
-        capturarDatos( event );
+    	long time2 = 0;
+    	if(event.getAction()==MotionEvent.ACTION_UP)
+    	{   
+    		time2 = System.currentTimeMillis();
+        	if(time!=-1)
+        	{
+        		time2 -= time;
+        	}
+        	time = System.currentTimeMillis();
+    	}
+        capturarDatos( event, time2 );
         if( m_view == null )
             return false;
         if( m_view.vGetLock( ) == 3 )
