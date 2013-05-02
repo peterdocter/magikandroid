@@ -28,25 +28,9 @@
                 <Button
                     android:id="@+id/file_modification_monitor_btn_second"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
+                    android:layout_weight="1"
                     android:gravity="center"
                     android:text="Stop"
-                    android:textStyle="bold" />
-
-                <Button
-                    android:id="@+id/file_modification_monitor_btn_third"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Refresh"
-                    android:textStyle="bold" />
-
-                <Button
-                    android:id="@+id/file_modification_monitor_btn_forth"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Clear"
                     android:textStyle="bold" />
             </TableRow>
         </TableLayout>
