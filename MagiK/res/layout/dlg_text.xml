@@ -11,20 +11,20 @@
         android:layout_height="wrap_content" >
 
         <RadioButton
-            android:id="@+id/rad_copy"
+            android:id="@+id/rad_mWeb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
             android:text="Copy text to clipboard" />
 
         <RadioButton
-            android:id="@+id/rad_highlight"
+            android:id="@+id/rad_mFiles"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Highlight texts" />
 
         <RadioButton
-            android:id="@+id/rad_underline"
+            android:id="@+id/rad_mAct"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Underline" />
