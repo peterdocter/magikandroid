@@ -78,6 +78,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         objWebView = ( WebView )findViewById( R.id.webView );
         objWebView.setOnTouchListener( this );
         time = -1;
+        
         client = new WebViewClient( )
         {
 
@@ -92,7 +93,8 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                     @Override
                     public void run( )
                     {
-                        while( sensorProcess && manager.ismWeb())
+                        manager = InterfaceManager.getInstance( );
+                        while( sensorProcess && manager.ismAct( ))
                         {
                             try
                             {

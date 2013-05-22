@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 /**
  * This class is the input processing of the settings user interface.
@@ -53,6 +54,7 @@ public class SettingsActivity extends Activity {
 			{
 				interfaceManager.setmWeb(false);
 			}
+			Toast.makeText( this, interfaceManager.ismWeb( )+"", Toast.LENGTH_LONG ).show();
 			break;
 		case R.id.rad_mFiles:
 			if(checked)
@@ -63,6 +65,7 @@ public class SettingsActivity extends Activity {
 			{
 				interfaceManager.setmFiles(false);
 			}
+			Toast.makeText( this, interfaceManager.ismFiles( )+"", Toast.LENGTH_LONG ).show();
 			break;
 		case R.id.rad_mAct:
 			if(checked)
@@ -73,6 +76,7 @@ public class SettingsActivity extends Activity {
 			{
 				interfaceManager.setmAct(false);
 			}
+			Toast.makeText( this, interfaceManager.ismAct( )+"", Toast.LENGTH_LONG ).show();
 			break;
 		}
 	}

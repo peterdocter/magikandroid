@@ -67,6 +67,8 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
     private boolean sensorProcess;
     private PersistenceManager persistenceManager;
     private String path;
+    
+    private InterfaceManager manager;
 
     @Override
     public void onCreate( Bundle savedInstanceState )
@@ -82,8 +84,8 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
             @Override
             public void run( )
             {
-
-                while( sensorProcess )
+                manager = InterfaceManager.getInstance( );
+                while( sensorProcess && manager.ismAct( ))
                 {
                     try
                     {
