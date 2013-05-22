@@ -477,14 +477,14 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         {
             public void onClick( DialogInterface dialog, int which )
             {
-                if( rad_group.getCheckedRadioButtonId( ) == R.id.rad_copy )
+                if( rad_group.getCheckedRadioButtonId( ) == R.id.rad_mWeb )
                     Toast.makeText( PDFReaderAct.this, "todo copy text:" + sel_text, Toast.LENGTH_SHORT ).show( );
                 else if( m_reader.PDFCanSave( ) )
                 {
                     boolean ret = false;
-                    if( rad_group.getCheckedRadioButtonId( ) == R.id.rad_highlight )
+                    if( rad_group.getCheckedRadioButtonId( ) == R.id.rad_mFiles )
                         ret = m_reader.PDFSetSelMarkup( 0 );
-                    else if( rad_group.getCheckedRadioButtonId( ) == R.id.rad_underline )
+                    else if( rad_group.getCheckedRadioButtonId( ) == R.id.rad_mAct )
                         ret = m_reader.PDFSetSelMarkup( 1 );
                     else if( rad_group.getCheckedRadioButtonId( ) == R.id.rad_strikeout )
                         ret = m_reader.PDFSetSelMarkup( 2 );
