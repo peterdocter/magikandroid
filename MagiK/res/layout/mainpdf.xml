@@ -40,8 +40,8 @@
             style="?android:attr/buttonStyleSmall"
             android:layout_width="36dp"
             android:layout_height="wrap_content"
-            android:text="@string/s_next" />
-
+            android:text="@string/s_next"/>
+
         <Button
             android:id="@+id/btn_saveas"
             android:layout_width="wrap_content"
@@ -49,8 +49,7 @@
             android:text="@string/s_saveas" />
 
     </LinearLayout>
-
-    <com.radaee.pdfex.ThumbView
+    <com.radaee.pdfex.ThumbView
         android:id="@+id/PDFThumb"
         android:layout_width="match_parent"
         android:layout_height="64px"
@@ -75,31 +74,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/s_rect" />
-
         <Button
             android:id="@+id/btn_end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/s_end" />
-
         <Button
             android:id="@+id/btn_remove"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/s_remove" />
-
         <Button
             android:id="@+id/btn_act"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/s_act" />
-
-        <Button
+		<Button
             android:id="@+id/btn_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/s_save" />
-
         <Button
             android:id="@+id/btn_edit"
             android:layout_width="wrap_content"
