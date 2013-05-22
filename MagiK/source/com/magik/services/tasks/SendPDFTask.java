@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.magik.services.tasks;
 
 import java.io.File;
