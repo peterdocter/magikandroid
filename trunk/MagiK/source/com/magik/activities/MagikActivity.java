@@ -24,6 +24,7 @@ public class MagikActivity extends Activity
     private Button btn_File_Back;
     private Button btn_Pdf_Reader;
     private Button btn_Web_Reader;
+    private Button btn_settings;
 
     private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
     
@@ -79,6 +80,19 @@ public class MagikActivity extends Activity
                 startWebReaderActivity( );
             }
         } );
+        btn_settings = (Button)findViewById(R.id.settings);
+        btn_settings.setOnClickListener(new View.OnClickListener() {
+			/*
+			 * (non-Javadoc)
+			 * @see android.view.View.OnClickListener#onClick(android.view.View)
+			 */
+			@Override
+			public void onClick(View v) {
+				showSettings();
+				
+			}
+		});
+        
         
         File direct = new File(Environment.getExternalStorageDirectory() + "/Magik");
         if(!direct.exists())
@@ -124,6 +138,12 @@ public class MagikActivity extends Activity
     {
         Intent file = new Intent( this, WebActivity.class );
         startActivity( file );
+    }
+    
+    public void showSettings()
+    {
+    	Intent intent = new Intent(this, SettingsActivity.class);
+    	startActivity(intent);
     }
     
     private void copyAssets(String path) {
