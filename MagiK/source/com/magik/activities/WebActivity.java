@@ -61,6 +61,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
     private boolean cargolenguaje;
     private String[] recs;
     private long time;
+    private InterfaceManager manager;
 
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -91,7 +92,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                     @Override
                     public void run( )
                     {
-                        while( sensorProcess )
+                        while( sensorProcess && manager.ismWeb())
                         {
                             try
                             {
