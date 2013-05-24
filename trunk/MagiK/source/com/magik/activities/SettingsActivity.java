@@ -3,13 +3,12 @@
  */
 package com.magik.activities;
 
-import com.magik.R;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.RadioButton;
-import android.widget.Toast;
+import android.widget.CheckBox;
+
+import com.magik.R;
 
 /**
  * This class is the input processing of the settings user interface.
@@ -18,11 +17,11 @@ import android.widget.Toast;
  */
 public class SettingsActivity extends Activity {
 	
-	private RadioButton rad_mWeb;
+	private CheckBox checkWeb;
 	
-	private RadioButton rad_mFiles;
+	private CheckBox checkFiles;
 	
-	private RadioButton rad_mAct;
+	private CheckBox checkAct;
 	
 	private InterfaceManager interfaceManager;
 	
@@ -34,49 +33,55 @@ public class SettingsActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
-		rad_mWeb = (RadioButton)findViewById(R.id.rad_mWeb);
-		rad_mFiles = (RadioButton)findViewById(R.id.rad_mFiles);
-		rad_mAct = (RadioButton)findViewById(R.id.rad_mAct);
+		checkWeb = (CheckBox)findViewById(R.id.checkWeb);
+		checkFiles = (CheckBox)findViewById(R.id.checkFiles);
+		checkAct = (CheckBox)findViewById(R.id.checkAct);
 		interfaceManager = InterfaceManager.getInstance();
 	}
 
-	public void onRadioButtonClicked(View view)
+	public void onCheckboxClicked(View view)
 	{
-		boolean checked = ((RadioButton)view).isChecked();
-		
+		boolean checked = ((CheckBox)view).isChecked();
+		if(interfaceManager.getContext( )==null)
+		{
+		   interfaceManager.setContext( getApplicationContext( ) ); 
+		}
 		switch (view.getId()) {
-		case R.id.rad_mWeb:
+		case R.id.checkWeb:
 			if(checked)
 			{
 				interfaceManager.setmWeb(true);
+				startService(interfaceManager.getIntent( ));
 			}
 			else
 			{
 				interfaceManager.setmWeb(false);
+				stopService(interfaceManager.getIntent( ));
 			}
-			Toast.makeText( this, interfaceManager.ismWeb( )+"", Toast.LENGTH_LONG ).show();
+			
 			break;
-		case R.id.rad_mFiles:
+		case R.id.checkFiles:
 			if(checked)
 			{
 				interfaceManager.setmFiles(true);
+				startService( interfaceManager.getIntent( ) );
 			}
 			else
 			{
 				interfaceManager.setmFiles(false);
-			}
-			Toast.makeText( this, interfaceManager.ismFiles( )+"", Toast.LENGTH_LONG ).show();
+				stopService( interfaceManager.getIntent( ) );
+			}			
 			break;
-		case R.id.rad_mAct:
+		case R.id.checkAct:
 			if(checked)
 			{
 				interfaceManager.setmAct(true);
+				
 			}
 			else
 			{
-				interfaceManager.setmAct(false);
-			}
-			Toast.makeText( this, interfaceManager.ismAct( )+"", Toast.LENGTH_LONG ).show();
+				interfaceManager.setmAct(false);				
+			}			
 			break;
 		}
 	}
