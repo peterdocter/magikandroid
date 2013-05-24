@@ -14,7 +14,6 @@ import android.widget.Toast;
 import com.magik.db.PersistenceManager;
 
 public class FileModificationService extends Service {
-	// private MyFileObserver fileOb;
 	private PersistenceManager pm;
 	private static final int MAX_FO = 100;
 	private List<MyFileObserver> fileOb_list = new ArrayList<MyFileObserver>();
@@ -62,17 +61,13 @@ public class FileModificationService extends Service {
 			ext = null;
 			
 			filename = null;
-//			System.gc();
+			System.gc();
 		} else if (f.getAbsolutePath().contains("Download")) {
 			fileOb_list.add(aFileOb);
 			num_of_fos++;
 		}
 		aFileOb = null;
-//		System.gc();
-		// fileOb = new MyFileObserver( f.getName() ,f.getAbsolutePath( ) ,this
-		// );
-		// MyFileObserver aFileOb = new MyFileObserver( f.getAbsolutePath( ) );
-		// fileOb_list.add( aFileOb );
+		System.gc();
 		
 		try {
 			if (f.isDirectory()) {
