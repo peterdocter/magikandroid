@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Hashtable;
 
@@ -39,10 +40,10 @@ public class ControlerData
     public String getDayFileName( )
     {
         Calendar c = Calendar.getInstance( );
-        int month = c.get( Calendar.MONTH );
-        int day = c.get( Calendar.DAY_OF_MONTH ) + 1;
-        int year = c.get( Calendar.YEAR );
-        return day + "-" + month + "-" + year;
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+        String formattedDate = df.format(c.getTime());
+        
+        return formattedDate;
     }
 
     public String getTimeStamp( )
