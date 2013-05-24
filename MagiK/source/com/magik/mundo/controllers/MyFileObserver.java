@@ -1,10 +1,6 @@
 package com.magik.mundo.controllers;
 
-import java.io.File;
-
-import android.content.Intent;
 import android.os.FileObserver;
-
 import com.magik.mundo.data.ControlerData;
 
 public class MyFileObserver extends FileObserver
@@ -15,23 +11,19 @@ public class MyFileObserver extends FileObserver
     private String name;
     private ControlerData data;
     private boolean directorio;
+    private boolean creado;
     private String accesos;
-//    private Intent intent;
 
     public MyFileObserver( String pName, String path, FileModificationService pServicio, boolean esDirectorio )
     {
         super( path, FileObserver.ALL_EVENTS );
         accesos = "";
-        
+        creado = false;
         data = new ControlerData( );
         absolutePath = path;
         name = pName;
         CLASE_FILE += name;
         directorio = esDirectorio;
-//        if( !directorio )
-//        {
-//            data.crearFile( CLASE_FILE, "TIME;Process;Foreground;Perceptible;Visible" );
-//        }
         servicoGeneral = pServicio;
     }
 
@@ -41,7 +33,11 @@ public class MyFileObserver extends FileObserver
         if( event == 32 )
         {
             accesos += absolutePath + " was opened\n";
-//            servicoGeneral.starServicioProcess(  );
+            if( !directorio )
+            {
+                data.crearFile( CLASE_FILE, "Datos:\n" );
+                creado = true;
+            }
         }
 
         if( event == 1 )
@@ -57,19 +53,11 @@ public class MyFileObserver extends FileObserver
         if( event == 512 )
         {
             accesos += absolutePath + " file was deleted from the monitored directory\n";
-//            if( !servicoGeneral.isMyServiceRunning( ) )
-//            {
-//                servicoGeneral.starServicioProcess( );//intent );
-//            }
         }
 
         if( event == 32 )
         {
             accesos += absolutePath + " file or directory was opened\n";
-//            if( !servicoGeneral.isMyServiceRunning( ) )
-//            {
-//                servicoGeneral.starServicioProcess( );//intent );
-//            }
         }
 
         if( ( FileObserver.CREATE & event ) != 0 )
@@ -80,10 +68,6 @@ public class MyFileObserver extends FileObserver
         if( ( FileObserver.OPEN & event ) != 0 )
         {
             accesos += name + " is opened\n";
-//            if( !servicoGeneral.isMyServiceRunning( ) )
-//            {
-//                servicoGeneral.starServicioProcess( );//intent );
-//            }
         }
         // data was read from a file
         if( ( FileObserver.ACCESS & event ) != 0 )
@@ -99,7 +83,6 @@ public class MyFileObserver extends FileObserver
         if( ( FileObserver.CLOSE_NOWRITE & event ) != 0 )
         {
             accesos += name + " is closed\n";
-//            servicoGeneral.stopServiceProcess( );//intent );
         }
         // someone has a file or directory open for writing, and closed it
         if( ( FileObserver.CLOSE_WRITE & event ) != 0 )
@@ -116,7 +99,7 @@ public class MyFileObserver extends FileObserver
         if( ( FileObserver.DELETE_SELF & event ) != 0 )
         {
             accesos += absolutePath + "/" + " is deleted\n";
-//            servicoGeneral.stopServiceProcess( );//intent );
+            // servicoGeneral.stopServiceProcess( );//intent );
         }
         // a file or subdirectory was moved from the monitored directory
         if( ( FileObserver.MOVED_FROM & event ) != 0 )
@@ -136,14 +119,11 @@ public class MyFileObserver extends FileObserver
         // Metadata (permissions, owner, timestamp) was changed explicitly
         if( ( FileObserver.ATTRIB & event ) != 0 )
         {
-            accesos += absolutePath + "/" + name + " is changed " +
-            		"" +
-            		"(permissions, owner, timestamp)\n";
+            accesos += absolutePath + "/" + name + " is changed " + "" + "(permissions, owner, timestamp)\n";
         }
-        if( !directorio )
+
+        if( !directorio && creado )
         {
-            data.existDelete( CLASE_FILE );
-            data.crearFile( CLASE_FILE, "TIME" );
             data.writeToFile( accesos, true, CLASE_FILE );
         }
     }
