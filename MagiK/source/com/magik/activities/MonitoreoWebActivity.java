@@ -60,12 +60,13 @@ public class MonitoreoWebActivity extends Activity
             // @Override
             public void onClick( View v )
             {
+                final InterfaceManager manager = InterfaceManager.getInstance( );
                 t = new Thread( )
                 {
                     @Override
                     public void run( )
                     {
-                        while( sensorProcess )
+                        while( sensorProcess && manager.ismWeb( ))
                         {
                             try
                             {
