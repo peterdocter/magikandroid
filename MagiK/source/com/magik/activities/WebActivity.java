@@ -7,10 +7,12 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Vibrator;
 import android.util.Log;
@@ -29,6 +31,7 @@ import com.magik.R;
 import com.magik.db.PersistenceManager;
 import com.magik.mundo.analisyswords.PalabrasClave;
 import com.magik.mundo.analisyswords.Words;
+import com.magik.mundo.controllers.RotationControlService;
 import com.magik.mundo.data.ControlerData;
 import com.magik.mundo.monitoring.ControlerDisplay;
 import com.magik.services.WebServiceConnection;
@@ -62,6 +65,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
     private String[] recs;
     private long time;
     private InterfaceManager manager;
+    private RotationControlService rotationService;
 
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -78,10 +82,13 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         objWebView = ( WebView )findViewById( R.id.webView );
         objWebView.setOnTouchListener( this );
         time = -1;
+        Intent service = new Intent(getApplicationContext(), RotationControlService.class);
+        startService(service);
+        service = null;
+        
         
         client = new WebViewClient( )
         {
-
             @Override
             public boolean shouldOverrideUrlLoading( WebView view, String url )
             {
@@ -90,11 +97,13 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                 System.out.println( txtUrl.getText( ).toString( ) );
                 t = new Thread( )
                 {
+                	
                     @Override
                     public void run( )
                     {
+                    	rotationService = RotationControlService.getInstance();
                         manager = InterfaceManager.getInstance( );
-                        while( sensorProcess && manager.ismAct( ))
+                        while( sensorProcess && manager.ismAct( ) && rotationService.isReading())
                         {
                             try
                             {
@@ -512,9 +521,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
 
         }
         return false;
-    }
-    
-    
+    }    
 
     @Override
     public boolean handleMessage( Message msg )
@@ -539,5 +546,25 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             return true;
         }
         return false;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onPause()
+     */
+    @Override
+    protected void onPause() {
+    	stopService(new Intent(getApplicationContext(), RotationControlService.class));
+    	super.onPause();
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onDestroy()
+     */
+    @Override
+    protected void onDestroy() {
+    	stopService(new Intent(getApplicationContext(), RotationControlService.class));
+    	super.onDestroy();
     }
 }

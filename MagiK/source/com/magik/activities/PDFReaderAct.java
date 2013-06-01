@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 
 import com.magik.R;
 import com.magik.db.PersistenceManager;
+import com.magik.mundo.controllers.RotationControlService;
 import com.magik.mundo.data.ControlerData;
 import com.magik.mundo.monitoring.DatosDisplay;
 import com.magik.mundo.pdf.PDFReader;
@@ -49,7 +51,6 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
     private RelativeLayout m_layout;
     private Document m_doc = new Document( );
     // private Button btn_close;
-    private Button btn_pal;
     private Button btn_rec;
 
     private boolean m_set = false;
@@ -69,6 +70,7 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
     private String path;
     
     private InterfaceManager manager;
+    private RotationControlService rotationService;
 
     @Override
     public void onCreate( Bundle savedInstanceState )
@@ -79,13 +81,17 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         palabras = new ArrayList<String>( );
         recs = new ArrayList<String>( );
         sensorProcess = true;
+        Intent service = new Intent(getApplicationContext(), RotationControlService.class);
+        startService(service);
+        service = null;
+        rotationService = RotationControlService.getInstance();
         recommendationsThread = new Thread( )
         {
             @Override
             public void run( )
             {
                 manager = InterfaceManager.getInstance( );
-                while( sensorProcess && manager.ismAct( ))
+                while( sensorProcess && manager.ismAct( ) && rotationService.isReading())
                 {
                     try
                     {
@@ -170,7 +176,14 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         if( m_doc != null )
             m_doc.Close( );
         Global.RemoveTmp( );
+        stopService(new Intent(getApplicationContext(), RotationControlService.class));
         super.onDestroy( );
+    }
+    
+    @Override
+    protected void onPause() {
+    	stopService(new Intent(getApplicationContext(), RotationControlService.class));
+    	super.onPause();
     }
 
     public void onItemClick( AdapterView<?> arg0, View arg1, int arg2, long arg3 )

@@ -100,9 +100,7 @@ public class ControlerDisplay
 
     public String analizarVelocidad( int valor, String sentido, long time2 )
     {
-    	System.out.println("Tiempo:----------------------------------------------------"+String.valueOf(time2));
         String direccion;
-
         if( valor >= 0 )
         {
             if( sentido.equals( "X" ) )
@@ -175,7 +173,6 @@ public class ControlerDisplay
     
     public String analizarVelocidadCorto( int valor, String sentido, long time2 )
     {
-    	System.out.println("Tiempo:----------------------------------------------------"+String.valueOf(time2)+","+valor);
         String direccion;
 
         if( valor >= 0 )
