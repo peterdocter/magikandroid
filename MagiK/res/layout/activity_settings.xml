@@ -5,30 +5,25 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <RadioGroup
-        android:id="@+id/rad_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+    <CheckBox
+        android:id="@+id/checkWeb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Monitorear Historial Web"
+        android:onClick="onCheckboxClicked" />
 
-        <RadioButton
-            android:id="@+id/rad_mWeb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:text="Monitoreo web" />
+    <CheckBox
+        android:id="@+id/checkFiles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"        
+        android:text="Monitorear Archivos" 
+        android:onClick="onCheckboxClicked"/>
 
-        <RadioButton
-            android:id="@+id/rad_mFiles"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Monitoreo de archivos" />
-
-        <RadioButton
-            android:id="@+id/rad_mAct"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Monitoreo de actividades" />
-
-    </RadioGroup>
+    <CheckBox
+        android:id="@+id/checkAct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Monitorear Gestos" 
+        android:onClick="onCheckboxClicked"/>
 
 </LinearLayout>
