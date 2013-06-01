@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.magik.R;
+import com.magik.mundo.controllers.RotationControlService;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,8 +21,6 @@ import android.widget.Button;
 public class MagikActivity extends Activity
 {
 
-    private Button btn_Web_Back;
-    private Button btn_File_Back;
     private Button btn_Pdf_Reader;
     private Button btn_Web_Reader;
     private Button btn_settings;
@@ -40,26 +39,7 @@ public class MagikActivity extends Activity
 
     private void inicializarBotones( )
     {
-        btn_Web_Back = ( Button )findViewById( R.id.webMonitoreo );
 
-        btn_Web_Back.setOnClickListener( new View.OnClickListener( )
-        {
-            // @Override
-            public void onClick( View v )
-            {
-                startWebBackGroundActivity( );
-            }
-        } );
-
-        btn_File_Back = ( Button )findViewById( R.id.fileMonitoreo );
-        btn_File_Back.setOnClickListener( new View.OnClickListener( )
-        {
-            // @Override
-            public void onClick( View v )
-            {
-                startFileBackGroundActivity( );
-            }
-        } );
         btn_Pdf_Reader = ( Button )findViewById( R.id.button3 );
         btn_Pdf_Reader.setOnClickListener( new View.OnClickListener( )
         {

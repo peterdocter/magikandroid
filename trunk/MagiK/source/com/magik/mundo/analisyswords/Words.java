@@ -22,7 +22,6 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.jsoup.Jsoup;
 
-import android.R.bool;
 import android.util.Log;
 
 import com.aliasi.lm.TokenizedLM;
