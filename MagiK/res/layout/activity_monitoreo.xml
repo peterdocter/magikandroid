@@ -1,7 +1,8 @@
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:columnCount="1" >
+    android:columnCount="1"
+    android:orientation="horizontal" >
 
     <ImageView
         android:id="@+id/imageView1"
@@ -19,35 +20,12 @@
         android:layout_row="0"
         android:orientation="vertical" >
 
-         <Button
-            android:id="@+id/settings"
-            android:layout_width="185dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@android:color/holo_blue_light"
-            android:text="Settings" />
-        
-        <Button
-            android:id="@+id/webMonitoreo"
-            android:layout_width="185dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@android:color/holo_blue_light"
-            android:text="Web Monitor" />
-
-        <Button
-            android:id="@+id/fileMonitoreo"
-            android:layout_width="185dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="File Monitor" />
-
         <Button
             android:id="@+id/button4"
             android:layout_width="185dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@android:color/holo_blue_light"
+            android:background="@drawable/violet"
             android:text="Web Viewer" />
 
         <Button
@@ -55,7 +33,20 @@
             android:layout_width="185dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:background="@android:color/holo_blue_light"
             android:text="PDF Viewer" />
+       
     </LinearLayout>
+
+    <Button
+        android:id="@+id/settings"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="29dp"
+        android:layout_column="0"
+        android:layout_gravity="right|bottom"
+        android:layout_marginTop="10dp"
+        android:layout_row="0"        
+        android:text="Settings" />
 
 </GridLayout>
