@@ -52,7 +52,7 @@ public class Words
     private static int MAX_COUNT = 100;
     static File root = android.os.Environment.getExternalStorageDirectory( );
     private static File BACKGROUND_DIR = new File( root.getAbsolutePath( ) + "/Magik/train" );
-    private static File FOREGROUND_DIR = new File( root.getAbsolutePath( ) + "/Magik/test" );
+    //private static File FOREGROUND_DIR = new File( root.getAbsolutePath( ) + "/Magik/test" );
     private boolean cargoProfiles;
     private boolean error = false;
     
@@ -174,23 +174,23 @@ public class Words
             
             File dir = new File( root.getAbsolutePath( ) + "/Magik/" + "train" + lng );
             BACKGROUND_DIR = dir;
-            File dir2 = new File( root.getAbsolutePath( ) + "/Magik/" + "test" + lng );
-            FOREGROUND_DIR = dir2;
+            //File dir2 = new File( root.getAbsolutePath( ) + "/Magik/" + "test" + lng );
+            //FOREGROUND_DIR = dir2;
 
-            String[] children = dir2.list( );
-            if( children != null && children.length > 0 )
-            {
-                for( int i = 0; i < children.length; i++ )
-                {
-                    new File( dir2, children[ i ] ).delete( );
-                }
-            }
+//            String[] children = dir2.list( );
+//            if( children != null && children.length > 0 )
+//            {
+//                for( int i = 0; i < children.length; i++ )
+//                {
+//                    new File( dir2, children[ i ] ).delete( );
+//                }
+//            }
 
             dir.mkdirs( );
-            dir2.mkdirs( );
+//            dir2.mkdirs( );
 
             File monitorFile = new File( dir, "datos" + ( dir.listFiles( ).length + 1 ) );
-            File monitorFile2 = new File( dir2, "datos" + ( dir2.listFiles( ).length + 1 ) );
+//            File monitorFile2 = new File( dir2, "datos" + ( dir2.listFiles( ).length + 1 ) );
             try
             {
 
@@ -201,12 +201,12 @@ public class Words
                 pw.close( );
                 f.close( );
 
-                FileOutputStream f2 = new FileOutputStream( monitorFile2, true );
-                PrintWriter pw2 = new PrintWriter( f2 );
-                pw2.append( resString );
-                pw2.flush( );
-                pw2.close( );
-                f2.close( );
+//                FileOutputStream f2 = new FileOutputStream( monitorFile2, true );
+//                PrintWriter pw2 = new PrintWriter( f2 );
+//                pw2.append( resString );
+//                pw2.flush( );
+//                pw2.close( );
+//                f2.close( );
 
             }
             catch( FileNotFoundException e )
@@ -262,23 +262,23 @@ public class Words
                 SortedSet<ScoredObject<String[]>> coll = backgroundModel.collocationSet( NGRAM_REPORTING_LENGTH, MIN_COUNT, MAX_COUNT );
 
                 System.out.println( "\nCollocations in Order of Significance:" );
-                // report( coll );
+                report( coll );
 
-                System.out.println( "Training foreground model" );
-                TokenizedLM foregroundModel = buildModel( tokenizerFactory, NGRAM, FOREGROUND_DIR );
-                foregroundModel.sequenceCounter( ).prune( 3 );
+                //System.out.println( "Training foreground model" );
+                //TokenizedLM foregroundModel = buildModel( tokenizerFactory, NGRAM, FOREGROUND_DIR );
+                //foregroundModel.sequenceCounter( ).prune( 3 );
 
-                System.out.println( "\nAssembling New Terms in Test vs. Training" );
-                SortedSet<ScoredObject<String[]>> newTerms = foregroundModel.newTermSet( NGRAM_REPORTING_LENGTH, MIN_COUNT, MAX_COUNT, backgroundModel );
+                //System.out.println( "\nAssembling New Terms in Test vs. Training" );
+                //SortedSet<ScoredObject<String[]>> newTerms = foregroundModel.newTermSet( NGRAM_REPORTING_LENGTH, MIN_COUNT, MAX_COUNT, backgroundModel );
 
-                System.out.println( "\nNew Terms in Order of Signficance:" );
-                report( newTerms );
+                //System.out.println( "\nNew Terms in Order of Signficance:" );
+                //report( newTerms );
 
-                foregroundModel = null;
+                //foregroundModel = null;
                 backgroundModel = null;
                 coll = null;
                 tokenizerFactory = null;
-                newTerms = null;
+                //newTerms = null;
                 System.gc( );
                 System.out.println( "\nDone." );
                 return true;
