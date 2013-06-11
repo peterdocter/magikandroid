@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@drawable/violet"
-            android:text="Web Viewer" />
+            android:text="Web Borwser" />
 
         <Button
             android:id="@+id/button3"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@android:color/holo_blue_light"
-            android:text="PDF Viewer" />
+            android:text="PDF Reader" />
        
     </LinearLayout>
 
@@ -42,11 +42,11 @@
         android:id="@+id/settings"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
-        android:layout_height="29dp"
+        android:layout_height="wrap_content"
         android:layout_column="0"
         android:layout_gravity="right|bottom"
         android:layout_marginTop="10dp"
-        android:layout_row="0"        
+        android:layout_row="0"
         android:text="Settings" />
 
 </GridLayout>
