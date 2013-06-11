@@ -30,6 +30,7 @@ public class PDFInk extends View
 	{
 		super(context, attrs);
 	}
+	@Override
 	protected void onSizeChanged (int w, int h, int oldw, int oldh)
 	{
 		win_cx = w;
@@ -42,6 +43,7 @@ public class PDFInk extends View
 			bitmap = Bitmap.createBitmap(win_cx, win_cy, Config.ARGB_8888);
 		}
 	}
+	@Override
 	protected void onDraw( Canvas canvas )
 	{
 		if( ink == null ) return;
@@ -51,6 +53,7 @@ public class PDFInk extends View
 		Global.unlockBitmap(bitmap, bmp);
 		canvas.drawBitmap(bitmap, 0, 0, null);
 	}
+	@Override
 	public boolean onTouchEvent (MotionEvent event)
 	{
 		switch( event.getActionMasked() )

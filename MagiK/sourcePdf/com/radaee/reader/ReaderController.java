@@ -1,30 +1,11 @@
 package com.radaee.reader;
 
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.RadioGroup;
-import android.widget.Toast;
 import com.radaee.pdf.Document;
-import com.radaee.pdf.Global;
-import com.radaee.pdf.Matrix;
-import com.radaee.pdf.Page;
 import com.radaee.pdfex.*;
-
-import java.io.File;
 
 /**
  * Created with IntelliJ IDEA.
@@ -37,10 +18,6 @@ public class ReaderController extends View implements PDFView.PDFViewListener {
 
     PDFView m_pdv = new PDFViewSingle();
     public boolean m_lock_resize = false;
-    private int m_save_w = 0;
-    private int m_save_h = 0;
-    private int m_cur_page = 0;
-
     public ReaderController(Context context)
     {
         super(context);
@@ -51,7 +28,8 @@ public class ReaderController extends View implements PDFView.PDFViewListener {
         super(context, attrs);
     }
 
-    protected void onDraw(Canvas canvas)
+    @Override
+	protected void onDraw(Canvas canvas)
     {
         m_pdv.viewDraw(canvas);
 
@@ -68,10 +46,9 @@ public class ReaderController extends View implements PDFView.PDFViewListener {
         invalidate();
     }
 
-    protected void onSizeChanged (int w, int h, int oldw, int oldh)
+    @Override
+	protected void onSizeChanged (int w, int h, int oldw, int oldh)
     {
-        m_save_w = w;
-        m_save_h = h;
         if( m_pdv != null && !m_lock_resize )
             m_pdv.viewResize(w, h);
     }
@@ -85,11 +62,13 @@ public class ReaderController extends View implements PDFView.PDFViewListener {
         m_pdv = null;
     }
 
-    public void onSingleTap(float x, float y) {
+    @Override
+	public void onSingleTap(float x, float y) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void onInvalidate()
+    @Override
+	public void onInvalidate()
     {
         if( m_pdv != null )
         {
@@ -97,51 +76,63 @@ public class ReaderController extends View implements PDFView.PDFViewListener {
         }
     }
 
-    public void onFound(boolean found) {
+    @Override
+	public void onFound(boolean found) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void onSelectStart() {
+    @Override
+	public void onSelectStart() {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void onSelectEnd(String text) {
+    @Override
+	public void onSelectEnd(String text) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void onSelDisplayed(PDFView.PDFSelDispPara para) {
+    @Override
+	public void onSelDisplayed(PDFView.PDFSelDispPara para) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void onSubmit(String target, String para) {
+    @Override
+	public void onSubmit(String target, String para) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void onOpenURL(String url) {
+    @Override
+	public void onOpenURL(String url) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void onOpen3D(String file_name) {
+    @Override
+	public void onOpen3D(String file_name) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void onOpenMovie(String file_name) {
+    @Override
+	public void onOpenMovie(String file_name) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void onOpenSound(int[] paras, String file_name) {
+    @Override
+	public void onOpenSound(int[] paras, String file_name) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void onOpenAttachment(String file_name) {
+    @Override
+	public void onOpenAttachment(String file_name) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void onPageChanged(int pageno) {
+    @Override
+	public void onPageChanged(int pageno) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void onPageDisplayed(PDFView.PDFPageDispPara para) {
+    @Override
+	public void onPageDisplayed(PDFView.PDFPageDispPara para) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

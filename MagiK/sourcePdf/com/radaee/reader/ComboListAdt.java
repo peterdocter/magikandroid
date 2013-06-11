@@ -17,27 +17,32 @@ public class ComboListAdt implements ListAdapter
 		m_opts = opts;
 		m_obs.onChanged();
 	}
+	@Override
 	public int getCount()
 	{
 		if( m_opts == null ) return 0;
 		return m_opts.length;
 	}
 
+	@Override
 	public Object getItem(int arg0)
 	{
 		return m_opts[arg0];
 	}
 
+	@Override
 	public long getItemId(int position)
 	{
 		return 0;
 	}
 
+	@Override
 	public int getItemViewType(int position)
 	{
 		return 0;
 	}
 
+	@Override
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
 		TextView v = new TextView(parent.getContext());
@@ -47,36 +52,43 @@ public class ComboListAdt implements ListAdapter
 		return v;
 	}
 
+	@Override
 	public int getViewTypeCount()
 	{
 		return 1;
 	}
 
+	@Override
 	public boolean hasStableIds()
 	{
 		return false;
 	}
 
+	@Override
 	public boolean isEmpty()
 	{
 		return (m_opts == null) || (m_opts.length > 0);
 	}
 
+	@Override
 	public void registerDataSetObserver(DataSetObserver observer)
 	{
 		m_obs = observer;
 	}
 
+	@Override
 	public void unregisterDataSetObserver(DataSetObserver observer)
 	{
 		m_obs = null;
 	}
 
+	@Override
 	public boolean areAllItemsEnabled()
 	{
 		return true;
 	}
 
+	@Override
 	public boolean isEnabled(int position)
 	{
 		return true;

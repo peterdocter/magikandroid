@@ -8,7 +8,6 @@ import android.graphics.Canvas;
 import android.graphics.Bitmap.Config;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.Toast;
 
 /**
  * simplest PDF sample.
@@ -91,7 +90,7 @@ public class PDFSimple extends View
 		Close();
 		m_doc = new Document();
 		m_stream = new PDFFileStream();
-		boolean ok = m_stream.open(path);
+		m_stream.open(path);
 		int ret = m_doc.OpenStream(m_stream, null);
 		if( ret != 0 )
 		{
@@ -102,6 +101,7 @@ public class PDFSimple extends View
 		onSizeChanged(win_cx, win_cy, 0, 0);
 		return 0;
 	}
+	@Override
 	protected void onSizeChanged (int w, int h, int oldw, int oldh)
 	{
 		if( w > 0 && h > 0 )
@@ -113,6 +113,7 @@ public class PDFSimple extends View
 			render_page(m_pageno);
 		}
 	}
+	@Override
 	protected void onDraw( Canvas canvas )
 	{
 		if( bitmap != null )

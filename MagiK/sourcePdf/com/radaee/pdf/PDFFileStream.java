@@ -35,10 +35,12 @@ public class PDFFileStream implements PDFStream
 		}
 		m_impl = null;
 	}
+	@Override
 	public boolean writeable()
 	{
 		return true;
 	}
+	@Override
 	public int get_size()
 	{
 		try
@@ -52,6 +54,7 @@ public class PDFFileStream implements PDFStream
 		}
 	}
 
+	@Override
 	public int read(byte[] data)
 	{
 		try
@@ -69,6 +72,7 @@ public class PDFFileStream implements PDFStream
 		}
 	}
 
+	@Override
 	public int write(byte[] data)
 	{
 		try
@@ -82,6 +86,7 @@ public class PDFFileStream implements PDFStream
 		}
 	}
 
+	@Override
 	public void seek(int pos)
 	{
 		try
@@ -94,6 +99,7 @@ public class PDFFileStream implements PDFStream
 		}
 	}
 
+	@Override
 	public int tell()
 	{
 		try
