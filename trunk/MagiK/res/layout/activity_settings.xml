@@ -5,25 +5,39 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
     <CheckBox
         android:id="@+id/checkWeb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Monitorear Historial Web"
+        android:text="Monitor Web History"
         android:onClick="onCheckboxClicked" />
 
     <CheckBox
         android:id="@+id/checkFiles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"        
-        android:text="Monitorear Archivos" 
+        android:text="Monitor Files" 
         android:onClick="onCheckboxClicked"/>
 
     <CheckBox
         android:id="@+id/checkAct"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Monitorear Gestos" 
+        android:text="Monitor Swipes on Screen" 
         android:onClick="onCheckboxClicked"/>
+
+    <CheckBox
+        android:id="@+id/checkGyro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Monitor Device Orientation"
+        android:onClick="onCheckboxClicked" />
 
 </LinearLayout>
