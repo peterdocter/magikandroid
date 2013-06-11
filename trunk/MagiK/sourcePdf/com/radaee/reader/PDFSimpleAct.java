@@ -28,13 +28,15 @@ public class PDFSimpleAct extends Activity implements OnChildClickListener
 		m_vPDF = new PDFSimple(this);
 		setContentView(m_vFiles);
     }
-    protected void onDestroy()
+    @Override
+	protected void onDestroy()
     {
     	if( m_vPDF != null )
     		m_vPDF.Close();
     	Global.RemoveTmp();
     	super.onDestroy();
     }
+	@Override
 	public boolean onChildClick(ExpandableListView parent, View v,
 			int groupPosition, int childPosition, long id)
 	{

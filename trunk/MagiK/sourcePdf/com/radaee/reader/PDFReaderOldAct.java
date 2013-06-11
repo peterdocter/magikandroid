@@ -10,9 +10,6 @@ import com.radaee.pdf.*;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.InputType;
@@ -24,8 +21,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -79,7 +74,8 @@ public class PDFReaderOldAct extends Activity implements OnItemClickListener, On
 		m_pCombo.setBackgroundDrawable(bitmap);
         setContentView(m_vFiles);
     }
-    protected void onDestroy()
+    @Override
+	protected void onDestroy()
     {
     	//m_vFiles.close();
     	if( m_vThumb != null )
@@ -109,6 +105,7 @@ public class PDFReaderOldAct extends Activity implements OnItemClickListener, On
     	Global.RemoveTmp();
     	super.onDestroy();
     }
+	@Override
 	public void onClick(View v)
 	{
 		switch( v.getId() )
@@ -195,6 +192,7 @@ public class PDFReaderOldAct extends Activity implements OnItemClickListener, On
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+					@Override
 					public void onClick(DialogInterface dialog, int which)
 					{
 						String str_subj = subj.getText().toString();
@@ -206,6 +204,7 @@ public class PDFReaderOldAct extends Activity implements OnItemClickListener, On
 						m_vPDF.lockResize(false);
 					}});
 				builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+					@Override
 					public void onClick(DialogInterface dialog, int which)
 					{
 						m_vPDF.annotEnd();
@@ -286,6 +285,7 @@ public class PDFReaderOldAct extends Activity implements OnItemClickListener, On
 			break;
 		}
 	}
+	@Override
 	public void onAnnotDragStart(boolean has_goto, boolean has_popup)
 	{
 		btn_ink.setEnabled(false);
@@ -298,6 +298,7 @@ public class PDFReaderOldAct extends Activity implements OnItemClickListener, On
         btn_next.setEnabled(false);
         btn_edit.setEnabled(has_popup);
 	}
+	@Override
 	public void onAnnotEditBox(int type, String val, float text_size, float left, float top, float right, float bottom)
 	{
 		m_vPDF.lockResize(true);
@@ -328,6 +329,7 @@ public class PDFReaderOldAct extends Activity implements OnItemClickListener, On
 		edit_type = 1;
 		m_pEdit.showAtLocation(m_vPDF, Gravity.NO_GRAVITY, (int)left + location[0], (int)top + location[1]);
 	}
+	@Override
 	public void onAnnotComboBox(int sel, String[] opts, float left, float top, float right, float bottom)
 	{
 		m_vPDF.lockResize(true);
@@ -345,6 +347,7 @@ public class PDFReaderOldAct extends Activity implements OnItemClickListener, On
 		sel_index = -1;
 		m_pCombo.showAtLocation(m_vPDF, Gravity.NO_GRAVITY, (int)left + location[0], (int)top + location[1]);
 	}
+	@Override
 	public void onAnnotEnd()
 	{
 		btn_ink.setEnabled(true);
@@ -358,6 +361,7 @@ public class PDFReaderOldAct extends Activity implements OnItemClickListener, On
         btn_edit.setEnabled(false);
 	}
 
+	@Override
 	public void onAnnotUpdate()
 	{
 		m_modified = true;
@@ -371,16 +375,7 @@ public class PDFReaderOldAct extends Activity implements OnItemClickListener, On
         btn_next.setEnabled(true);
         btn_edit.setEnabled(false);
 	}
-	private void expand_outline( int outline )
-	{
-		outline = m_doc.GetOutlineChild(outline);
-		while( outline != 0 )
-		{
-			String title = m_doc.GetOutlineTitle(outline);
-			expand_outline( outline );
-			outline  = m_doc.GetOutlineNext(outline);
-		}
-	}
+	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
 	{
 		if( arg0 == m_vFiles )
@@ -501,6 +496,7 @@ public class PDFReaderOldAct extends Activity implements OnItemClickListener, On
 			m_pCombo.dismiss();
 		}
 	}
+	@Override
 	public void onDismiss()
 	{
 		if( edit_type == 1 )//edit box
@@ -520,8 +516,8 @@ public class PDFReaderOldAct extends Activity implements OnItemClickListener, On
 		}
 		edit_type = 0;
 	}
+	@Override
 	public void onLowMemory()
 	{
-		int iiii = 0;
 	}
 }

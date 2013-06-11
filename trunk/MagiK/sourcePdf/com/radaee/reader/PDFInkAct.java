@@ -22,7 +22,8 @@ public class PDFInkAct extends Activity
         m_vInk = new PDFInk(this);
 		setContentView(m_vInk);
     }
-    protected void onDestroy()
+    @Override
+	protected void onDestroy()
     {
     	Global.RemoveTmp();
     	super.onDestroy();

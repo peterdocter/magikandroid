@@ -74,7 +74,8 @@ public class PDFViewer extends View
         {
             task = new TimerTask()
             {
-            	public void run()
+            	@Override
+				public void run()
             	{
             		if( pending_check() )
             			handUI.removeMessages(100);
@@ -216,6 +217,7 @@ public class PDFViewer extends View
 		m_view = null;
 		m_gesture = null;
 	}
+	@Override
 	protected void onSizeChanged (int w, int h, int oldw, int oldh)
 	{
 		win_cx = w;
@@ -227,6 +229,7 @@ public class PDFViewer extends View
 			if( m_view != null ) m_view.SetSize(w, h);
 		}
 	}
+	@Override
 	protected void onDraw( Canvas canvas )
 	{
 		if( m_status == STATUS.sta_zoom )
@@ -310,6 +313,7 @@ public class PDFViewer extends View
 		}
 		return true;
 	}
+	@Override
 	public boolean onTouchEvent (MotionEvent event)
 	{
 		if( m_view == null ) return true;

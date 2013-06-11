@@ -16,6 +16,7 @@ public class PDFGridAdt extends BaseAdapter
 	private Context m_context;
 	private Handler m_hand_ui = new Handler()
 	{
+		@Override
 		public void handleMessage(Message msg)
 		{
 			PDFGridItem item = (PDFGridItem)msg.obj;
@@ -164,21 +165,25 @@ public class PDFGridAdt extends BaseAdapter
 		m_thread = new PDFGridThread( m_hand_ui );
 		m_thread.start();
 	}
+	@Override
 	public int getCount()
 	{
 		return m_items.size();
 	}
 
+	@Override
 	public Object getItem(int arg0)
 	{
 		return m_items.get(arg0);
 	}
 
+	@Override
 	public long getItemId(int position)
 	{
 		return 0;
 	}
 
+	@Override
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
 		return m_items.get(position).m_item;

@@ -3,12 +3,9 @@ package com.radaee.reader;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import com.radaee.pdf.PDFFileStream;
 import com.radaee.pdf.Document;
 import com.radaee.pdf.Global;
-import com.radaee.pdfex.PDFView;
-import com.radaee.reader.PDFSimple;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,11 +20,12 @@ public class ReaderActivity extends Activity {
     private Document doc = new Document();
     private PDFFileStream stream = new PDFFileStream();
 
-    public void onCreate(Bundle savedInstanceState){
+    @Override
+	public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
         Global.Init(ReaderActivity.this);
-        Intent receivedIntent = this.getIntent();
+        this.getIntent();
         String pathToPDF = "/sdcard/ebook/pdf.pdf";
 
         m_vPDF = new ReaderController(this);
@@ -68,7 +66,8 @@ public class ReaderActivity extends Activity {
     }
 
 
-    public void onDestroy()
+    @Override
+	public void onDestroy()
     {
         if( m_vPDF != null )
         {

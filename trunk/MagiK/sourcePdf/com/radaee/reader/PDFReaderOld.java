@@ -91,6 +91,7 @@ public class PDFReaderOld extends View implements PDFView.PDFViewListener, Thumb
 			if( pos != null ) m_viewer.viewGoto(pos);
 		}
 	}
+	@Override
 	protected void onConfigurationChanged(Configuration newConfig)
 	{
 		super.onConfigurationChanged(newConfig);
@@ -115,6 +116,7 @@ public class PDFReaderOld extends View implements PDFView.PDFViewListener, Thumb
 			m_viewer.viewClose();
 		m_viewer = null;
 	}
+	@Override
 	protected void onSizeChanged (int w, int h, int oldw, int oldh)
 	{
 		m_save_w = w;
@@ -129,6 +131,7 @@ public class PDFReaderOld extends View implements PDFView.PDFViewListener, Thumb
 			//m_thumbView.thumbGotoPage(m_viewer.viewGetCurPageNo());
 		}
 	}
+	@Override
 	protected void onDraw( Canvas canvas )
 	{
 		if( m_viewer != null )
@@ -149,6 +152,7 @@ public class PDFReaderOld extends View implements PDFView.PDFViewListener, Thumb
 	}
 	//private float xSelStart = 0;
 	//private float ySelStart = 0;
+	@Override
 	public boolean onTouchEvent (MotionEvent event)
 	{
 		/*
@@ -265,42 +269,51 @@ public class PDFReaderOld extends View implements PDFView.PDFViewListener, Thumb
 		if( m_viewer != null )
 			m_viewer.viewFindStart(str, match_case, whole_word);
 	}
+	@Override
 	public void onInvalidate()
 	{
 		if( m_viewer != null )
 			invalidate();
 	}
+	@Override
 	public void onFound( boolean found )
 	{
 		if( !found )
 			Toast.makeText(getContext(), "no more found", Toast.LENGTH_SHORT).show();
 	}
+	@Override
 	public void onOpenURL(String url)
 	{
 		Toast.makeText(getContext(), "todo open url:" + url, Toast.LENGTH_LONG).show();
 	}
+	@Override
 	public void onSubmit(String target, String para)
 	{
 		Toast.makeText(getContext(), "todo open url:" + target + "\nparameters:" + para, Toast.LENGTH_LONG).show();
 	}
+	@Override
 	public void onPageChanged(int pageno)
 	{
 		m_cur_page = pageno;
 		if( m_thumbView != null )
 			m_thumbView.thumbGotoPage(pageno);
 	}
+	@Override
 	public void onSingleTap( float x, float y )
 	{
 	}
+	@Override
 	public void onOpen3D(String file_name)
 	{
 	}
+	@Override
 	public void onOpenMovie(String file_name)
 	{
 		File file = new File(file_name);
 		file.delete();//you should delete the temporary file, after played
 	}
 
+	@Override
 	public void onOpenSound(int[] paras, String file_name)
 	{
 		if( paras[0] == 0 )//means format sound file, example: mp3/wav
@@ -317,14 +330,17 @@ public class PDFReaderOld extends View implements PDFView.PDFViewListener, Thumb
 		file.delete();//you should delete the temporary file, after played
 	}
 
+	@Override
 	public void onOpenAttachment(String file_name)
 	{
 		File file = new File(file_name);
 		file.delete();//you should delete the temporary file, after played
 	}
+	@Override
 	public void onSelectStart()
 	{
 	}
+	@Override
 	public void onSelectEnd(String text)
 	{
 		//if( true ) return;
@@ -335,6 +351,7 @@ public class PDFReaderOld extends View implements PDFView.PDFViewListener, Thumb
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+			@Override
 			public void onClick(DialogInterface dialog, int which)
 			{
 				if( rad_group.getCheckedRadioButtonId() == R.id.rad_mWeb )
@@ -358,6 +375,7 @@ public class PDFReaderOld extends View implements PDFView.PDFViewListener, Thumb
 				lockResize(false);
 			}});
 		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+			@Override
 			public void onClick(DialogInterface dialog, int which)
 			{
 				annotEnd();
@@ -370,6 +388,7 @@ public class PDFReaderOld extends View implements PDFView.PDFViewListener, Thumb
 		AlertDialog dlg = builder.create();
 		dlg.show();
 	}
+	@Override
 	public void onPageDisplayed(PDFPageDispPara para)
 	{
 		Paint paint = new Paint();
@@ -381,19 +400,24 @@ public class PDFReaderOld extends View implements PDFView.PDFViewListener, Thumb
 		y = para.bottom - 12 * para.real_ratio;
 		para.canvas.drawText("PNO:" + (para.pageno + 1), x, y, paint);
 	}
+	@Override
 	public void onHold()
 	{
 	}
+	@Override
 	public void onPressDown()
 	{
 	}
+	@Override
 	public void onPressUp()
 	{
 	}
+	@Override
 	public void onClickPage(int pageno)
 	{
 		m_viewer.viewGotoPage(pageno);
 	}
+	@Override
 	public void onSelDisplayed(PDFView.PDFSelDispPara para)
 	{
 		if( para == null ) return;

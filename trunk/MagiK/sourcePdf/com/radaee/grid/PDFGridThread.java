@@ -1,14 +1,5 @@
 package com.radaee.grid;
 
-import com.radaee.pdf.Document;
-import com.radaee.pdf.Matrix;
-import com.radaee.pdf.Page;
-
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -64,6 +55,7 @@ public class PDFGridThread extends Thread
 		Looper.prepare();
 		m_hand = new Handler(Looper.myLooper())
 		{
+			@Override
 			public void handleMessage(Message msg)
 			{
 				if( msg != null )
@@ -91,6 +83,7 @@ public class PDFGridThread extends Thread
 	{
 		m_hand.sendMessage(m_hand.obtainMessage(0, item));
 	}
+	@Override
 	public synchronized void destroy()
 	{
 		try

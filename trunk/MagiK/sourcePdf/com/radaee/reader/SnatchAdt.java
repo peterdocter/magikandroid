@@ -57,6 +57,7 @@ public class SnatchAdt implements ExpandableListAdapter
 	private boolean canceling = false;
 	private Handler m_hand_ui = new Handler()
 	{
+		@Override
 		public void handleMessage(Message msg)
 		{
 			if( m_groups != null )
@@ -252,10 +253,12 @@ public class SnatchAdt implements ExpandableListAdapter
         }
         canceling = false;
     }
+	@Override
 	public boolean areAllItemsEnabled()
 	{
 		return true;
 	}
+	@Override
 	public Object getChild(int groupPosition, int childPosition)
 	{
 		return get_child(groupPosition, childPosition);
@@ -265,81 +268,97 @@ public class SnatchAdt implements ExpandableListAdapter
 		return get_child_path(groupPosition, childPosition);
 	}
 
+	@Override
 	public long getChildId(int groupPosition, int childPosition)
 	{
 		return 0;
 	}
 
+	@Override
 	public View getChildView(int groupPosition, int childPosition,
 			boolean isLastChild, View convertView, ViewGroup parent)
 	{
 		return get_child_view(groupPosition, childPosition);
 	}
 
+	@Override
 	public int getChildrenCount(int groupPosition)
 	{
 		return get_children_count(groupPosition);
 	}
 
+	@Override
 	public long getCombinedChildId(long groupId, long childId)
 	{
 		return 0;
 	}
 
+	@Override
 	public long getCombinedGroupId(long groupId)
 	{
 		return 0;
 	}
 
+	@Override
 	public Object getGroup(int groupPosition)
 	{
 		return get_group(groupPosition);
 	}
 
+	@Override
 	public int getGroupCount()
 	{
 		return get_group_cnt();
 	}
 
+	@Override
 	public long getGroupId(int groupPosition)
 	{
 		return 0;
 	}
 
+	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded,
 			View convertView, ViewGroup parent)
 	{
 		return get_group_view(groupPosition);
 	}
 
+	@Override
 	public boolean hasStableIds()
 	{
 		return false;
 	}
 
+	@Override
 	public boolean isChildSelectable(int groupPosition, int childPosition)
 	{
 		return true;
 	}
 
+	@Override
 	public boolean isEmpty()
 	{
 		return get_group_cnt() == 0;
 	}
 
+	@Override
 	public void onGroupCollapsed(int groupPosition)
 	{
 	}
 
+	@Override
 	public void onGroupExpanded(int groupPosition)
 	{
 	}
 
+	@Override
 	public void registerDataSetObserver(DataSetObserver observer)
 	{
 		m_obs = observer;
 	}
 
+	@Override
 	public void unregisterDataSetObserver(DataSetObserver observer)
 	{
 		m_obs = null;

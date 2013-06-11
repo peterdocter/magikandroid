@@ -82,6 +82,7 @@ public class PDFCrop extends View
 		m_doc = null;
 		bitmap.recycle();
 	}
+	@Override
 	protected void onDraw( Canvas canvas )
 	{
 		if( m_doc != null )

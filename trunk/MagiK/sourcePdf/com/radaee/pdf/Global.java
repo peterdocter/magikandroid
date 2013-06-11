@@ -7,7 +7,6 @@ import java.io.InputStream;
 import com.radaee.pdfex.PDFRecent;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -435,12 +434,7 @@ public class Global {
 		buf = null;
 		assets = null;
 
-		// active library, or WaterMark will displayed on each page.
-		// boolean succeeded = activeStandard(act, "radaee",
-		// "radaee_com@yahoo.cn", "HV8A19-WOT9YC-9ZOU9E-OQ31K2-FADG6Z-XEBCAO");
-		// boolean succeeded = activeProfessional( act, "radaee",
-		// "radaee_com@yahoo.cn", "Z5A7JV-5WQAJY-9ZOU9E-OQ31K2-FADG6Z-XEBCAO" );
-		boolean succeeded = activePremium(act, "radaee", "radaee_com@yahoo.cn",
+		activePremium(act, "radaee", "radaee_com@yahoo.cn",
 				"LNJFDN-C89QFX-9ZOU9E-OQ31K2-FADG6Z-XEBCAO");
 
 		// set cmaps and umaps data.

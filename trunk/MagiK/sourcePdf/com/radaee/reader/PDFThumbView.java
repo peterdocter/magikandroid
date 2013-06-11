@@ -1,10 +1,8 @@
 package com.radaee.reader;
 
 import com.radaee.pdf.Document;
-import com.radaee.pdf.Page;
 import com.radaee.view.PDFView.PDFPos;
 import com.radaee.view.PDFView.PDFViewListener;
-import com.radaee.view.PDFVPage;
 import com.radaee.view.PDFViewThumb;
 import com.radaee.view.PDFViewThumb.PDFThumbListener;
 
@@ -22,29 +20,37 @@ public class PDFThumbView extends View implements PDFViewListener
 		super(context, attrs);
 		m_thumb = new PDFViewThumb(context);
 	}
+	@Override
 	public void OnPDFPosChanged(PDFPos pos)
 	{
 	}
+	@Override
 	public boolean OnPDFDoubleTapped(float x, float y)
 	{
 		return false;
 	}
+	@Override
 	public boolean OnPDFSingleTapped(float x, float y)
 	{
 		return false;
 	}
+	@Override
 	public void OnPDFLongPressed(float x, float y)
 	{
 	}
+	@Override
 	public void OnPDFShowPressed(float x, float y)
 	{
 	}
+	@Override
 	public void OnPDFSelectEnd()
 	{
 	}
+	@Override
 	public void OnPDFFound(boolean found)
 	{
 	}
+	@Override
 	public void OnPDFInvalidate(boolean post)
 	{
 		if( post ) postInvalidate();
