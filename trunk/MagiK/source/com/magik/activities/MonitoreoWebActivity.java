@@ -3,6 +3,7 @@ package com.magik.activities;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.provider.Browser;
 import android.view.View;
 import android.widget.AdapterView;
@@ -58,7 +59,8 @@ public class MonitoreoWebActivity extends Activity
         btnStart.setOnClickListener( new View.OnClickListener( )
         {
             // @Override
-            public void onClick( View v )
+            @Override
+			public void onClick( View v )
             {
                 final InterfaceManager manager = InterfaceManager.getInstance( );
                 t = new Thread( )
@@ -91,7 +93,8 @@ public class MonitoreoWebActivity extends Activity
         btnClear.setOnClickListener( new View.OnClickListener( )
         {
             // @Override
-            public void onClick( View v )
+            @Override
+			public void onClick( View v )
             {
                 clearLog( );
                 started = false;
@@ -129,7 +132,6 @@ public class MonitoreoWebActivity extends Activity
     private void guardarDatos( Cursor cursor )
     {
         artData.existDelete( CLASE_MONITOREO );
-        String rta = "";
         cursor.moveToFirst( );
         while( cursor.isAfterLast( ) == false )
         {
@@ -164,7 +166,8 @@ public class MonitoreoWebActivity extends Activity
     {
         atrListView.setOnItemClickListener( new OnItemClickListener( )
         {
-            public void onItemClick( AdapterView<?> parent, View view, int position, long id )
+            @Override
+			public void onItemClick( AdapterView<?> parent, View view, int position, long id )
             {
                 TextView view2 = ( TextView )view.findViewById( R.id.textlistDescription );
                 Toast.makeText( getApplicationContext( ), view2.getText( ), Toast.LENGTH_SHORT ).show( );
@@ -175,7 +178,7 @@ public class MonitoreoWebActivity extends Activity
 
     private Cursor cargarDatosWeb( )
     {
-        String[] selection = { Browser.BookmarkColumns._ID, Browser.BookmarkColumns.URL, Browser.BookmarkColumns.TITLE };
+        String[] selection = { BaseColumns._ID, Browser.BookmarkColumns.URL, Browser.BookmarkColumns.TITLE };
         Cursor cursor = getContentResolver( ).query( Browser.BOOKMARKS_URI, selection, null, null, Browser.BookmarkColumns.DATE + " DESC LIMIT 30" );
         guardarDatos( cursor );
         return cursor;

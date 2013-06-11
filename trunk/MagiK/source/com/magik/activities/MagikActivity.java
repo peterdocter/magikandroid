@@ -7,8 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.magik.R;
-import com.magik.mundo.controllers.RotationControlService;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -25,10 +23,6 @@ public class MagikActivity extends Activity
     private Button btn_Web_Reader;
     private Button btn_settings;
 
-    private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
-    
-    
-
     @Override
     protected void onCreate( Bundle savedInstanceState )
     {
@@ -44,7 +38,8 @@ public class MagikActivity extends Activity
         btn_Pdf_Reader.setOnClickListener( new View.OnClickListener( )
         {
             // @Override
-            public void onClick( View v )
+            @Override
+			public void onClick( View v )
             {
 
                 startPdfReaderActivity( );
@@ -54,7 +49,8 @@ public class MagikActivity extends Activity
         btn_Web_Reader.setOnClickListener( new View.OnClickListener( )
         {
             // @Override
-            public void onClick( View v )
+            @Override
+			public void onClick( View v )
             {
 
                 startWebReaderActivity( );

@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
 import com.magik.R;
 
@@ -15,13 +16,15 @@ import com.magik.R;
  * @author User
  *
  */
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends Activity {	
 	
 	private CheckBox checkWeb;
 	
 	private CheckBox checkFiles;
 	
 	private CheckBox checkAct;
+	
+	private CheckBox checkGyro;
 	
 	private InterfaceManager interfaceManager;
 	
@@ -36,7 +39,22 @@ public class SettingsActivity extends Activity {
 		checkWeb = (CheckBox)findViewById(R.id.checkWeb);
 		checkFiles = (CheckBox)findViewById(R.id.checkFiles);
 		checkAct = (CheckBox)findViewById(R.id.checkAct);
+		checkGyro = (CheckBox)findViewById(R.id.checkGyro);
 		interfaceManager = InterfaceManager.getInstance();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onResume()
+	 */
+	@Override
+	protected void onResume() {
+		interfaceManager = InterfaceManager.getInstance();
+		checkWeb.setChecked(interfaceManager.ismWeb());
+		checkFiles.setChecked(interfaceManager.ismFiles());
+		checkAct.setChecked(interfaceManager.ismAct());
+		checkGyro.setChecked(interfaceManager.ismGyro());
+		super.onResume();
 	}
 
 	public void onCheckboxClicked(View view)
@@ -76,15 +94,27 @@ public class SettingsActivity extends Activity {
 			if(checked)
 			{
 				interfaceManager.setmAct(true);
-				
+				Toast.makeText(getApplicationContext(), "Swipe monitoring activated...", Toast.LENGTH_LONG).show();
 			}
 			else
 			{
-				interfaceManager.setmAct(false);				
+				interfaceManager.setmAct(false);
+				Toast.makeText(getApplicationContext(), "Swipe monitoring stopped...", Toast.LENGTH_LONG).show();
+			}			
+			break;
+		case R.id.checkGyro:
+			if(checked)
+			{
+				interfaceManager.setmGyro(true);
+				Toast.makeText(getApplicationContext(), "Device's orientation monitoring activated...", Toast.LENGTH_LONG).show();
+			}
+			else
+			{
+				interfaceManager.setmGyro(false);
+				Toast.makeText(getApplicationContext(), "Device's orientation monitoring stopped...", Toast.LENGTH_LONG).show();
 			}			
 			break;
 		}
+		}
+		
 	}
-	
-
-}

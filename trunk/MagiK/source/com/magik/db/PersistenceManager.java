@@ -7,7 +7,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.webkit.WebChromeClient.CustomViewCallback;
 
 /**
  * Creates queries to the SQLite helper and returns its results.
@@ -81,60 +80,6 @@ public class PersistenceManager
     }
 
     /**
-     * Creates a sound in the database by the given file name.
-     * @param recommendet_url The location of the document in the WEB.
-     * @param recommendet_document_id Id of the recommendation in the associated with the Document
-     * @param reommendetId Id of the recommendation in the Data Base
-     * @throws Exception if there is an error inserting the data.
-     */
-    private void createRecommendation( int reommendetId, String recommendet_url, int recommendet_document_id ) throws Exception
-    {
-        try
-        {
-            database = helper.getWritableDatabase( );
-            ContentValues values = new ContentValues( );
-            values.put( SQLiteHelper.COLUMN_RECOMMENDACION_URL, recommendet_url );
-            values.put( SQLiteHelper.COLUMN_RECOMEN_ID, reommendetId );
-            values.put( SQLiteHelper.COLUMN_R_D_ID, recommendet_document_id );
-            database.insert( SQLiteHelper.TABLE_RECOMMENDACION, null, values );
-            database.close( );
-            values = null;
-            database = null;
-        }
-        catch( Exception e )
-        {
-            throw new Exception( e.getMessage( ) );
-        }
-    }
-
-    /**
-     * Creates a sound in the database by the given file name.
-     * @param palabra_clave The location of the document in the WEB.
-     * @param palabra_document_id Id of the recommendation in the associated with the Document
-     * @param palabraId Id of the recommendation in the Data Base
-     * @throws Exception if there is an error inserting the data.
-     */
-    private void createPalabraClave( int palabraId, String palabra_clave, int palabra_document_id ) throws Exception
-    {
-        try
-        {
-            database = helper.getWritableDatabase( );
-            ContentValues values = new ContentValues( );
-            values.put( SQLiteHelper.COLUMN_PALABRA_CLAVE, palabra_clave );
-            values.put( SQLiteHelper.COLUMN_PALABRA_CLAVE_ID, palabraId );
-            values.put( SQLiteHelper.COLUMN_P_D_ID, palabra_document_id );
-            database.insert( SQLiteHelper.TABLE_PALABRAS_CLAVE, null, values );
-            database.close( );
-            values = null;
-            database = null;
-        }
-        catch( Exception e )
-        {
-            throw new Exception( e.getMessage( ) );
-        }
-    }
-
-    /**
      * Returns the id of the mix identified by the parameter.
      * @param mixName The name of the mix.
      * @return The id of the found mix. <b>-1</b> if the mix is not found.
@@ -189,74 +134,6 @@ public class PersistenceManager
             throw new Exception( "Error: " + e );
         }
         return title;
-    }
-
-    /**
-     * Returns the id of the mix identified by the parameter.
-     * @param mixName The name of the mix.
-     * @return The id of the found mix. <b>-1</b> if the mix is not found.
-     * @throws Exception If there is an error trying to find the mix.
-     */
-    /**
-     * @param document
-     * @return
-     * @throws Exception
-     */
-    private int getRecommendation( String recommendation ) throws Exception
-    {
-        int id = -1;
-        try
-        {
-            database = helper.getReadableDatabase( );
-            Cursor cursor = database.query( SQLiteHelper.TABLE_RECOMMENDACION, new String[]{ SQLiteHelper.COLUMN_RECOMEN_ID }, SQLiteHelper.COLUMN_RECOMMENDACION_URL + " LIKE '" + recommendation + "'", null, null, null, null );
-            if( cursor.moveToFirst( ) )
-            {
-                id = cursor.getInt( 0 );
-            }
-            cursor.close( );
-            database.close( );
-            cursor = null;
-            database = null;
-        }
-        catch( Exception e )
-        {
-            throw new Exception( "Error: " + e );
-        }
-        return id;
-    }
-
-    /**
-     * Returns the id of the mix identified by the parameter.
-     * @param mixName The name of the mix.
-     * @return The id of the found mix. <b>-1</b> if the mix is not found.
-     * @throws Exception If there is an error trying to find the mix.
-     */
-    /**
-     * @param document
-     * @return
-     * @throws Exception
-     */
-    private int getPalabraClave( String palabraClave ) throws Exception
-    {
-        int id = -1;
-        try
-        {
-            database = helper.getReadableDatabase( );
-            Cursor cursor = database.query( SQLiteHelper.TABLE_PALABRAS_CLAVE, new String[]{ SQLiteHelper.COLUMN_PALABRA_CLAVE_ID }, SQLiteHelper.COLUMN_PALABRA_CLAVE + " LIKE '" + palabraClave + "'", null, null, null, null );
-            if( cursor.moveToFirst( ) )
-            {
-                id = cursor.getInt( 0 );
-            }
-            cursor.close( );
-            database.close( );
-            cursor = null;
-            database = null;
-        }
-        catch( Exception e )
-        {
-            throw new Exception( "Error: " + e );
-        }
-        return id;
     }
 
     /**

@@ -6,7 +6,6 @@ import com.magik.mundo.data.ControlerData;
 public class MyFileObserver extends FileObserver
 {
     private String CLASE_FILE = "MFILE";
-    private FileModificationService servicoGeneral;
     public String absolutePath;
     private String name;
     private ControlerData data;
@@ -24,7 +23,6 @@ public class MyFileObserver extends FileObserver
         name = pName;
         CLASE_FILE += name;
         directorio = esDirectorio;
-        servicoGeneral = pServicio;
     }
 
     @Override

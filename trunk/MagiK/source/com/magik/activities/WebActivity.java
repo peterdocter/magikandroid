@@ -2,7 +2,6 @@ package com.magik.activities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,7 +11,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.os.Vibrator;
 import android.util.Log;
@@ -21,9 +19,10 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,10 +61,13 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
     private boolean cargoplabras;
     private boolean cargoProfiles;
     private boolean cargolenguaje;
+    private boolean analizando;
+    private boolean completo;
     private String[] recs;
     private long time;
     private InterfaceManager manager;
     private RotationControlService rotationService;
+    private TextView txtLeft;
 
     @Override
     protected void onCreate( Bundle savedInstanceState )
@@ -82,9 +84,16 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         objWebView = ( WebView )findViewById( R.id.webView );
         objWebView.setOnTouchListener( this );
         time = -1;
-        Intent service = new Intent(getApplicationContext(), RotationControlService.class);
-        startService(service);
-        service = null;
+        manager = InterfaceManager.getInstance( );
+        txtLeft = (TextView)findViewById(R.id.textView1);
+        analizando = false;
+        completo = false;
+        if(manager.ismGyro())
+        {
+        	Intent service = new Intent(getApplicationContext(), RotationControlService.class);
+            startService(service);
+            service = null;
+        }
         
         
         client = new WebViewClient( )
@@ -92,87 +101,158 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             @Override
             public boolean shouldOverrideUrlLoading( WebView view, String url )
             {
-
-                Toast.makeText( getApplicationContext( ), "palabras" + txtUrl.getText( ).toString( ), Toast.LENGTH_SHORT ).show( );
-                System.out.println( txtUrl.getText( ).toString( ) );
+            	Toast.makeText(getApplicationContext(), "Browsing: "+txtUrl.getText(), Toast.LENGTH_SHORT).show();
                 t = new Thread( )
                 {
                 	
                     @Override
                     public void run( )
-                    {
-                    	rotationService = RotationControlService.getInstance();
-                        manager = InterfaceManager.getInstance( );
-                        while( sensorProcess && manager.ismAct( ) && rotationService.isReading())
-                        {
-                            try
+                    {     	
+                        
+                        if(manager.ismGyro())
+                        {                        	
+                            rotationService = RotationControlService.getInstance();
+                            while( sensorProcess && manager.ismAct( ) && rotationService.isReading())
                             {
-                                Log.v( "KELVIN", "lecturas " + lecturas.size( ) );
-                                if( lecturas.size( ) > 5 )
+                                try
                                 {
-                                    // Toast.makeText( getApplicationContext( ),
-                                    // "Analizando pagina" + objWebView.getUrl(
-                                    // ), Toast.LENGTH_SHORT ).show( );
-                                    ArrayList<String> pals = new ArrayList<String>( );
-                                    if( !connected( ) )
+                                    Log.v( "KELVIN", "lecturas " + lecturas.size( ) );
+                                    if( lecturas.size( ) > 5 )
                                     {
-                                        WebServiceConnection connection = WebServiceConnection.darInctancia( );
-                                        String[] nombresParams = { "interes", "archivo" };
-                                        Object[] params = new Object[2];
-                                        params[ 0 ] = objWebView.getUrl( );
-                                        params[ 1 ] = "LECTURA";
-                                        String string = ( String )connection.accederServicio( WebServiceConnection.PALABRAS_URL, nombresParams, params );
-                                        for( String s : string.split( ";" ) )
+                                        ArrayList<String> pals = new ArrayList<String>( );
+                                        if( !connected( ) )
                                         {
-                                            pals.add( s );
-                                        }
-                                        string = null;
-                                        connection = null;
-                                        nombresParams = null;
-                                        params = null;
-
-                                    }
-                                    else
-                                    {
-                                        if( !cargoplabras )
-                                        {
-                                            Words w = new Words( cargoProfiles );
-                                            cargoProfiles = w.cargoProfiles();
-                                            boolean exito = w.startWords( objWebView.getUrl( ) );
-                                            if( exito )
+                                            WebServiceConnection connection = WebServiceConnection.darInctancia( );
+                                            String[] nombresParams = { "interes", "archivo" };
+                                            Object[] params = new Object[2];
+                                            params[ 0 ] = objWebView.getUrl( );
+                                            params[ 1 ] = "LECTURA";
+                                            String string = ( String )connection.accederServicio( WebServiceConnection.PALABRAS_URL, nombresParams, params );
+                                            for( String s : string.split( ";" ) )
                                             {
-                                                if( !cargolenguaje )
-                                                {
-                                                    lenguajes = w.getLenguaje( );
-                                                    if( lenguajes != null && lenguajes.size( ) > 0 )
-                                                    {
-                                                        Vibrator vibrator = ( Vibrator )WebActivity.this.getSystemService( VIBRATOR_SERVICE );
-                                                        vibrator.vibrate( 3000 );
-                                                        cargolenguaje = true;
-                                                        sensorProcess = false;
-                                                    }
-                                                }
-                                                PalabrasClave palabras = PalabrasClave.darInstacia( );
-                                                pals = palabras.getPalabras( );
-                                                cargoplabras = true;
-                                                w = null;
+                                                pals.add( s );
                                             }
-                                            System.gc( );
+                                            string = null;
+                                            connection = null;
+                                            nombresParams = null;
+                                            params = null;
                                         }
+                                        else
+                                        {
+                                            if( !cargoplabras )
+                                            {
+                                            	analizando = true;
+                                            	
+                                                Words w = new Words( cargoProfiles );
+                                                cargoProfiles = w.cargoProfiles();
+                                                boolean exito = w.startWords( objWebView.getUrl( ) );
+                                                if( exito )
+                                                {
+                                                	analizando = false;
+                                                	completo = true;
+                                                    if( !cargolenguaje )
+                                                    {
+                                                        lenguajes = w.getLenguaje( );
+                                                        if( lenguajes != null && lenguajes.size( ) > 0 )
+                                                        {
+                                                            Vibrator vibrator = ( Vibrator )WebActivity.this.getSystemService( VIBRATOR_SERVICE );
+                                                            vibrator.vibrate( 3000 );
+                                                            cargolenguaje = true;
+                                                            sensorProcess = false;
+                                                        }
+                                                    }
+                                                    PalabrasClave palabras = PalabrasClave.darInstacia( );
+                                                    pals = palabras.getPalabras( );
+                                                    cargoplabras = true;
+                                                    w = null;
+                                                }
+                                                System.gc( );
+                                            }
+                                        }
+                                        recomendaciones( pals );
                                     }
-                                    recomendaciones( pals );
+                                    sleep( 30000 );
                                 }
-                                sleep( 30000 );
-                            }
-                            catch( InterruptedException e )
-                            {
-                                e.printStackTrace( );
-                            }
-                            catch( Exception e )
-                            {
-                                e.printStackTrace( );
+                                catch( InterruptedException e )
+                                {
+                                    e.printStackTrace( );
+                                }
+                                catch( Exception e )
+                                {
+                                    e.printStackTrace( );
+                                }
                             }
                         }
+                        else
+                        {
+                        	while( sensorProcess && manager.ismAct( ))
+                            {
+                                try
+                                {
+                                    Log.v( "KELVIN", "lecturas " + lecturas.size( ) );
+                                    if( lecturas.size( ) > 5 )
+                                    {
+                                        ArrayList<String> pals = new ArrayList<String>( );
+                                        if( !connected( ) )
+                                        {
+                                            WebServiceConnection connection = WebServiceConnection.darInctancia( );
+                                            String[] nombresParams = { "interes", "archivo" };
+                                            Object[] params = new Object[2];
+                                            params[ 0 ] = objWebView.getUrl( );
+                                            params[ 1 ] = "LECTURA";
+                                            String string = ( String )connection.accederServicio( WebServiceConnection.PALABRAS_URL, nombresParams, params );
+                                            for( String s : string.split( ";" ) )
+                                            {
+                                                pals.add( s );
+                                            }
+                                            string = null;
+                                            connection = null;
+                                            nombresParams = null;
+                                            params = null;
+                                        }
+                                        else
+                                        {
+                                            if( !cargoplabras )
+                                            {
+                                                Words w = new Words( cargoProfiles );
+                                                cargoProfiles = w.cargoProfiles();
+                                                boolean exito = w.startWords( objWebView.getUrl( ) );
+                                                if( exito )
+                                                {
+                                                    if( !cargolenguaje )
+                                                    {
+                                                        lenguajes = w.getLenguaje( );
+                                                        if( lenguajes != null && lenguajes.size( ) > 0 )
+                                                        {
+                                                            Vibrator vibrator = ( Vibrator )WebActivity.this.getSystemService( VIBRATOR_SERVICE );
+                                                            vibrator.vibrate( 3000 );
+                                                            cargolenguaje = true;
+                                                            sensorProcess = false;
+                                                        }
+                                                    }
+                                                    PalabrasClave palabras = PalabrasClave.darInstacia( );
+                                                    pals = palabras.getPalabras( );
+                                                    cargoplabras = true;
+                                                    w = null;
+                                                }
+                                                System.gc( );
+                                            }
+                                        }
+                                        recomendaciones( pals );
+                                    }
+                                    sleep( 30000 );
+                                }
+                                catch( InterruptedException e )
+                                {
+                                    e.printStackTrace( );
+                                }
+                                catch( Exception e )
+                                {
+                                    e.printStackTrace( );
+                                }
+                            }
+                        }
+                        
                     }
                 };
                 t.start( );
@@ -196,7 +276,6 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                 {
                     try
                     {
-                        Log.v( "KELVIN", "Guardo" );
                         guardar( );
                         sleep( 120000 );
                     }
@@ -245,12 +324,10 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             }
             String[] pals = new String[palabras.size( )];
             pals = palabras.toArray( pals );
-            // TODO pals = new String[] { "Kelvin", "Tita", "Julio" };
             System.out.println( "ARREGLO: -------------------------------------------------- " + Arrays.deepToString( pals ) );
             if( pals.length > 0 )
             {
                 persistenceManager = new PersistenceManager( getApplicationContext( ) );
-                System.out.println( "BDDDDDDDDDDDDDDDDDDDDDDDDDDDD" );
                 String urlTemp = objWebView.getUrl( );
                 if( !persistenceManager.isFileInTable( urlTemp ) )
                 {
@@ -310,7 +387,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         }
         else
         {
-            text.setText( "No se tiene cargado las Pk" );
+            text.setText( "No se han cargado las Pk." );
         }
     }
 
@@ -348,7 +425,8 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         btnIr.setOnClickListener( new View.OnClickListener( )
         {
 
-            public void onClick( View v )
+            @Override
+			public void onClick( View v )
             {
             	Vibrator vibrator = ( Vibrator )WebActivity.this.getSystemService( VIBRATOR_SERVICE );
                 vibrator.vibrate( 300 );
@@ -408,7 +486,8 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         btnLenguaje.setOnClickListener( new View.OnClickListener( )
         {
 
-            public void onClick( View v )
+            @Override
+			public void onClick( View v )
             {
             	Vibrator vibrator = ( Vibrator )WebActivity.this.getSystemService( VIBRATOR_SERVICE );
                 vibrator.vibrate( 300 );
@@ -423,7 +502,8 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         btnPk.setOnClickListener( new View.OnClickListener( )
         {
 
-            public void onClick( View v )
+            @Override
+			public void onClick( View v )
             {
             	Vibrator vibrator = ( Vibrator )WebActivity.this.getSystemService( VIBRATOR_SERVICE );
                 vibrator.vibrate( 300 );
@@ -442,7 +522,8 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
     /**
      * Muestra la actividad que permite ver los productoscreados
      */
-    public boolean onTouchEvent( MotionEvent event )
+    @Override
+	public boolean onTouchEvent( MotionEvent event )
     {
         return true;
     }
@@ -450,6 +531,21 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
     @Override
     public boolean onTouch( View v, MotionEvent event )
     {
+    	GridLayout layout = (GridLayout)findViewById(R.id.weblayout);
+    	ProgressBar bar = new ProgressBar(getApplicationContext(), null, android.R.attr.progressBarStyleSmall);
+    	if(analizando)
+    	{
+    		txtLeft.setText("Analizando...");
+        	layout.addView(bar);
+    	}
+    	else if(completo)
+    	{
+    		txtLeft.setText("Análisis completo.");
+        	layout.removeView(bar);
+    	}
+    	layout = null;
+    	bar = null;
+    	
     	long time2 = 0;
     	if(event.getAction()==MotionEvent.ACTION_UP)
     	{   
@@ -507,8 +603,9 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             if( tipoLectorua.contains( "LECTURA" ) )
             {
                 lecturas.add( rta );
+                Toast.makeText(getApplicationContext(), "Reading", Toast.LENGTH_SHORT).show();
             }
-
+            /*
             String textoFrontal = tipoLectorua + ":(" + a + "," + b + ")";
             TextView text = ( TextView )findViewById( R.id.textView1 );
             String anterior = ( String )text.getText( );
@@ -518,24 +615,30 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             }
             String cambio = textoFrontal + "\n" + anterior;
             text.setText( cambio );
+            */
 
         }
         return false;
     }    
-
+    
+    /*
+     * (non-Javadoc)
+     * @see android.os.Handler.Callback#handleMessage(android.os.Message)
+     */
     @Override
     public boolean handleMessage( Message msg )
     {
         if( msg.what == CLICK_ON_URL )
         {
-            lecturas = new ArrayList<String>( );
-            
+            lecturas = new ArrayList<String>( );            
             cargolenguaje = false;
             cargoplabras = false;
             sensorProcess = true;
             sensorProcessGuardar = true;
             lenguajes = null;
-            Toast.makeText( this, "WebView url" + msg, Toast.LENGTH_SHORT ).show( );
+            analizando = false;
+            completo = false;
+            txtLeft.setText("");
             handler.removeMessages( CLICK_ON_WEBVIEW );
             PalabrasClave palabrasClave = PalabrasClave.darInstacia( );
             palabrasClave.iniPalabras( );

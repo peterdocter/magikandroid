@@ -35,7 +35,6 @@ import com.cybozu.labs.langdetect.LangDetectException;
 import com.cybozu.labs.langdetect.Language;
 
 /**
- * Creates queries to the SQLite helper and returns its results.
  * @author Kelvin Guerrero
  * 
  */
@@ -47,7 +46,6 @@ public class Words
     private ArrayList<Language> leguajeL;
     private static int NGRAM = 3;
     private static int MIN_COUNT = 5;
-    private static int MAX_NGRAM_REPORTING_LENGTH = 2;
     private static int NGRAM_REPORTING_LENGTH = 2;
     private static int MAX_COUNT = 100;
     static File root = android.os.Environment.getExternalStorageDirectory( );
@@ -99,7 +97,7 @@ public class Words
             leguaje = new ArrayList<String>( );
             for( int i = 0; i < langlist.size( ); i++ )
             {
-                temp = langlist.get( i ).lang + ";" + langlist.get( i ).prob;
+                temp = langlist.get( i ).lang.toUpperCase() + ": " + (int)(langlist.get( i ).prob * 100) + "%";
                 leguaje.add( temp );
             }
 

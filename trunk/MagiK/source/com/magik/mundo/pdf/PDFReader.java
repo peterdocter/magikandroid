@@ -176,7 +176,8 @@ public class PDFReader extends View implements PDFViewListener, OnItemClickListe
             return false;
         return m_doc.CanSave( );
     }
-    public void OnPDFPosChanged( PDFPos pos )
+    @Override
+	public void OnPDFPosChanged( PDFPos pos )
     {
         if( m_listener != null )
         {
@@ -207,14 +208,16 @@ public class PDFReader extends View implements PDFViewListener, OnItemClickListe
             }
         }
     }
-    public boolean OnPDFDoubleTapped( float x, float y )
+    @Override
+	public boolean OnPDFDoubleTapped( float x, float y )
     {
         if( m_status != STA_NORMAL )
             return false;
         m_view.vSetScale( m_view.vGetScale( ) + Global.zoomStep, x, y );
         return true;
     }
-    public boolean OnPDFSingleTapped( float x, float y )
+    @Override
+	public boolean OnPDFSingleTapped( float x, float y )
     {
         if( m_status == STA_NORMAL || m_status == STA_ANNOT )
         {
@@ -327,18 +330,22 @@ public class PDFReader extends View implements PDFViewListener, OnItemClickListe
         }
         return false;
     }
-    public void OnPDFLongPressed( float x, float y )
+    @Override
+	public void OnPDFLongPressed( float x, float y )
     {
     }
-    public void OnPDFShowPressed( float x, float y )
+    @Override
+	public void OnPDFShowPressed( float x, float y )
     {
     }
-    public void OnPDFSelectEnd( )
+    @Override
+	public void OnPDFSelectEnd( )
     {
         if( m_listener != null )
             m_listener.OnSelectEnd( m_view.vGetSel( ) );
     }
-    public void OnPDFFound( boolean found )
+    @Override
+	public void OnPDFFound( boolean found )
     {
         if( !found )
             Toast.makeText( getContext( ), "no more found", Toast.LENGTH_SHORT ).show( );
@@ -719,19 +726,22 @@ public class PDFReader extends View implements PDFViewListener, OnItemClickListe
     {
         return m_view.vSetSelMarkup( type );
     }
-    public void OnPDFInvalidate( boolean post )
+    @Override
+	public void OnPDFInvalidate( boolean post )
     {
         if( post )
             postInvalidate( );
         else
             invalidate( );
     }
-    public void onItemClick( AdapterView<?> arg0, View arg1, int arg2, long arg3 )
+    @Override
+	public void onItemClick( AdapterView<?> arg0, View arg1, int arg2, long arg3 )
     {
         m_sel_index = arg2;
         m_pCombo.dismiss( );
     }
-    public void onDismiss( )
+    @Override
+	public void onDismiss( )
     {
         Page page = m_annot_page.GetPage( );
         if( m_edit_type == 1 )// edit box

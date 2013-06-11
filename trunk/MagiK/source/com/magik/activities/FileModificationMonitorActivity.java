@@ -5,16 +5,11 @@ import com.magik.mundo.controllers.FileAccessLogStatic;
 import com.magik.mundo.controllers.FileModificationService;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 //use asynctask background thread to detect file modification and then update the UI once there is 
 //a new change detected
@@ -24,8 +19,6 @@ public class FileModificationMonitorActivity extends Activity
     private Button btn2;
     private TextView text1;
     private boolean started = false;
-    private boolean pmStarted = false;
-
     @Override
     public void onCreate( Bundle savedInstanceState )
     {

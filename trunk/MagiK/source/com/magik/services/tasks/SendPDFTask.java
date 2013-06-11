@@ -3,7 +3,6 @@ package com.magik.services.tasks;
 import java.io.File;
 import java.nio.charset.Charset;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -16,8 +15,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import com.magik.services.WebServiceConnection;
 
 import android.os.AsyncTask;
-import android.util.Base64;
-import android.util.Log;
 
 /**
  * @author User
@@ -27,8 +24,6 @@ public class SendPDFTask extends AsyncTask<Object, Void, String> {
 
 	
 	
-	
-	private WebServiceConnection connection;
 	
 	public SendPDFTask()
 	{

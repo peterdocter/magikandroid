@@ -23,6 +23,8 @@ public class InterfaceManager
     private boolean mFiles;
 
     private boolean mAct;
+    
+    private boolean mGyro;
 
     private Context context;
 
@@ -35,6 +37,8 @@ public class InterfaceManager
         mFiles = false;
 
         mAct = false;
+        
+        mGyro = false;
     }
 
     public Context getContext( )
@@ -104,9 +108,23 @@ public class InterfaceManager
     public void setmAct( boolean mAct )
     {
         this.mAct = mAct;
-    }
+    }    
 
-    public Intent getIntent( )
+    /**
+	 * @return the mGyro
+	 */
+	public boolean ismGyro() {
+		return mGyro;
+	}
+
+	/**
+	 * @param mGyro the mGyro to set
+	 */
+	public void setmGyro(boolean mGyro) {
+		this.mGyro = mGyro;
+	}
+
+	public Intent getIntent( )
     {
         return intent;
     }

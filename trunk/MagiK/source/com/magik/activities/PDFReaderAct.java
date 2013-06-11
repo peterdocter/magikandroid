@@ -81,36 +81,67 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         palabras = new ArrayList<String>( );
         recs = new ArrayList<String>( );
         sensorProcess = true;
-        Intent service = new Intent(getApplicationContext(), RotationControlService.class);
-        startService(service);
-        service = null;
-        rotationService = RotationControlService.getInstance();
+        manager = InterfaceManager.getInstance( );
+        if(manager.ismGyro())
+        {
+        	Intent service = new Intent(getApplicationContext(), RotationControlService.class);
+            startService(service);
+            service = null;
+        }
+        
         recommendationsThread = new Thread( )
         {
             @Override
             public void run( )
             {
-                manager = InterfaceManager.getInstance( );
-                while( sensorProcess && manager.ismAct( ) && rotationService.isReading())
+                if(manager.ismGyro())
                 {
-                    try
+                	rotationService = RotationControlService.getInstance();
+                	while( sensorProcess && manager.ismAct( ) && rotationService.isReading())
                     {
-                        Log.v( "KELVIN", "Save Reads" );
-                        datosDisplay = DatosDisplay.darInstacia( );
-                        Log.d( "Lecturas", String.valueOf( datosDisplay.getLecturas( ).size( ) ) );
-                        if( datosDisplay.getLecturas( ).size( ) > 5 )
+                        try
                         {
-                            Log.d( "Recomendaciones", "Hizo el thread" );
-                            recomendacionesPDF( );
-                            sensorProcess = false;
+                            Log.v( "KELVIN", "Save Reads" );
+                            datosDisplay = DatosDisplay.darInstacia( );
+                            Log.d( "Lecturas", String.valueOf( datosDisplay.getLecturas( ).size( ) ) );
+                            if( datosDisplay.getLecturas( ).size( ) > 5 )
+                            {
+                                Log.d( "Recomendaciones", "Hizo el thread" );
+                                recomendacionesPDF( );
+                                sensorProcess = false;
+                            }
+                            sleep( 10000 );
                         }
-                        sleep( 10000 );
-                    }
-                    catch( InterruptedException e )
-                    {
-                        e.printStackTrace( );
+                        catch( InterruptedException e )
+                        {
+                            e.printStackTrace( );
+                        }
                     }
                 }
+                else
+                {
+                	while( sensorProcess && manager.ismAct( ))
+                    {
+                        try
+                        {
+                            Log.v( "KELVIN", "Save Reads" );
+                            datosDisplay = DatosDisplay.darInstacia( );
+                            Log.d( "Lecturas", String.valueOf( datosDisplay.getLecturas( ).size( ) ) );
+                            if( datosDisplay.getLecturas( ).size( ) > 5 )
+                            {
+                                Log.d( "Recomendaciones", "Hizo el thread" );
+                                recomendacionesPDF( );
+                                sensorProcess = false;
+                            }
+                            sleep( 10000 );
+                        }
+                        catch( InterruptedException e )
+                        {
+                            e.printStackTrace( );
+                        }
+                    }
+                }
+                
             }
         };
         recommendationsThread.start( );
@@ -158,7 +189,8 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         rta = "";
     }
 
-    protected void onDestroy( )
+    @Override
+	protected void onDestroy( )
     {
         // m_vFiles.close();
         if( m_vFiles != null )
@@ -186,7 +218,8 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
     	super.onPause();
     }
 
-    public void onItemClick( AdapterView<?> arg0, View arg1, int arg2, long arg3 )
+    @Override
+	public void onItemClick( AdapterView<?> arg0, View arg1, int arg2, long arg3 )
     {
         if( arg0 == m_vFiles )
         {
@@ -267,7 +300,8 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         m_reader.PDFSetSelect( );
     }
 
-    public void onClick( View v )
+    @Override
+	public void onClick( View v )
     {
         switch( v.getId( ) )
         {
@@ -298,17 +332,20 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         }
     }
 
-    public void OnPageClicked( int pageno )
+    @Override
+	public void OnPageClicked( int pageno )
     {
         m_reader.PDFGotoPage( pageno );
     }
 
-    public void OnPageChanged( int pageno )
+    @Override
+	public void OnPageChanged( int pageno )
     {
         m_thumb.thumbGotoPage( pageno );
     }
 
-    public void OnAnnotClicked( PDFVPage vpage, int annot )
+    @Override
+	public void OnAnnotClicked( PDFVPage vpage, int annot )
     {
     }
 
@@ -461,27 +498,33 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         System.gc( );
     }
 
-    public void OnOpenURI( String uri )
+    @Override
+	public void OnOpenURI( String uri )
     {
     }
 
-    public void OnOpenMovie( String path )
+    @Override
+	public void OnOpenMovie( String path )
     {
     }
 
-    public void OnOpenSound( int[] paras, String path )
+    @Override
+	public void OnOpenSound( int[] paras, String path )
     {
     }
 
-    public void OnOpenAttachment( String path )
+    @Override
+	public void OnOpenAttachment( String path )
     {
     }
 
-    public void OnOpen3D( String path )
+    @Override
+	public void OnOpen3D( String path )
     {
     }
 
-    public void OnSelectEnd( String text )
+    @Override
+	public void OnSelectEnd( String text )
     {
         LinearLayout layout = ( LinearLayout )LayoutInflater.from( this ).inflate( R.layout.dlg_text, null );
         final RadioGroup rad_group = ( RadioGroup )layout.findViewById( R.id.rad_group );
@@ -490,7 +533,8 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         AlertDialog.Builder builder = new AlertDialog.Builder( this );
         builder.setPositiveButton( "OK", new DialogInterface.OnClickListener( )
         {
-            public void onClick( DialogInterface dialog, int which )
+            @Override
+			public void onClick( DialogInterface dialog, int which )
             {
                 if( rad_group.getCheckedRadioButtonId( ) == R.id.rad_mWeb )
                     Toast.makeText( PDFReaderAct.this, "todo copy text:" + sel_text, Toast.LENGTH_SHORT ).show( );
@@ -514,7 +558,8 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         } );
         builder.setNegativeButton( "Cancel", new DialogInterface.OnClickListener( )
         {
-            public void onClick( DialogInterface dialog, int which )
+            @Override
+			public void onClick( DialogInterface dialog, int which )
             {
                 dialog.dismiss( );
             }
