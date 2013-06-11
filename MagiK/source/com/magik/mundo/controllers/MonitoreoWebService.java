@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.IBinder;
+import android.provider.BaseColumns;
 import android.provider.Browser;
 
 import com.magik.db.PersistenceManager;
@@ -100,7 +101,7 @@ public class MonitoreoWebService extends Service
     
     private Cursor cargarDatosWeb( )
     {
-        String[] selection = { Browser.BookmarkColumns._ID, Browser.BookmarkColumns.URL, Browser.BookmarkColumns.TITLE };
+        String[] selection = { BaseColumns._ID, Browser.BookmarkColumns.URL, Browser.BookmarkColumns.TITLE };
         Cursor cursor = getContentResolver( ).query( Browser.BOOKMARKS_URI, selection, null, null, Browser.BookmarkColumns.DATE + " DESC LIMIT 30" );
         guardarDatos( cursor );
         return cursor;

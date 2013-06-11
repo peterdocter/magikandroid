@@ -2,9 +2,6 @@ package com.magik.mundo.monitoring;
 
 import java.util.ArrayList;
 
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
-
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 
@@ -173,17 +170,13 @@ public class ControlerDisplay
     
     public String analizarVelocidadCorto( int valor, String sentido, long time2 )
     {
-        String direccion;
-
         if( valor >= 0 )
         {
             if( sentido.equals( "X" ) )
             {
-                direccion = "DERECHA";
             }
             else
             {
-                direccion = "ABAJO";
             }
 
         }
@@ -191,11 +184,9 @@ public class ControlerDisplay
         {
             if( sentido.equals( "X" ) )
             {
-                direccion = "IZQUIERDA";
             }
             else
             {
-                direccion = "ARRIBA";
             }
         }
         if(time2>=33600)
