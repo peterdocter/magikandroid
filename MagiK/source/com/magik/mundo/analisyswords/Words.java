@@ -170,7 +170,7 @@ public class Words
                 }
             }
             
-            File dir = new File( root.getAbsolutePath( ) + "/Magik/" + "train" + lng );
+            File dir = new File( root.getAbsolutePath( ) + "/Magik/" + "test" + lng );//train por test
             BACKGROUND_DIR = dir;
             //File dir2 = new File( root.getAbsolutePath( ) + "/Magik/" + "test" + lng );
             //FOREGROUND_DIR = dir2;
