@@ -7,6 +7,7 @@ public class DatosDisplay
         private ArrayList<String> analisiX;
         private ArrayList<String> analisiY;
         private ArrayList<String> lecturas;
+        private ArrayList<String> swipes;
         private static DatosDisplay instancia;
 
         public DatosDisplay( )
@@ -14,6 +15,7 @@ public class DatosDisplay
             analisiX = new ArrayList<String>( );
             analisiY = new ArrayList<String>( );
             lecturas = new ArrayList<String>( );
+            swipes = new ArrayList<String>();
         }
         
         public static DatosDisplay darInstacia()
@@ -53,6 +55,21 @@ public class DatosDisplay
         public void setLecturas( String lecturas )
         {
             this.lecturas.add( lecturas );
+        }
+        
+        public ArrayList<String> getSwipes()
+        {
+        	return swipes;
+        }
+        
+        public void addSwipe(String gesture)
+        {
+        	swipes.add(gesture);
+        }
+        
+        public void clearSwipes()
+        {
+        	swipes.clear();
         }
         
 }

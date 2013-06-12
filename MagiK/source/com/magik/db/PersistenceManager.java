@@ -68,6 +68,7 @@ public class PersistenceManager
             values.put( SQLiteHelper.COLUMN_DOCUMENT_TITLE, title);
             values.put( SQLiteHelper.COLUMN_DOCUMENT_URL, url );
             values.put( SQLiteHelper.COLUMN_DOCUMENT_TIPO, type);
+            values.put(SQLiteHelper.COLUMN_DOCUMENT_SYNCED, 0);
             database.insert( SQLiteHelper.TABLE_DOCUMENTS, null, values );
             database.close( );
             values = null;
@@ -437,136 +438,46 @@ public class PersistenceManager
     	}
     	return equal;
     }
-
-    // /**
-    // * Returns the id of the sound identified by the parameter.
-    // * @param path The path of the sound file to search.
-    // * @param soundIndex
-    // * @param soundId
-    // * @return The id of the found mix. <b>-1</b> if the mix is not found.
-    // * @throws Exception If there is an error trying to find the mix.
-    // */
-    // private int getSound(String path, int soundId, int soundIndex) throws Exception
-    // {
-    // int id = -1;
-    // try {
-    // database = helper.getReadableDatabase();
-    // Cursor cursor = database.query(SQLiteHelper.TABLE_RECOMMENDACION,new String[] {SQLiteHelper.COLUMN_RECOMEN_ID},
-    // SQLiteHelper.COLUMN_RECOMMENDACION_URL + " LIKE '" + path + "' AND " + SQLiteHelper.COLUMN_SOUND_INDEX + " = " + soundIndex
-    // + " AND " + SQLiteHelper.COLUMN_SOUND_IDENT + " = " + soundId, null, null, null, null);
-    // if(cursor.moveToFirst())
-    // {
-    // id = cursor.getInt(0);
-    // }
-    // cursor.close();
-    // database.close();
-    // cursor = null;
-    // database = null;
-    // } catch (Exception e) {
-    // throw new Exception("Error: "+e);
-    // }
-    // return id;
-    // }
-    //
-    // /**
-    // * Assigns a sound to a mix in the database.
-    // * @param mixName The name of the mix to assign.
-    // * @param path The path of the sound file.
-    // * @throws Exception If there is an error trying to insert the values in the table.
-    // */
-    // public void assignSoundToMix(String mixName, String path, int soundId, int soundIndex) throws Exception
-    // {
-    // try {
-    // int m_id = getMix(mixName);
-    // int s_id = getSound(path, soundId, soundIndex);
-    // if(m_id == -1)
-    // {
-    // createDocument(mixName);
-    // m_id = getMix(mixName);
-    // }
-    // if(s_id==-1)
-    // {
-    // createSound(path, soundId, soundIndex);
-    // s_id = getSound(path, soundId, soundIndex);
-    // }
-    // database = helper.getWritableDatabase();
-    // ContentValues values = new ContentValues();
-    // values.put(SQLiteHelper.COLUMN_M_ID, m_id);
-    // values.put(SQLiteHelper.COLUMN_S_ID, s_id);
-    // database.insertWithOnConflict(SQLiteHelper.TABLE_M_S, null,values, SQLiteDatabase.CONFLICT_REPLACE);
-    // database.close();
-    // values = null;
-    // database = null;
-    // }
-    // catch (Exception e) {
-    // throw new Exception(e.getMessage());
-    // }
-    //
-    // }
-    //
-    // /**
-    // * Returns all the mixes in the database.
-    // * @return The array of names of the mixes.
-    // * @throws Exception If there is a database error.
-    // */
-    // public String[] getAllMixes() throws Exception
-    // {
-    // String[] mixes = null;
-    // try {
-    // database = helper.getReadableDatabase();
-    // // Cursor cursor = database.query(SQLiteHelper.TABLE_MIXES,new String[] {SQLiteHelper.COLUMN_MIX_NAME},
-    // // null, null, null, null, null);
-    // // if(cursor.moveToFirst())
-    // // {
-    // // mixes = new String[cursor.getCount()];
-    // // for(int i = 0; i < mixes.length; i ++)
-    // // {
-    // // mixes[i] = cursor.getString(0);
-    // // }
-    // // }
-    // // cursor.close();
-    // // database.close();
-    // // cursor = null;
-    // // database = null;
-    // } catch (Exception e) {
-    // throw new Exception(e.getMessage());
-    // }
-    // return mixes;
-    // }
-    //
-    //
-    //
-    // /**
-    // * Returns the mix id of amix given its name.
-    // * @param name
-    // * @return The id of the mix. -1 if not found.
-    // */
-    // public int getMixByName(String name)
-    // {
-    // int id = -1;
-    // database = helper.getReadableDatabase();
-    // Cursor cursor = database.query(SQLiteHelper.TABLE_MIXES, new String[] {SQLiteHelper.COLUMN_MIX_ID}, SQLiteHelper.COLUMN_MIX_NAME+ " LIKE '"+ name + "'", null, null,
-    // null, null);
-    // if(cursor.moveToFirst())
-    // {
-    // id = cursor.getInt(0);
-    // }
-    // cursor.close();
-    // database.close();
-    // return id;
-    // }
-    //
-    // /**
-    // * Is true if the mix exists in the database.
-    // * @param name The name of the database to search.
-    // * @return <b>True</b> if the mix exists, <b>False</b> on the contrary.
-    // * @throws Exception if there is an error looking the mix up.
-    // */
-    // public boolean mixExists(String name) throws Exception
-    // {
-    // int id = getMix(name);
-    // boolean exists = id != -1? true:false;
-    // return exists;
-    // }
-
+    
+    public String[] getUnsyncedPaths()
+    {
+    	String[] paths = null;
+    	ArrayList<String> temp = new ArrayList<String>();
+    	try {
+			database = helper.getReadableDatabase();
+			Cursor cursor = database.query(SQLiteHelper.TABLE_DOCUMENTS, new String[]{SQLiteHelper.COLUMN_DOCUMENT_URL}, SQLiteHelper.COLUMN_DOCUMENT_SYNCED + " = 0", null, null, null, null);
+			if(cursor.moveToFirst())
+			{
+				do
+            	{
+            		temp.add(cursor.getString(0));
+            	}
+            	while(cursor.moveToNext());
+			}
+			paths = new String[temp.size()];
+            paths = temp.toArray(paths);
+            cursor.close( );
+            database.close( );
+            cursor = null;
+            database = null;
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();			
+		}
+    	return paths;
+    }
+    
+    public void setSynced(String path)
+    {
+    	try {
+    		int id = getDocument(path);
+			database = helper.getWritableDatabase();
+			ContentValues values = new ContentValues( );
+			values.put(SQLiteHelper.COLUMN_DOCUMENT_SYNCED, 1);
+			database.update(SQLiteHelper.TABLE_DOCUMENTS, values, SQLiteHelper.COLUMN_DOCUMENT_ID + " = "+ id , null);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+    }
 }

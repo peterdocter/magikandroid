@@ -936,12 +936,26 @@ public class PDFReader extends View implements PDFViewListener, OnItemClickListe
         int a = ( int )valorx;
         int b = ( int )valory;
 
-        String rtaX = display.analizarVelocidad( a, "X", time2 );
-        String rtaY = display.analizarVelocidad( b, "Y", time2 );
+        String rtaX = display.analizarVelocidadCorto( a, "X", time2 );
+        String tipolecturax = display.darTipoLectura( );
+
+        String rtaY = display.analizarVelocidadCorto( b, "Y", time2 );
+        String tipolecturay = display.darTipoLectura( );
+
+        String tipoLectura = "";
+        if( Math.abs( a ) > Math.abs( b ) )
+        {
+            tipoLectura = tipolecturax;
+        }
+        else
+        {
+            tipoLectura = tipolecturay;
+        }
+        datos = DatosDisplay.darInstacia( );
+        datos.addSwipe(tipoLectura);
 
         if( captura != "" )
         {
-            datos = DatosDisplay.darInstacia( );
             datos.setAnalisiX( rtaX );
             datos.setAnalisiY( rtaY );
             String rta = captura + ";" + rtaX + ";" + rtaY + ";";

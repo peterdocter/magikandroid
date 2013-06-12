@@ -30,6 +30,7 @@ import com.magik.R;
 import com.magik.db.PersistenceManager;
 import com.magik.mundo.controllers.RotationControlService;
 import com.magik.mundo.data.ControlerData;
+import com.magik.mundo.monitoring.ControlerDisplay;
 import com.magik.mundo.monitoring.DatosDisplay;
 import com.magik.mundo.pdf.PDFReader;
 import com.magik.mundo.pdf.PDFReader.PDFReaderListener;
@@ -71,6 +72,8 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
     
     private InterfaceManager manager;
     private RotationControlService rotationService;
+    
+    private ArrayList<String> swipes;
 
     @Override
     public void onCreate( Bundle savedInstanceState )
@@ -82,6 +85,8 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         recs = new ArrayList<String>( );
         sensorProcess = true;
         manager = InterfaceManager.getInstance( );
+        datosDisplay = DatosDisplay.darInstacia( );
+        datosDisplay.clearSwipes();
         if(manager.ismGyro())
         {
         	Intent service = new Intent(getApplicationContext(), RotationControlService.class);
@@ -94,6 +99,7 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
             @Override
             public void run( )
             {
+            	swipes = datosDisplay.getSwipes();
                 if(manager.ismGyro())
                 {
                 	rotationService = RotationControlService.getInstance();
@@ -102,15 +108,26 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
                         try
                         {
                             Log.v( "KELVIN", "Save Reads" );
-                            datosDisplay = DatosDisplay.darInstacia( );
-                            Log.d( "Lecturas", String.valueOf( datosDisplay.getLecturas( ).size( ) ) );
-                            if( datosDisplay.getLecturas( ).size( ) > 5 )
+                            if( swipes.size( ) > 1 )
                             {
-                                Log.d( "Recomendaciones", "Hizo el thread" );
-                                recomendacionesPDF( );
-                                sensorProcess = false;
+                                int cardinalidadLectura = cardinalidadLecturas( );
+                                int cardinalidadBusqueda = cardinalidadBusqueda( );
+                                int cardinalidadLecturarapida = cardinalidadLecturaRapida( );
+                                double analisis = (cardinalidadLectura + (cardinalidadLecturarapida/2))/(cardinalidadBusqueda + cardinalidadLectura + cardinalidadLecturarapida);
+//                                if( lecturas.size( ) > 5 )
+                                if(analisis>0.5)
+                                {
+                                	Log.d( "Lecturas", String.valueOf( datosDisplay.getLecturas( ).size( ) ) );
+                                	if( datosDisplay.getLecturas( ).size( ) > 5 )
+                                	{
+                                		Log.d( "Recomendaciones", "Hizo el thread" );
+                                		recomendacionesPDF( );
+                                		sensorProcess = false;
+                                	}
+                                	
+                                }
                             }
-                            sleep( 10000 );
+                        	sleep( 10000 );
                         }
                         catch( InterruptedException e )
                         {
@@ -125,13 +142,23 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
                         try
                         {
                             Log.v( "KELVIN", "Save Reads" );
-                            datosDisplay = DatosDisplay.darInstacia( );
-                            Log.d( "Lecturas", String.valueOf( datosDisplay.getLecturas( ).size( ) ) );
-                            if( datosDisplay.getLecturas( ).size( ) > 5 )
+                            if( swipes.size( ) > 1 )
                             {
-                                Log.d( "Recomendaciones", "Hizo el thread" );
-                                recomendacionesPDF( );
-                                sensorProcess = false;
+                                int cardinalidadLectura = cardinalidadLecturas( );
+                                int cardinalidadBusqueda = cardinalidadBusqueda( );
+                                int cardinalidadLecturarapida = cardinalidadLecturaRapida( );
+                                double analisis = (cardinalidadLectura + (cardinalidadLecturarapida/2))/(cardinalidadBusqueda + cardinalidadLectura + cardinalidadLecturarapida);
+//                                if( lecturas.size( ) > 5 )
+                                if(analisis>0.5)
+                                {                                	
+                                	Log.d( "Lecturas", String.valueOf( datosDisplay.getLecturas( ).size( ) ) );
+                                	if( datosDisplay.getLecturas( ).size( ) > 5 )
+                                	{
+                                		Log.d( "Recomendaciones", "Hizo el thread" );
+                                		recomendacionesPDF( );
+                                		sensorProcess = false;
+                                	}
+                                }
                             }
                             sleep( 10000 );
                         }
@@ -436,10 +463,13 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
     {
         try
         {
-            if( !connected( ) )
+        	persistenceManager = new PersistenceManager( getApplicationContext( ) );
+        	String pathTemp = path;
+            if( connected( ) )
             {
                 recomendaciones( );
                 palabrasClave( );
+                persistenceManager.setSynced(pathTemp);
             }
             String[] pals = new String[palabras.size( )];
             pals = palabras.toArray( pals );
@@ -447,8 +477,6 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
             pals = new String[] { "Kelvin", "Tita", "Julio" };
             if( pals.length > 0 )
             {
-                persistenceManager = new PersistenceManager( getApplicationContext( ) );
-                String pathTemp = path;
                 if( !persistenceManager.isFileInTable( pathTemp ) )
                 {
                     persistenceManager.createDocument( pathTemp, PersistenceManager.PDF, CLASE_DISPLAY );
@@ -586,6 +614,45 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
             text.clearComposingText( );
             text.setText( "Cargando..." );
         }
+    }
+    
+    public int cardinalidadLecturaRapida( )
+    {
+        int cardinalidad = 0;
+        for( String swipe : swipes )
+        {
+            if( swipe.equals( ControlerDisplay.LECTURA_RAPIDA ) )
+            {
+                cardinalidad++;
+            }
+        }
+        return ( int ) ( cardinalidad * 0.5 );
+    }
+
+    public int cardinalidadLecturas( )
+    {
+        int cardinalidad = 0;
+        for( String swipe : swipes )
+        {
+            if( swipe.equals( ControlerDisplay.LECTURA ) )
+            {
+                cardinalidad++;
+            }
+        }
+        return cardinalidad;
+    }
+
+    public int cardinalidadBusqueda( )
+    {
+        int cardinalidad = 0;
+        for( String swipe : swipes )
+        {
+            if( swipe.equals( ControlerDisplay.BUSQUEDA ) )
+            {
+                cardinalidad++;
+            }
+        }
+        return ( int ) ( cardinalidad * 0.2 );
     }
 
 }
