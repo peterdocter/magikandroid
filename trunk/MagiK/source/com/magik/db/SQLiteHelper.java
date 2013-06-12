@@ -38,6 +38,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
      * The name of the document, given by the user after saving the document.
      */
     protected static final String COLUMN_DOCUMENT_TIPO= "document_tipo";
+    
+    protected static final String COLUMN_DOCUMENT_SYNCED = "synced";
 
 	
 	//---------------------------------------------------------------------
@@ -103,7 +105,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	 * The mixes table creation SQL statement.
 	 */
 	private static final String CREATE_DOCUMENT = "create table if not exists " + TABLE_DOCUMENTS + " (" + COLUMN_DOCUMENT_ID + " integer primary key autoincrement, "
-			+ COLUMN_DOCUMENT_TITLE + " text, " + COLUMN_DOCUMENT_URL + " text, " + COLUMN_DOCUMENT_TIPO +" text not null )";
+			+ COLUMN_DOCUMENT_TITLE + " text, " + COLUMN_DOCUMENT_URL + " text, " + COLUMN_DOCUMENT_TIPO +" text not null, "+COLUMN_DOCUMENT_SYNCED+" integer not null )";
 	/**
 	 * The recommendation table creation SQL statement.
 	 */

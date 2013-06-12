@@ -118,12 +118,14 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                                 try
                                 {
                                     Log.v( "KELVIN", "lecturas " + lecturas.size( ) );
+                                    Log.v( "KELVIN", "swipes" + swipes.size() + " " + swipes.toString() );
                                     if( swipes.size( ) > 1 )
                                     {
-                                        int cardinalidadLectura = cadinalidadLecturas( );
-                                        int cardinalidadBusqueda = cadinalidadBusqueda( );
-                                        int cardinalidadLecturarapida = cadinalidadLecturaRapida( );
+                                        int cardinalidadLectura = cardinalidadLecturas( );
+                                        int cardinalidadBusqueda = cardinalidadBusqueda( );
+                                        int cardinalidadLecturarapida = cardinalidadLecturaRapida( );
                                         double analisis = (cardinalidadLectura + (cardinalidadLecturarapida/2))/(cardinalidadBusqueda + cardinalidadLectura + cardinalidadLecturarapida);
+                                        System.out.println("Análisis: "+ analisis);
 //                                        if( lecturas.size( ) > 5 )
                                         if(analisis>0.5)
                                         {
@@ -198,63 +200,65 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                             {
                                 try
                                 {
-                                    int cardinalidadLectura = cadinalidadLecturas( );
-                                    int cardinalidadBusqueda = cadinalidadBusqueda( );
-                                    int cardinalidadLecturarapida = cadinalidadLecturaRapida( );
+                                    int cardinalidadLectura = cardinalidadLecturas( );
+                                    int cardinalidadBusqueda = cardinalidadBusqueda( );
+                                    int cardinalidadLecturarapida = cardinalidadLecturaRapida( );
                                     double analisis = (cardinalidadLectura + (cardinalidadLecturarapida/2))/(cardinalidadBusqueda + cardinalidadLectura + cardinalidadLecturarapida);
-//                                  if( lecturas.size( ) > 5 )
-                                    if(analisis>0.5)
-                                    {
-                                        if( lecturas.size( ) > 5 )
-                                        {
-                                            ArrayList<String> pals = new ArrayList<String>( );
-                                            if( !connected( ) )
-                                            {
-                                                WebServiceConnection connection = WebServiceConnection.darInctancia( );
-                                                String[] nombresParams = { "interes", "archivo" };
-                                                Object[] params = new Object[2];
-                                                params[ 0 ] = objWebView.getUrl( );
-                                                params[ 1 ] = "LECTURA";
-                                                String string = ( String )connection.accederServicio( WebServiceConnection.PALABRAS_URL, nombresParams, params );
-                                                for( String s : string.split( ";" ) )
-                                                {
-                                                    pals.add( s );
-                                                }
-                                                string = null;
-                                                connection = null;
-                                                nombresParams = null;
-                                                params = null;
-                                            }
-                                            else
-                                            {
-                                                if( !cargoplabras )
-                                                {
-                                                    Words w = new Words( cargoProfiles );
-                                                    cargoProfiles = w.cargoProfiles( );
-                                                    boolean exito = w.startWords( objWebView.getUrl( ) );
-                                                    if( exito )
-                                                    {
-                                                        if( !cargolenguaje )
-                                                        {
-                                                            lenguajes = w.getLenguaje( );
-                                                            if( lenguajes != null && lenguajes.size( ) > 0 )
-                                                            {
-                                                                Vibrator vibrator = ( Vibrator )WebActivity.this.getSystemService( VIBRATOR_SERVICE );
-                                                                vibrator.vibrate( 3000 );
-                                                                cargolenguaje = true;
-                                                                sensorProcess = false;
-                                                            }
-                                                        }
-                                                        PalabrasClave palabras = PalabrasClave.darInstacia( );
-                                                        pals = palabras.getPalabras( );
-                                                        cargoplabras = true;
-                                                        w = null;
-                                                    }
-                                                    System.gc( );
-                                                }
-                                            }
-                                            recomendaciones( pals );
-                                        }
+                                    if( swipes.size( ) > 1 )
+                                    {                                    	
+                                    	if(analisis>0.5)
+                                    	{
+                                    		if( lecturas.size( ) > 5 )
+                                    		{
+                                    			ArrayList<String> pals = new ArrayList<String>( );
+                                    			if( !connected( ) )
+                                    			{
+                                    				WebServiceConnection connection = WebServiceConnection.darInctancia( );
+                                    				String[] nombresParams = { "interes", "archivo" };
+                                    				Object[] params = new Object[2];
+                                    				params[ 0 ] = objWebView.getUrl( );
+                                    				params[ 1 ] = "LECTURA";
+                                    				String string = ( String )connection.accederServicio( WebServiceConnection.PALABRAS_URL, nombresParams, params );
+                                    				for( String s : string.split( ";" ) )
+                                    				{
+                                    					pals.add( s );
+                                    				}
+                                    				string = null;
+                                    				connection = null;
+                                    				nombresParams = null;
+                                    				params = null;
+                                    			}
+                                    			else
+                                    			{
+                                    				if( !cargoplabras )
+                                    				{
+                                    					Words w = new Words( cargoProfiles );
+                                    					cargoProfiles = w.cargoProfiles( );
+                                    					boolean exito = w.startWords( objWebView.getUrl( ) );
+                                    					if( exito )
+                                    					{
+                                    						if( !cargolenguaje )
+                                    						{
+                                    							lenguajes = w.getLenguaje( );
+                                    							if( lenguajes != null && lenguajes.size( ) > 0 )
+                                    							{
+                                    								Vibrator vibrator = ( Vibrator )WebActivity.this.getSystemService( VIBRATOR_SERVICE );
+                                    								vibrator.vibrate( 3000 );
+                                    								cargolenguaje = true;
+                                    								sensorProcess = false;
+                                    							}
+                                    						}
+                                    						PalabrasClave palabras = PalabrasClave.darInstacia( );
+                                    						pals = palabras.getPalabras( );
+                                    						cargoplabras = true;
+                                    						w = null;
+                                    					}
+                                    					System.gc( );
+                                    				}
+                                    			}
+                                    			recomendaciones( pals );
+                                    		}
+                                    	}
                                     }
                                     sleep( 30000 );
                                 }
@@ -544,7 +548,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         return true;
     }
 
-    public int cadinalidadLecturaRapida( )
+    public int cardinalidadLecturaRapida( )
     {
         int cardinalidad = 0;
         for( String swipe : swipes )
@@ -557,7 +561,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         return ( int ) ( cardinalidad * 0.5 );
     }
 
-    public int cadinalidadLecturas( )
+    public int cardinalidadLecturas( )
     {
         int cardinalidad = 0;
         for( String swipe : swipes )
@@ -570,7 +574,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         return cardinalidad;
     }
 
-    public int cadinalidadBusqueda( )
+    public int cardinalidadBusqueda( )
     {
         int cardinalidad = 0;
         for( String swipe : swipes )
@@ -640,22 +644,22 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         String rtaY = display.analizarVelocidadCorto( b, "Y", time2 );
         String tipolecturay = display.darTipoLectura( );
 
-        String tipoLectorua = "";
+        String tipoLectura = "";
 
         if( Math.abs( a ) > Math.abs( b ) )
         {
-            tipoLectorua = tipolecturax;
+            tipoLectura = tipolecturax;
         }
         else
         {
-            tipoLectorua = tipolecturay;
+            tipoLectura = tipolecturay;
         }
-        swipes.add( tipoLectorua );
+        swipes.add( tipoLectura );
         if( captura != "" )
         {
             rta += "\n";
             rta += objWebView.getTitle( ) + ";" + captura + ";" + rtaX + ";" + rtaY + ";" + objWebView.getUrl( );
-            if( tipoLectorua.contains( "LECTURA" ) )
+            if( tipoLectura.contains( "LECTURA" ) )
             {
                 lecturas.add( rta );
                 Toast.makeText( getApplicationContext( ), "Reading", Toast.LENGTH_SHORT ).show( );
@@ -689,6 +693,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             completo = false;
             txtLeft.setText( "" );
             handler.removeMessages( CLICK_ON_WEBVIEW );
+            swipes = new ArrayList<String>();
             PalabrasClave palabrasClave = PalabrasClave.darInstacia( );
             palabrasClave.iniPalabras( );
             return true;
