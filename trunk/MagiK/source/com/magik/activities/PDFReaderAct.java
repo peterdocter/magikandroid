@@ -180,7 +180,7 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
             rtay = rtay + respuestay.get( i ) + "\n";
         }
         String rta = rtax + "\n" + rtay;
-        // data.crearFile( CLASE_DISPLAY, "TIME;Velocity" );
+        
         if( respuestax.size( ) > 0 )
         {
             data.writeToFile( rta, true, CLASE_DISPLAY );
@@ -443,13 +443,11 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
             }
             String[] pals = new String[palabras.size( )];
             pals = palabras.toArray( pals );
-            // TODO
+            // TODO quitar este arreglo
             pals = new String[] { "Kelvin", "Tita", "Julio" };
-            System.out.println( "ARREGLO: -------------------------------------------------- " + Arrays.deepToString( pals ) );
             if( pals.length > 0 )
             {
                 persistenceManager = new PersistenceManager( getApplicationContext( ) );
-                System.out.println( "BDDDDDDDDDDDDDDDDDDDDDDDDDDDD" );
                 String pathTemp = path;
                 if( !persistenceManager.isFileInTable( pathTemp ) )
                 {
