@@ -86,7 +86,6 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
         sensorProcess = true;
         manager = InterfaceManager.getInstance( );
         datosDisplay = DatosDisplay.darInstacia( );
-        datosDisplay.clearSwipes();
         if(manager.ismGyro())
         {
         	Intent service = new Intent(getApplicationContext(), RotationControlService.class);
@@ -105,26 +104,21 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
                 	rotationService = RotationControlService.getInstance();
                 	while( sensorProcess && manager.ismAct( ) && rotationService.isReading())
                     {
+                		Log.v( "KELVIN", "swipes: " + swipes.size() + " " + swipes.toString() );
                         try
                         {
-                            Log.v( "KELVIN", "Save Reads" );
                             if( swipes.size( ) > 1 )
                             {
                                 int cardinalidadLectura = cardinalidadLecturas( );
                                 int cardinalidadBusqueda = cardinalidadBusqueda( );
                                 int cardinalidadLecturarapida = cardinalidadLecturaRapida( );
                                 double analisis = (cardinalidadLectura + (cardinalidadLecturarapida/2))/(cardinalidadBusqueda + cardinalidadLectura + cardinalidadLecturarapida);
-//                                if( lecturas.size( ) > 5 )
                                 if(analisis>0.5)
                                 {
                                 	Log.d( "Lecturas", String.valueOf( datosDisplay.getLecturas( ).size( ) ) );
-                                	if( datosDisplay.getLecturas( ).size( ) > 5 )
-                                	{
-                                		Log.d( "Recomendaciones", "Hizo el thread" );
-                                		recomendacionesPDF( );
-                                		sensorProcess = false;
-                                	}
-                                	
+                                	Log.d( "Recomendaciones", "Hizo el thread" );
+                                	recomendacionesPDF( );
+                                	sensorProcess = false;                            	
                                 }
                             }
                         	sleep( 10000 );
@@ -142,22 +136,19 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
                         try
                         {
                             Log.v( "KELVIN", "Save Reads" );
+                            Log.v( "KELVIN", "swipes: " + swipes.size() + " " + swipes.toString() );
                             if( swipes.size( ) > 1 )
                             {
                                 int cardinalidadLectura = cardinalidadLecturas( );
                                 int cardinalidadBusqueda = cardinalidadBusqueda( );
                                 int cardinalidadLecturarapida = cardinalidadLecturaRapida( );
                                 double analisis = (cardinalidadLectura + (cardinalidadLecturarapida/2))/(cardinalidadBusqueda + cardinalidadLectura + cardinalidadLecturarapida);
-//                                if( lecturas.size( ) > 5 )
                                 if(analisis>0.5)
                                 {                                	
                                 	Log.d( "Lecturas", String.valueOf( datosDisplay.getLecturas( ).size( ) ) );
-                                	if( datosDisplay.getLecturas( ).size( ) > 5 )
-                                	{
-                                		Log.d( "Recomendaciones", "Hizo el thread" );
-                                		recomendacionesPDF( );
-                                		sensorProcess = false;
-                                	}
+                                	Log.d( "Recomendaciones", "Hizo el thread" );
+                                	recomendacionesPDF( );
+                                	sensorProcess = false;                                
                                 }
                             }
                             sleep( 10000 );
@@ -452,10 +443,14 @@ public class PDFReaderAct extends Activity implements OnItemClickListener, OnCli
 
     private boolean connected( )
     {
-        boolean connected = false;
-        ConnectivityManager manager = ( ConnectivityManager )getSystemService( Context.CONNECTIVITY_SERVICE );
-        NetworkInfo activeNetworkInfo = manager.getActiveNetworkInfo( );
-        connected = activeNetworkInfo != null && activeNetworkInfo.isConnected( );
+    	boolean connected = false;
+    	ConnectivityManager cm =
+    	        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+    	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+    	    if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+    	        connected = true;
+    	    }
+    	    System.out.println(connected);
         return connected;
     }
 

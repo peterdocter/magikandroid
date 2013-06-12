@@ -8,6 +8,7 @@ import android.content.Intent;
 
 import com.magik.mundo.controllers.FileModificationService;
 import com.magik.mundo.controllers.MonitoreoWebService;
+import com.magik.services.SyncService;
 
 /**
  * @author User
@@ -25,6 +26,8 @@ public class InterfaceManager
     private boolean mAct;
     
     private boolean mGyro;
+    
+    private boolean mSync;
 
     private Context context;
 
@@ -39,6 +42,8 @@ public class InterfaceManager
         mAct = false;
         
         mGyro = false;
+        
+        mSync = false;
     }
 
     public Context getContext( )
@@ -122,6 +127,24 @@ public class InterfaceManager
 	 */
 	public void setmGyro(boolean mGyro) {
 		this.mGyro = mGyro;
+	}
+	
+	
+
+	/**
+	 * @return the mSync
+	 */
+	public boolean ismSync() {
+		return mSync;
+	}
+
+	/**
+	 * @param mSync the mSync to set
+	 */
+	public void setmSync(boolean mSync) {
+		this.intent = new Intent(context, SyncService.class);
+		this.mSync = mSync;
+		
 	}
 
 	public Intent getIntent( )

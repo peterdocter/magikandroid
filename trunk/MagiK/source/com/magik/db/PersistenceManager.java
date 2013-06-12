@@ -114,7 +114,7 @@ public class PersistenceManager
         return id;
     }
     
-    private String getDocumentTitle( String document ) throws Exception
+    public String getDocumentTitle( String document ) throws Exception
     {
         String title = null;
         try
@@ -192,13 +192,10 @@ public class PersistenceManager
             String sql = "SELECT p." + SQLiteHelper.COLUMN_RECOMMENDACION_URL+ ", d."+ SQLiteHelper.COLUMN_DOCUMENT_TITLE + " FROM " + SQLiteHelper.TABLE_RECOMMENDACION + " p JOIN " + SQLiteHelper.TABLE_DOCUMENTS + " d ON p." + SQLiteHelper.COLUMN_R_D_ID + " = d."
                     + SQLiteHelper.COLUMN_DOCUMENT_ID + " WHERE d." + SQLiteHelper.COLUMN_DOCUMENT_URL + " LIKE '" + documentName + "'";
             Cursor cursor = database.rawQuery( sql, null );
-            System.out.println("COnsulta "+cursor.getCount() +":-------------------------------------"+sql);
-            System.out.println();
             if( cursor.moveToFirst( ) )
             {
             	do
             	{
-            		System.out.println("Cursor:-------------------------------------"+cursor.getString(1));
             		if(!cursor.getString(1).equals("") && cursor.getString(1) != null)
             		{
             			temp.add(cursor.getString(1));
@@ -284,6 +281,7 @@ public class PersistenceManager
     	catch (Exception e) 
     	{
 			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
     	
     	return repeated;
@@ -307,6 +305,7 @@ public class PersistenceManager
     	catch (Exception e) 
     	{
 			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
     	
     	return repeated;
@@ -329,6 +328,7 @@ public class PersistenceManager
     	catch (Exception e) 
     	{
 			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
     	
     	return repeated;
@@ -362,13 +362,11 @@ public class PersistenceManager
 			int id = getDocument(document);
 			
 			ContentValues values;
-			System.out.println("Recs:                             "+Arrays.deepToString(recs));
 			for (int i = 0; i < recs.length; i++) {
 				String rec = recs[i];
 				if(!isRecInTable(rec, document))
 				{
 					database = helper.getWritableDatabase();
-					System.out.println(":::::::::::::::::::SAVE:::::::::::::::::::::");
 					values = new ContentValues();
 					values.put(SQLiteHelper.COLUMN_RECOMMENDACION_URL, rec);
 					values.put(SQLiteHelper.COLUMN_R_D_ID, id);
@@ -476,8 +474,30 @@ public class PersistenceManager
 			ContentValues values = new ContentValues( );
 			values.put(SQLiteHelper.COLUMN_DOCUMENT_SYNCED, 1);
 			database.update(SQLiteHelper.TABLE_DOCUMENTS, values, SQLiteHelper.COLUMN_DOCUMENT_ID + " = "+ id , null);
+			database.close();
+			database = null;
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
+    }
+    
+    public String getDocumentType(String path)
+    {
+    	String type = null;
+    	try {
+			database = helper.getReadableDatabase();
+			Cursor c = database.query(SQLiteHelper.TABLE_DOCUMENTS, new String[]{SQLiteHelper.COLUMN_DOCUMENT_TIPO}, SQLiteHelper.COLUMN_DOCUMENT_URL + " LIKE '"+path+"'", null, null, null, null);
+    		if(c.moveToFirst())
+    		{
+    			type = c.getString(0);
+    		}
+    		c.close();
+    		c = null;
+    		database.close();
+    		database = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return type;
     }
 }

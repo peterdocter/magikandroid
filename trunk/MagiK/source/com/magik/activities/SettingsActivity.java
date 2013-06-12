@@ -4,6 +4,9 @@
 package com.magik.activities;
 
 import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
@@ -26,6 +29,9 @@ public class SettingsActivity extends Activity {
 	
 	private CheckBox checkGyro;
 	
+	private CheckBox checkSync;
+
+	
 	private InterfaceManager interfaceManager;
 	
 	/*
@@ -40,6 +46,11 @@ public class SettingsActivity extends Activity {
 		checkFiles = (CheckBox)findViewById(R.id.checkFiles);
 		checkAct = (CheckBox)findViewById(R.id.checkAct);
 		checkGyro = (CheckBox)findViewById(R.id.checkGyro);
+		checkSync = (CheckBox)findViewById(R.id.checkSync);
+		if(!connected())
+		{
+			checkSync.setEnabled(false);
+		}
 		interfaceManager = InterfaceManager.getInstance();
 	}
 	
@@ -54,6 +65,12 @@ public class SettingsActivity extends Activity {
 		checkFiles.setChecked(interfaceManager.ismFiles());
 		checkAct.setChecked(interfaceManager.ismAct());
 		checkGyro.setChecked(interfaceManager.ismGyro());
+		checkSync.setChecked(interfaceManager.ismSync());
+		if(!connected())
+		{
+			checkSync.setEnabled(false);
+			checkSync.setChecked(false);
+		}
 		super.onResume();
 	}
 
@@ -114,7 +131,33 @@ public class SettingsActivity extends Activity {
 				Toast.makeText(getApplicationContext(), "Device's orientation monitoring stopped...", Toast.LENGTH_LONG).show();
 			}			
 			break;
+		case R.id.checkSync:
+			if(checked)
+			{
+				interfaceManager.setmSync(true);
+				startService(interfaceManager.getIntent());
+				Toast.makeText(getApplicationContext(), "Browsed files under internet connection will be sent.", Toast.LENGTH_LONG).show();
+			}
+			else
+			{
+				interfaceManager.setmSync(false);
+				stopService(interfaceManager.getIntent());
+				Toast.makeText(getApplicationContext(), "Browsed files under intenrnet connection won't be sent.", Toast.LENGTH_LONG).show();
+			}
 		}
 		}
+	
+	private boolean connected( )
+    {
+		boolean connected = false;
+    	ConnectivityManager cm =
+    	        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+    	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+    	    if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+    	        connected = true;
+    	    }
+    	    System.out.println(connected);
+        return connected;
+    }
 		
 	}
