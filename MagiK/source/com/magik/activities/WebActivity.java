@@ -208,9 +208,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                                     {                                    	
                                     	if(analisis>0.5)
                                     	{
-                                    		if( lecturas.size( ) > 5 )
-                                    		{
-                                    			ArrayList<String> pals = new ArrayList<String>( );
+                                    		          			ArrayList<String> pals = new ArrayList<String>( );
                                     			if( !connected( ) )
                                     			{
                                     				WebServiceConnection connection = WebServiceConnection.darInctancia( );
@@ -258,7 +256,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                                     			}
                                     			recomendaciones( pals );
                                     		}
-                                    	}
+                                    	
                                     }
                                     sleep( 30000 );
                                 }
