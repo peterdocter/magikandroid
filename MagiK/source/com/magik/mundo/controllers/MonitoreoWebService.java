@@ -1,6 +1,7 @@
 package com.magik.mundo.controllers;
 
 import android.app.Service;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.IBinder;
@@ -88,6 +89,7 @@ public class MonitoreoWebService extends Service
     {
         try
         {
+        	pm = new PersistenceManager(getApplicationContext());
             if( !pm.isFileInTable( documentName ) )
             {
                 pm.createDocument( documentName, documentType, documentTitle );
@@ -95,15 +97,21 @@ public class MonitoreoWebService extends Service
         }
         catch( Exception e )
         {
-            e.printStackTrace( );
         }
     }
     
     private Cursor cargarDatosWeb( )
     {
-        String[] selection = { BaseColumns._ID, Browser.BookmarkColumns.URL, Browser.BookmarkColumns.TITLE };
-        Cursor cursor = getContentResolver( ).query( Browser.BOOKMARKS_URI, selection, null, null, Browser.BookmarkColumns.DATE + " DESC LIMIT 30" );
-        guardarDatos( cursor );
+        String[] projection = { BaseColumns._ID, Browser.BookmarkColumns.URL, Browser.BookmarkColumns.TITLE };
+        String selection = Browser.BookmarkColumns.BOOKMARK + "= 0";
+        ContentResolver resolver = getContentResolver();
+        Cursor cursor = null;
+        try {
+        	cursor = resolver.query( Browser.BOOKMARKS_URI, projection, selection, null, Browser.BookmarkColumns.DATE + " DESC LIMIT 30" );
+        	guardarDatos( cursor );
+		} catch (Exception e) {
+			this.stopSelf();
+		}        
         return cursor;
     }
 

@@ -100,6 +100,8 @@ public class PDFReader extends View implements PDFViewListener, OnItemClickListe
     }
     public void PDFOpen( Document doc, PDFReaderListener listener )
     {
+    	datos = DatosDisplay.darInstacia();
+    	datos.clearSwipes();
         PDFClose( );
         m_listener = listener;
         m_doc = doc;
@@ -952,7 +954,10 @@ public class PDFReader extends View implements PDFViewListener, OnItemClickListe
             tipoLectura = tipolecturay;
         }
         datos = DatosDisplay.darInstacia( );
-        datos.addSwipe(tipoLectura);
+        if(event.getAction() == MotionEvent.ACTION_UP)
+        {
+        	datos.addSwipe(tipoLectura);
+        }
 
         if( captura != "" )
         {

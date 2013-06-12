@@ -110,6 +110,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                     public void run( )
                     {
 
+                    	
                         if( manager.ismGyro( ) )
                         {
                             rotationService = RotationControlService.getInstance( );
@@ -117,8 +118,8 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                             {
                                 try
                                 {
-                                    Log.v( "KELVIN", "lecturas " + lecturas.size( ) );
-                                    Log.v( "KELVIN", "swipes" + swipes.size() + " " + swipes.toString() );
+                                	Log.v( "KELVIN", "lecturas " + lecturas.size( ) );
+                                	Log.v( "KELVIN", "swipes: " + swipes.size() + " " + swipes.toString() );
                                     if( swipes.size( ) > 1 )
                                     {
                                         int cardinalidadLectura = cardinalidadLecturas( );
@@ -200,12 +201,14 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
                             {
                                 try
                                 {
-                                    int cardinalidadLectura = cardinalidadLecturas( );
-                                    int cardinalidadBusqueda = cardinalidadBusqueda( );
-                                    int cardinalidadLecturarapida = cardinalidadLecturaRapida( );
-                                    double analisis = (cardinalidadLectura + (cardinalidadLecturarapida/2))/(cardinalidadBusqueda + cardinalidadLectura + cardinalidadLecturarapida);
+                                	Log.v( "KELVIN", "lecturas " + lecturas.size( ) );
+                                	Log.v( "KELVIN", "swipes: " + swipes.size() + " " + swipes.toString() );
                                     if( swipes.size( ) > 1 )
                                     {                                    	
+                                    	int cardinalidadLectura = cardinalidadLecturas( );
+                                    	int cardinalidadBusqueda = cardinalidadBusqueda( );
+                                    	int cardinalidadLecturarapida = cardinalidadLecturaRapida( );
+                                    	double analisis = (cardinalidadLectura + (cardinalidadLecturarapida/2))/(cardinalidadBusqueda + cardinalidadLectura + cardinalidadLecturarapida);
                                     	if(analisis>0.5)
                                     	{
                                     		          			ArrayList<String> pals = new ArrayList<String>( );
@@ -652,7 +655,10 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
         {
             tipoLectura = tipolecturay;
         }
-        swipes.add( tipoLectura );
+        if(event.getAction() == MotionEvent.ACTION_UP)
+        {
+        	swipes.add( tipoLectura );
+        }        
         if( captura != "" )
         {
             rta += "\n";
@@ -691,7 +697,7 @@ public class WebActivity extends Activity implements OnTouchListener, Handler.Ca
             completo = false;
             txtLeft.setText( "" );
             handler.removeMessages( CLICK_ON_WEBVIEW );
-            swipes = new ArrayList<String>();
+            swipes.clear();            
             PalabrasClave palabrasClave = PalabrasClave.darInstacia( );
             palabrasClave.iniPalabras( );
             return true;

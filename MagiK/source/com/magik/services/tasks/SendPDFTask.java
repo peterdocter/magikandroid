@@ -22,12 +22,12 @@ import android.os.AsyncTask;
  */
 public class SendPDFTask extends AsyncTask<Object, Void, String> {
 
-	
+	private boolean finished;
 	
 	
 	public SendPDFTask()
 	{
-		
+		finished = false;
 	}
 	
 	
@@ -93,16 +93,35 @@ public class SendPDFTask extends AsyncTask<Object, Void, String> {
 			*/
 			System.gc();
 			
-			
 		}
 		catch (Exception e) 
 		{
 			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
-		System.out.println(resp);
 		return resp;
 	}
 	
+	@Override
+	protected void onPostExecute(String result) {
+		finished = true;
+		super.onPostExecute(result);
+	}
+	 
 	
-
+	public boolean isRunning()
+	{
+		return this.getStatus() == AsyncTask.Status.RUNNING;
+	}
+	
+	public boolean isPending()
+	{
+		return this.getStatus() == AsyncTask.Status.PENDING;
+	}
+	
+	public boolean isFinished()
+	{
+		return finished;
+	}
+	
 }
